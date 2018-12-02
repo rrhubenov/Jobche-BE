@@ -1,4 +1,4 @@
-package bg.elsys.jobche
+package bg.elsys.jobche.UserTests
 
 import bg.elsys.jobche.entity.User
 import bg.elsys.jobche.entity.response.UserResponse

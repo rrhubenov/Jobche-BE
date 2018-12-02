@@ -11,7 +11,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.Mockito.`when`
+import org.mockito.ArgumentMatchers.anyLong
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
@@ -22,7 +22,7 @@ class UserServiceTest {
 
     private val userService: UserService
 
-    private val user = User("Radoslav", "Hubenov")
+    private val user = User("Radoslav", "Hubenov", "rrhubenov@gmail.com")
 
     init {
         userService = UserService(userRepository)
@@ -41,7 +41,7 @@ class UserServiceTest {
     @Test
     fun addUserTest() {
         every { userRepository.save(user) } returns user
-        assertThat(userService.addUser(user)).isEqualTo(user.id)
+        assertThat(userService.addUser(user)).isEqualTo(UserResponse(anyLong(), user.firstName, user.lastName))
     }
 
 }

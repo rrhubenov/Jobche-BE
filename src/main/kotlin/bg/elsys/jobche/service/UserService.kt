@@ -12,9 +12,9 @@ class UserService(val userRepository: UserRepository) {
         return UserResponse(user.id, user.firstName, user.lastName)
     }
 
-    fun addUser(user: User): Long {
+    fun addUser(user: User): UserResponse {
         val savedUser = userRepository.save(user)
-        return savedUser.id
+        return UserResponse(savedUser.id, savedUser.firstName, savedUser.lastName)
     }
 
 }

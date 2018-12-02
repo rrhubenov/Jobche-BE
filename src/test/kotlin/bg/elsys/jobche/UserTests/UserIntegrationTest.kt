@@ -18,6 +18,9 @@ class UserIntegrationTest {
 
     companion object {
         const val url = "/users/"
+        const val FIRST_NAME = "Radosalv"
+        const val LAST_NAME = "Hubenov"
+        const val EMAIL = "rrhubenov@gmail.com"
     }
 
     @Autowired
@@ -25,14 +28,14 @@ class UserIntegrationTest {
 
     @Test
     fun testPostAndGetUser() {
-        val user = User("Radoslav", "Hubenov")
+        val user = User(FIRST_NAME, LAST_NAME, EMAIL)
 
-        val postResponse = restTemplate.postForEntity(url, user, Long::class.java)
+        val postResponse = restTemplate.postForEntity(url, user, UserResponse::class.java)
         assertThat(postResponse.statusCode).isEqualTo(HttpStatus.CREATED)
 
-        val getResponse = restTemplate.getForEntity(url + postResponse.body, UserResponse::class.java)
+        val getResponse = restTemplate.getForEntity(url + postResponse.body?.id, UserResponse::class.java)
 
         assertThat(getResponse.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(getResponse.body?.id).isEqualTo(postResponse.body)
+        assertThat(getResponse.body).isEqualTo(postResponse.body)
     }
 }

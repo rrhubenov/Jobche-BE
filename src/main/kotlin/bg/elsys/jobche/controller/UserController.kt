@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.*
 class UserController(val userService: UserService) {
 
     @GetMapping("/{id}")
-    fun getUser(@PathVariable("id") id: Long): UserResponse {
-        return userService.getUser(id)
+    fun getUser(@PathVariable("id") id: Long): ResponseEntity<UserResponse> {
+        return ResponseEntity(userService.getUser(id), HttpStatus.OK)
     }
 
     @PostMapping
-    fun register(@RequestBody user: User): ResponseEntity<Long> {
-        return ResponseEntity<Long>(userService.addUser(user), HttpStatus.CREATED)
+    fun register(@RequestBody user: User): ResponseEntity<UserResponse> {
+        return ResponseEntity(userService.addUser(user), HttpStatus.CREATED)
     }
 
 }

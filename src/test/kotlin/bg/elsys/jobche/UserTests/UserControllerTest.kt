@@ -4,7 +4,6 @@ import bg.elsys.jobche.controller.UserController
 import bg.elsys.jobche.entity.response.UserResponse
 import bg.elsys.jobche.exceptions.UserNotFoundException
 import bg.elsys.jobche.service.UserService
-import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyLong

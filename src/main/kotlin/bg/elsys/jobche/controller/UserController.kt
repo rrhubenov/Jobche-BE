@@ -17,7 +17,7 @@ class UserController(val userService: UserService) {
     }
 
     @PostMapping
-    fun addUser(@RequestBody user: User): ResponseEntity<Long> {
+    fun register(@RequestBody user: User): ResponseEntity<Long> {
         return ResponseEntity<Long>(userService.addUser(user), HttpStatus.CREATED)
     }
 

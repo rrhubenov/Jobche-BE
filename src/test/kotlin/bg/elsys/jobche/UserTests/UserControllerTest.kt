@@ -1,14 +1,13 @@
-package bg.elsys.jobche
+package bg.elsys.jobche.UserTests
 
 import bg.elsys.jobche.controller.UserController
-import bg.elsys.jobche.entity.User
 import bg.elsys.jobche.entity.response.UserResponse
 import bg.elsys.jobche.exceptions.UserNotFoundException
 import bg.elsys.jobche.service.UserService
+import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyLong
-import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -21,18 +20,17 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ExtendWith(SpringExtension::class)
 @WebMvcTest(UserController::class)
-class UserControllerTest {
-
+class UserControllerTest() {
 
     companion object {
         const val testUrl = "/users/1"
     }
 
-    @Autowired
-    lateinit var mockMvc: MockMvc
-
     @MockBean
     lateinit var userService: UserService
+
+    @Autowired
+    lateinit var mockMvc: MockMvc
 
     @Test
     fun getUser() {

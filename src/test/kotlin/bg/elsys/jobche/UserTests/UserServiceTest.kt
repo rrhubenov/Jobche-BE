@@ -1,6 +1,8 @@
 package bg.elsys.jobche.UserTests
 
-import bg.elsys.jobche.entity.User
+import bg.elsys.jobche.entity.body.UserLoginBody
+import bg.elsys.jobche.entity.body.UserRegisterBody
+import bg.elsys.jobche.entity.model.User
 import bg.elsys.jobche.entity.response.UserResponse
 import bg.elsys.jobche.repositories.UserRepository
 import bg.elsys.jobche.service.UserService
@@ -18,30 +20,37 @@ import java.util.*
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserServiceTest {
 
+    companion object {
+        const val FIRST_NAME = "Radoslav"
+        const val LAST_NAME = "Hubenov"
+        const val EMAIL = "rrhubenov@gmail.com"
+        const val PASSWORD = "password"
+        private val userModel = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
+        private val userRegister = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
+        private val userLogin = UserLoginBody(EMAIL, PASSWORD)
+    }
+
     private val userRepository: UserRepository = mockk()
 
     private val userService: UserService
-
-    private val user = User("Radoslav", "Hubenov", "rrhubenov@gmail.com")
 
     init {
         userService = UserService(userRepository)
     }
 
     @Test
-    fun getUserTest() {
-        val optional = Optional.of(user)
-        every { userRepository.findById(1) } returns optional
+    fun loginTest() {
+        every { userRepository.findByEmail(EMAIL) } returns userModel
 
-        val result = userService.getUser(1)
+        val result = userService.login(userLogin)
         val expectedResult = UserResponse(0, "Radoslav", "Hubenov")
         assertThat(result).isEqualTo(expectedResult)
     }
 
     @Test
-    fun addUserTest() {
-        every { userRepository.save(user) } returns user
-        assertThat(userService.addUser(user)).isEqualTo(UserResponse(anyLong(), user.firstName, user.lastName))
+    fun registerTest() {
+        every { userRepository.save(userModel) } returns userModel
+        assertThat(userService.register(userRegister)).isEqualTo(UserResponse(anyLong(), userRegister.firstName, userRegister.lastName))
     }
 
 }

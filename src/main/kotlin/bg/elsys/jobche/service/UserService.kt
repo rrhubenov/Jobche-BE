@@ -13,11 +13,11 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
-class UserService(val userRepository: UserRepository, val passwordEncoder: PasswordEncoder, val authenticationManager: AuthenticationManager) {
-    fun login(userLogin: UserLoginBody): Authentication {
-        val authentication = authenticationManager
-                .authenticate(UsernamePasswordAuthenticationToken(userLogin.email, userLogin.password))
-        return authentication
+class UserService(val userRepository: UserRepository,
+                  val passwordEncoder: PasswordEncoder) {
+    fun login(userLogin: UserLoginBody): UserResponse {
+        val user = userRepository.findByEmail(userLogin.email)
+        return UserResponse(user?.id, user?.firstName, user?.lastName)
     }
 
     fun register(userRegister: UserRegisterBody): UserResponse {
@@ -25,6 +25,7 @@ class UserService(val userRepository: UserRepository, val passwordEncoder: Passw
                 userRegister.lastName,
                 userRegister.email,
                 passwordEncoder.encode(userRegister.password))
+//                userRegister.password)
 
         val savedUser = userRepository.save(userDTO)
         return UserResponse(savedUser.id, savedUser.firstName, savedUser.lastName)

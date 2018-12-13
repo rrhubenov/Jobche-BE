@@ -13,8 +13,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.anyLong
-import java.util.*
+import org.mockito.ArgumentMatchers.anyString
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 @ExtendWith(MockKExtension::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -25,22 +27,23 @@ class UserServiceTest {
         const val LAST_NAME = "Hubenov"
         const val EMAIL = "rrhubenov@gmail.com"
         const val PASSWORD = "password"
-        private val userModel = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
+        private val userDTO = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
         private val userRegister = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
         private val userLogin = UserLoginBody(EMAIL, PASSWORD)
     }
 
-    private val userRepository: UserRepository = mockk()
+    private val repository: UserRepository = mockk()
+    private val passwordEncoder = BCryptPasswordEncoder()
 
     private val userService: UserService
 
     init {
-        userService = UserService(userRepository)
+        userService = UserService(repository, passwordEncoder)
     }
 
     @Test
     fun loginTest() {
-        every { userRepository.findByEmail(EMAIL) } returns userModel
+        every { repository.findByEmail(EMAIL) } returns userDTO
 
         val result = userService.login(userLogin)
         val expectedResult = UserResponse(0, "Radoslav", "Hubenov")
@@ -49,8 +52,9 @@ class UserServiceTest {
 
     @Test
     fun registerTest() {
-        every { userRepository.save(userModel) } returns userModel
-        assertThat(userService.register(userRegister)).isEqualTo(UserResponse(anyLong(), userRegister.firstName, userRegister.lastName))
+        every { repository.save(any<User>()) } returns userDTO
+        val userResponse = userService.register(userRegister)
+        assertThat(userResponse).isEqualTo(UserResponse(anyLong(), userRegister.firstName, userRegister.lastName))
     }
 
 }

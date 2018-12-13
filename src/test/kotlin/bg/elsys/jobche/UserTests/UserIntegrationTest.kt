@@ -18,8 +18,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 class UserIntegrationTest {
 
     companion object {
-        const val REGISTER_URL = "/users/"
-        const val LOGIN_URL = REGISTER_URL + "login"
+        const val BASE_URL = "/users"
+        const val REGISTER_URL = BASE_URL
+        const val LOGIN_URL = BASE_URL + "/login"
         const val FIRST_NAME = "Radosalv"
         const val LAST_NAME = "Hubenov"
         const val EMAIL = "rrhubenov@gmail.com"

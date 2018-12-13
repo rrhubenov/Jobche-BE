@@ -22,7 +22,8 @@ class WebSecurityConfig(val userDetailsService: PostgreUserDetailsService) : Web
             "/configuration/ui",
             "/configuration/security",
             "/swagger-ui.html",
-            "/webjars/**")
+            "/webjars/**",
+            "/users/**")
 
     @Bean
     override fun authenticationManagerBean(): AuthenticationManager {
@@ -45,7 +46,6 @@ class WebSecurityConfig(val userDetailsService: PostgreUserDetailsService) : Web
     override fun configure(http: HttpSecurity) {
         http.csrf().disable()
         http.authorizeRequests()
-                .antMatchers("/user/**").permitAll()
                 .antMatchers(*WHITELISTED_URLS).permitAll()
                 .anyRequest().authenticated()
     }

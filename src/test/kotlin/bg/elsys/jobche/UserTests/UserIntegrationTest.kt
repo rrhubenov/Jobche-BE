@@ -1,6 +1,7 @@
 package bg.elsys.jobche.UserTests
 
-import bg.elsys.jobche.entity.User
+import bg.elsys.jobche.entity.body.UserLoginBody
+import bg.elsys.jobche.entity.body.UserRegisterBody
 import bg.elsys.jobche.entity.response.UserResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -17,25 +18,29 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 class UserIntegrationTest {
 
     companion object {
-        const val url = "/users/"
+        const val BASE_URL = "/users"
+        const val REGISTER_URL = BASE_URL
+        const val LOGIN_URL = BASE_URL + "/login"
         const val FIRST_NAME = "Radosalv"
         const val LAST_NAME = "Hubenov"
         const val EMAIL = "rrhubenov@gmail.com"
+        const val PASSWORD = "testing1"
     }
 
     @Autowired
     lateinit var restTemplate: TestRestTemplate
 
     @Test
-    fun testPostAndGetUser() {
-        val user = User(FIRST_NAME, LAST_NAME, EMAIL)
+    fun testRegisterAndLoginUser() {
+        val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
 
-        val postResponse = restTemplate.postForEntity(url, user, UserResponse::class.java)
-        assertThat(postResponse.statusCode).isEqualTo(HttpStatus.CREATED)
+        val registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
+        assertThat(registerResponse.statusCode).isEqualTo(HttpStatus.CREATED)
 
-        val getResponse = restTemplate.getForEntity(url + postResponse.body?.id, UserResponse::class.java)
+        val loginUserBody = UserLoginBody(EMAIL, PASSWORD)
 
-        assertThat(getResponse.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(getResponse.body).isEqualTo(postResponse.body)
+        val loginResponse = restTemplate.postForEntity(LOGIN_URL, loginUserBody, UserResponse::class.java)
+
+        assertThat(loginResponse.statusCode).isEqualTo(HttpStatus.OK)
     }
 }

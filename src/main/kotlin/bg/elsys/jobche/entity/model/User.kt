@@ -4,6 +4,7 @@ import bg.elsys.jobche.entity.BaseEntity
 import io.swagger.annotations.ApiModelProperty
 import javax.persistence.*
 
+
 @Entity
 @Table(name = "Users")
 data class User(@ApiModelProperty(required = true)

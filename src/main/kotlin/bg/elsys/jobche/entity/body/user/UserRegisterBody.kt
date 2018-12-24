@@ -1,4 +1,4 @@
-package bg.elsys.jobche.entity.body
+package bg.elsys.jobche.entity.body.user
 
 data class UserRegisterBody(val firstName: String,
                             val lastName: String,

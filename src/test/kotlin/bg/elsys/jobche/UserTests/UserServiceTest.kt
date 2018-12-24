@@ -1,7 +1,7 @@
 package bg.elsys.jobche.UserTests
 
-import bg.elsys.jobche.entity.body.UserLoginBody
-import bg.elsys.jobche.entity.body.UserRegisterBody
+import bg.elsys.jobche.entity.body.user.UserLoginBody
+import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.model.User
 import bg.elsys.jobche.entity.response.UserResponse
 import bg.elsys.jobche.repositories.UserRepository
@@ -13,9 +13,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.anyLong
-import org.mockito.ArgumentMatchers.anyString
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 @ExtendWith(MockKExtension::class)

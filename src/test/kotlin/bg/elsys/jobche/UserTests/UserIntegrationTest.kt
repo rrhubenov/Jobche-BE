@@ -1,7 +1,7 @@
 package bg.elsys.jobche.UserTests
 
-import bg.elsys.jobche.entity.body.UserLoginBody
-import bg.elsys.jobche.entity.body.UserRegisterBody
+import bg.elsys.jobche.entity.body.user.UserLoginBody
+import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.response.UserResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

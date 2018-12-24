@@ -1,13 +1,10 @@
 package bg.elsys.jobche.UserTests
 
 import bg.elsys.jobche.controller.UserController
-import bg.elsys.jobche.entity.body.UserLoginBody
-import bg.elsys.jobche.entity.body.UserRegisterBody
+import bg.elsys.jobche.entity.body.user.UserLoginBody
+import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.response.UserResponse
-import bg.elsys.jobche.exceptions.UserNotFoundException
 import bg.elsys.jobche.service.UserService
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
@@ -15,16 +12,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.BDDMockito.given
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.http.MediaType
-import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ExtendWith(MockKExtension::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -51,7 +38,7 @@ class UserControllerTest() {
     fun testLogin() {
         val userLogin = UserLoginBody(EMAIL, PASSWORD)
 
-        every { userService.login(userLogin)} returns userResponse
+        every { userService.login(userLogin) } returns userResponse
 
         val result = controller.login(userLogin)
 

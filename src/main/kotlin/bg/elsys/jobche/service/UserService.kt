@@ -1,14 +1,10 @@
 package bg.elsys.jobche.service
 
-import bg.elsys.jobche.entity.body.UserLoginBody
-import bg.elsys.jobche.entity.body.UserRegisterBody
+import bg.elsys.jobche.entity.body.user.UserLoginBody
+import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.model.User
 import bg.elsys.jobche.entity.response.UserResponse
-import bg.elsys.jobche.exceptions.UserNotFoundException
 import bg.elsys.jobche.repositories.UserRepository
-import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 

@@ -12,19 +12,19 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/users")
 class UserController(val userService: UserService) {
 
-    @PostMapping("/login")
-    fun login(@RequestBody userLogin : UserLoginBody): ResponseEntity<UserResponse> {
-        return ResponseEntity(userService.login(userLogin), HttpStatus.OK)
+    @PostMapping("/read")
+    fun read(@RequestBody userLogin : UserLoginBody): ResponseEntity<UserResponse> {
+        return ResponseEntity(userService.read(userLogin), HttpStatus.OK)
     }
 
     @PostMapping
-    fun register(@RequestBody userRegister: UserRegisterBody): ResponseEntity<UserResponse> {
-        return ResponseEntity(userService.register(userRegister), HttpStatus.CREATED)
+    fun create(@RequestBody userRegister: UserRegisterBody): ResponseEntity<UserResponse> {
+        return ResponseEntity(userService.create(userRegister), HttpStatus.CREATED)
     }
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long) : ResponseEntity<Unit> {
-        return ResponseEntity(userService.delete(id), HttpStatus.OK)
+        return ResponseEntity(userService.delete(id), HttpStatus.NO_CONTENT)
     }
 
 }

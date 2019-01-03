@@ -41,19 +41,19 @@ class UserServiceTest {
     }
 
     @Test
-    fun `login should return valid user response`() {
+    fun `read should return valid user response`() {
         every { repository.existsByEmail(EMAIL) } returns true
         every { repository.findByEmail(EMAIL) } returns userDTO
 
-        val result = userService.login(userLogin)
+        val result = userService.read(userLogin)
         val expectedResult = UserResponse(0, "Radoslav", "Hubenov")
         assertThat(result).isEqualTo(expectedResult)
     }
 
     @Test
-    fun `register should return valid user response`() {
+    fun `create should return valid user response`() {
         every { repository.save(any<User>()) } returns userDTO
-        val userResponse = userService.register(userRegister)
+        val userResponse = userService.create(userRegister)
         assertThat(userResponse).isEqualTo(UserResponse(anyLong(), userRegister.firstName, userRegister.lastName))
     }
 

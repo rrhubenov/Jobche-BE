@@ -13,6 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.core.env.Environment
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -24,7 +26,7 @@ class UserIntegrationTest {
     companion object {
         const val BASE_URL = "/users"
         const val REGISTER_URL = BASE_URL
-        const val LOGIN_URL = BASE_URL + "/login"
+        const val LOGIN_URL = BASE_URL + "/read"
         const val FIRST_NAME = "Radosalv"
         const val LAST_NAME = "Hubenov"
         const val EMAIL = "rrhubenov@gmail.com"
@@ -47,7 +49,7 @@ class UserIntegrationTest {
     }
 
     @Test
-    fun `login should return 200`() {
+    fun `read should return 200`() {
         val loginUserBody = UserLoginBody(EMAIL, PASSWORD)
 
         val loginResponse = restTemplate.postForEntity(LOGIN_URL, loginUserBody, UserResponse::class.java)
@@ -56,7 +58,7 @@ class UserIntegrationTest {
     }
 
     @Test
-    fun `register should return 201`() {
+    fun `create should return 201`() {
         val registerUserBody = UserRegisterBody("Random", "Random", "Random@Random.com", "Random")
         val registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
 
@@ -64,10 +66,17 @@ class UserIntegrationTest {
     }
 
     @Test
-    fun `remove should delete user from database`() {
+    fun `remove should return 200 and delete resource`() {
         //Delete user and check if it exists
 
-        restTemplate.delete(BASE_URL + "/" + registerResponse.body?.id)
+        val deleteResponse = restTemplate
+                .withBasicAuth(EMAIL, PASSWORD)
+                .exchange(BASE_URL + "/" + registerResponse.body?.id,
+                        HttpMethod.DELETE,
+                        null,
+                        Unit::class.java)
+
+        assertThat(deleteResponse.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
 
         val loginUserBody = UserLoginBody(EMAIL, PASSWORD)
 

@@ -12,14 +12,14 @@ import org.springframework.stereotype.Service
 @Service
 class UserService(val userRepository: UserRepository,
                   val passwordEncoder: PasswordEncoder) {
-    fun login(userLogin: UserLoginBody): UserResponse {
+    fun read(userLogin: UserLoginBody): UserResponse {
         if( userRepository.existsByEmail(userLogin.email)) {
             val user = userRepository.findByEmail(userLogin.email)
             return UserResponse(user?.id, user?.firstName, user?.lastName)
         } else throw UserNotFoundException()
     }
 
-    fun register(userRegister: UserRegisterBody): UserResponse {
+    fun create(userRegister: UserRegisterBody): UserResponse {
         val userDTO = User(userRegister.firstName,
                 userRegister.lastName,
                 userRegister.email,

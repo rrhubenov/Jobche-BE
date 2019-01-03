@@ -36,23 +36,23 @@ class UserControllerTest() {
     }
 
     @Test
-    fun `test response for login`() {
+    fun `test response for read`() {
         val userLogin = UserLoginBody(EMAIL, PASSWORD)
 
-        every { userService.login(userLogin) } returns userResponse
+        every { userService.read(userLogin) } returns userResponse
 
-        val result = controller.login(userLogin)
+        val result = controller.read(userLogin)
 
         assertThat(result.body).isEqualTo(userResponse)
     }
 
     @Test
-    fun `test response for register`() {
+    fun `test response for create`() {
         val userRegisterBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
 
-        every { userService.register(userRegisterBody) } returns userResponse
+        every { userService.create(userRegisterBody) } returns userResponse
 
-        val result = controller.register(userRegisterBody)
+        val result = controller.create(userRegisterBody)
 
         assertThat(result.body).isEqualTo(userResponse)
     }
@@ -62,6 +62,6 @@ class UserControllerTest() {
         every { userService.delete(anyLong()) } returns Unit
         val result = controller.delete(anyLong())
 
-        assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
+        assertThat(result.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
     }
 }

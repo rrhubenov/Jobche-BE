@@ -9,6 +9,8 @@ import bg.elsys.jobche.service.UserService
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.mockk.verify
+import io.mockk.verifyAll
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -17,7 +19,6 @@ import org.mockito.ArgumentMatchers.anyLong
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 @ExtendWith(MockKExtension::class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserServiceTest {
 
     companion object {
@@ -40,7 +41,8 @@ class UserServiceTest {
     }
 
     @Test
-    fun loginTest() {
+    fun `login should return valid user response`() {
+        every { repository.existsByEmail(EMAIL) } returns true
         every { repository.findByEmail(EMAIL) } returns userDTO
 
         val result = userService.login(userLogin)
@@ -49,10 +51,23 @@ class UserServiceTest {
     }
 
     @Test
-    fun registerTest() {
+    fun `register should return valid user response`() {
         every { repository.save(any<User>()) } returns userDTO
         val userResponse = userService.register(userRegister)
         assertThat(userResponse).isEqualTo(UserResponse(anyLong(), userRegister.firstName, userRegister.lastName))
+    }
+
+    @Test
+    fun `delete should return 200`() {
+        every { repository.existsById(anyLong()) } returns true
+
+        every { repository.deleteById(anyLong()) } returns Unit
+
+        userService.delete(anyLong())
+
+        verifyAll {
+            repository.existsById(anyLong())
+            repository.deleteById(anyLong())  }
     }
 
 }

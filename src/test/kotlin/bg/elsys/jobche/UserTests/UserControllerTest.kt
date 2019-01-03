@@ -12,9 +12,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers.anyLong
+import org.springframework.http.HttpStatus
 
 @ExtendWith(MockKExtension::class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserControllerTest() {
 
     companion object {
@@ -35,7 +36,7 @@ class UserControllerTest() {
     }
 
     @Test
-    fun testLogin() {
+    fun `test response for login`() {
         val userLogin = UserLoginBody(EMAIL, PASSWORD)
 
         every { userService.login(userLogin) } returns userResponse
@@ -46,7 +47,7 @@ class UserControllerTest() {
     }
 
     @Test
-    fun testRegister() {
+    fun `test response for register`() {
         val userRegisterBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
 
         every { userService.register(userRegisterBody) } returns userResponse
@@ -54,5 +55,13 @@ class UserControllerTest() {
         val result = controller.register(userRegisterBody)
 
         assertThat(result.body).isEqualTo(userResponse)
+    }
+
+    @Test
+    fun `remove should return userResponse`() {
+        every { userService.delete(anyLong()) } returns Unit
+        val result = controller.delete(anyLong())
+
+        assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
     }
 }

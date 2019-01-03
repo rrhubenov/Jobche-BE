@@ -8,10 +8,10 @@ import javax.persistence.*
 @Entity
 @Table(name = "Users")
 data class User(@ApiModelProperty(required = true)
-                            val firstName: String = "",
+                            var firstName: String = "",
                             @ApiModelProperty(required = true)
-                            val lastName: String = "",
+                            var lastName: String = "",
                             @ApiModelProperty(required = true)
-                            val email: String = "",
+                            var email: String = "",
                             @ApiModelProperty(required = true)
-                            val password: String = "") : BaseEntity()
+                            var password: String = "") : BaseEntity()

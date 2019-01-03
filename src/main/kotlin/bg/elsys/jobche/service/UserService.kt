@@ -12,8 +12,9 @@ import org.springframework.stereotype.Service
 @Service
 class UserService(val userRepository: UserRepository,
                   val passwordEncoder: PasswordEncoder) {
-    fun read(userLogin: UserLoginBody): UserResponse {
-        if( userRepository.existsByEmail(userLogin.email)) {
+
+    fun login(userLogin: UserLoginBody): UserResponse {
+        if (userRepository.existsByEmail(userLogin.email)) {
             val user = userRepository.findByEmail(userLogin.email)
             return UserResponse(user?.id, user?.firstName, user?.lastName)
         } else throw UserNotFoundException()
@@ -24,17 +25,33 @@ class UserService(val userRepository: UserRepository,
                 userRegister.lastName,
                 userRegister.email,
                 passwordEncoder.encode(userRegister.password))
-//                userRegister.password)
 
         val savedUser = userRepository.save(userDTO)
         return UserResponse(savedUser.id, savedUser.firstName, savedUser.lastName)
     }
 
     fun delete(id: Long) {
-        if ( userRepository.existsById(id) ){
+        if (userRepository.existsById(id)) {
             userRepository.deleteById(id)
-        }
-        else throw UserNotFoundException()
+        } else throw UserNotFoundException()
+    }
+
+    fun update(id: Long, updatedUser: UserRegisterBody) {
+        if (userRepository.existsById(id)) {
+            val user = userRepository.getOne(id)
+            user.firstName = updatedUser.firstName
+            user.lastName = updatedUser.lastName
+            user.email = updatedUser.email
+            user.password = updatedUser.password
+            userRepository.save(user)
+        } else throw UserNotFoundException()
+    }
+
+    fun read(id: Long): UserResponse {
+        if( userRepository.existsById(id) ) {
+            val user = userRepository.findById(id).get()
+            return UserResponse(user.id, user.firstName, user.lastName)
+        } else throw UserNotFoundException()
     }
 
 }

@@ -17,6 +17,7 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyLong
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import java.util.*
 
 @ExtendWith(MockKExtension::class)
 class UserServiceTest {
@@ -26,7 +27,7 @@ class UserServiceTest {
         const val LAST_NAME = "Hubenov"
         const val EMAIL = "rrhubenov@gmail.com"
         const val PASSWORD = "password"
-        private val userDTO = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
+        private val user = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
         private val userRegister = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
         private val userLogin = UserLoginBody(EMAIL, PASSWORD)
     }
@@ -41,26 +42,27 @@ class UserServiceTest {
     }
 
     @Test
-    fun `read should return valid user response`() {
+    fun `login should return valid user response`() {
         every { repository.existsByEmail(EMAIL) } returns true
-        every { repository.findByEmail(EMAIL) } returns userDTO
+        every { repository.findByEmail(EMAIL) } returns user
 
-        val result = userService.read(userLogin)
+        val result = userService.login(userLogin)
         val expectedResult = UserResponse(0, "Radoslav", "Hubenov")
         assertThat(result).isEqualTo(expectedResult)
     }
 
     @Test
     fun `create should return valid user response`() {
-        every { repository.save(any<User>()) } returns userDTO
+        every { repository.save(any<User>()) } returns user
+
         val userResponse = userService.create(userRegister)
+
         assertThat(userResponse).isEqualTo(UserResponse(anyLong(), userRegister.firstName, userRegister.lastName))
     }
 
     @Test
-    fun `delete should return 200`() {
+    fun `delete user`() {
         every { repository.existsById(anyLong()) } returns true
-
         every { repository.deleteById(anyLong()) } returns Unit
 
         userService.delete(anyLong())
@@ -70,4 +72,31 @@ class UserServiceTest {
             repository.deleteById(anyLong())  }
     }
 
+    @Test
+    fun `update user`() {
+        every { repository.existsById(anyLong()) } returns true
+        every { repository.getOne(anyLong()) } returns user
+        every { repository.save(user) } returns user
+
+        userService.update(anyLong(), UserRegisterBody(user.firstName, user.lastName, user.email, user.password))
+
+        verify {
+            repository.existsById(anyLong())
+            repository.getOne(anyLong())
+            repository.save(user)
+        }
+    }
+
+    @Test
+    fun `read user`() {
+        every { repository.existsById(anyLong()) } returns true
+        every { repository.findById(anyLong()) } returns Optional.of(user)
+
+        userService.read(anyLong())
+
+        verify {
+            repository.existsById(anyLong())
+            repository.findById(anyLong())
+        }
+    }
 }

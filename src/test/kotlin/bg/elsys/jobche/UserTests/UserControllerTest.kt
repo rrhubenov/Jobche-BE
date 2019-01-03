@@ -10,7 +10,6 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyLong
 import org.springframework.http.HttpStatus
@@ -36,18 +35,18 @@ class UserControllerTest() {
     }
 
     @Test
-    fun `test response for read`() {
+    fun `login should return valid user response`() {
         val userLogin = UserLoginBody(EMAIL, PASSWORD)
 
-        every { userService.read(userLogin) } returns userResponse
+        every { userService.login(userLogin) } returns userResponse
 
-        val result = controller.read(userLogin)
+        val result = controller.login(userLogin)
 
         assertThat(result.body).isEqualTo(userResponse)
     }
 
     @Test
-    fun `test response for create`() {
+    fun `create should return valid user response`() {
         val userRegisterBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
 
         every { userService.create(userRegisterBody) } returns userResponse
@@ -58,10 +57,31 @@ class UserControllerTest() {
     }
 
     @Test
-    fun `remove should return userResponse`() {
+    fun `remove should return 204`() {
         every { userService.delete(anyLong()) } returns Unit
         val result = controller.delete(anyLong())
 
         assertThat(result.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
+    }
+
+    @Test
+    fun `update should return 200`() {
+        val updatedUser = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
+
+        every { userService.update(anyLong(), updatedUser) } returns Unit
+
+        val result = controller.update(anyLong(), updatedUser)
+
+        assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
+    }
+
+    @Test
+    fun `read should return 200 and valid user response`() {
+        every { userService.read(anyLong()) } returns userResponse
+
+        val result = controller.read(anyLong())
+
+        assertThat(result.body).isEqualTo(userResponse)
+        assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
     }
 }

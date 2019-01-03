@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/users")
 class UserController(val userService: UserService) {
 
-    @PostMapping("/read")
-    fun read(@RequestBody userLogin : UserLoginBody): ResponseEntity<UserResponse> {
-        return ResponseEntity(userService.read(userLogin), HttpStatus.OK)
+    @PostMapping("/login")
+    fun login(@RequestBody userLogin: UserLoginBody): ResponseEntity<UserResponse> {
+        return ResponseEntity(userService.login(userLogin), HttpStatus.OK)
     }
 
     @PostMapping
@@ -23,8 +23,18 @@ class UserController(val userService: UserService) {
     }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: Long) : ResponseEntity<Unit> {
+    fun delete(@PathVariable id: Long): ResponseEntity<Unit> {
         return ResponseEntity(userService.delete(id), HttpStatus.NO_CONTENT)
+    }
+
+    @PutMapping("/{id}")
+    fun update(@PathVariable id: Long, @RequestBody updatedUser: UserRegisterBody): ResponseEntity<Unit> {
+        return ResponseEntity(userService.update(id, updatedUser), HttpStatus.OK)
+    }
+
+    @GetMapping("/{id}")
+    fun read(@PathVariable id: Long): ResponseEntity<UserResponse> {
+        return ResponseEntity(userService.read(id), HttpStatus.OK)
     }
 
 }

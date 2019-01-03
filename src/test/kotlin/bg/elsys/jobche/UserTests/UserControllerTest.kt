@@ -1,33 +1,20 @@
 package bg.elsys.jobche.UserTests
 
 import bg.elsys.jobche.controller.UserController
-import bg.elsys.jobche.entity.body.UserLoginBody
-import bg.elsys.jobche.entity.body.UserRegisterBody
+import bg.elsys.jobche.entity.body.user.UserLoginBody
+import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.response.UserResponse
-import bg.elsys.jobche.exceptions.UserNotFoundException
 import bg.elsys.jobche.service.UserService
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.BDDMockito.given
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.http.MediaType
-import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.mockito.ArgumentMatchers.anyLong
+import org.springframework.http.HttpStatus
 
 @ExtendWith(MockKExtension::class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserControllerTest() {
 
     companion object {
@@ -48,10 +35,10 @@ class UserControllerTest() {
     }
 
     @Test
-    fun testLogin() {
+    fun `login should return valid user response`() {
         val userLogin = UserLoginBody(EMAIL, PASSWORD)
 
-        every { userService.login(userLogin)} returns userResponse
+        every { userService.login(userLogin) } returns userResponse
 
         val result = controller.login(userLogin)
 
@@ -59,13 +46,42 @@ class UserControllerTest() {
     }
 
     @Test
-    fun testRegister() {
+    fun `create should return valid user response`() {
         val userRegisterBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
 
-        every { userService.register(userRegisterBody) } returns userResponse
+        every { userService.create(userRegisterBody) } returns userResponse
 
-        val result = controller.register(userRegisterBody)
+        val result = controller.create(userRegisterBody)
 
         assertThat(result.body).isEqualTo(userResponse)
+    }
+
+    @Test
+    fun `remove should return 204`() {
+        every { userService.delete(anyLong()) } returns Unit
+        val result = controller.delete(anyLong())
+
+        assertThat(result.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
+    }
+
+    @Test
+    fun `update should return 200`() {
+        val updatedUser = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
+
+        every { userService.update(anyLong(), updatedUser) } returns Unit
+
+        val result = controller.update(anyLong(), updatedUser)
+
+        assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
+    }
+
+    @Test
+    fun `read should return 200 and valid user response`() {
+        every { userService.read(anyLong()) } returns userResponse
+
+        val result = controller.read(anyLong())
+
+        assertThat(result.body).isEqualTo(userResponse)
+        assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
     }
 }

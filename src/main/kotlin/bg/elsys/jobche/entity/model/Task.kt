@@ -7,8 +7,8 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "Tasks")
-data class Task(val title: String = "",
-                val description: String = "",
-                val payment: Int = 0,
-                val numberOfWorkers: Int = 0,
-                val dateTime: LocalDateTime = LocalDateTime.now()) : BaseEntity()
+data class Task(var title: String = "",
+                var description: String = "",
+                var payment: Int = 0,
+                var numberOfWorkers: Int = 0,
+                var dateTime: LocalDateTime = LocalDateTime.now()) : BaseEntity()

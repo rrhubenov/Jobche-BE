@@ -22,4 +22,9 @@ class UserController(val userService: UserService) {
         return ResponseEntity(userService.register(userRegister), HttpStatus.CREATED)
     }
 
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable id: Long) : ResponseEntity<Unit> {
+        return ResponseEntity(userService.delete(id), HttpStatus.OK)
+    }
+
 }

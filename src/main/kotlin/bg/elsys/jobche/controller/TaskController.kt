@@ -18,17 +18,22 @@ class TaskController(val taskService: TaskService) {
             response = TaskResponse::class,
             httpMethod = "POST",
             authorizations = arrayOf(Authorization(value="basicAuth")))
-    fun createTask(@RequestBody taskBody: TaskBody): ResponseEntity<TaskResponse> {
-        return ResponseEntity(taskService.createTask(taskBody), HttpStatus.CREATED)
+    fun create(@RequestBody taskBody: TaskBody): ResponseEntity<TaskResponse> {
+        return ResponseEntity(taskService.create(taskBody), HttpStatus.CREATED)
     }
 
     @GetMapping("/{id}")
-    fun getTask(@PathVariable id: Long): ResponseEntity<TaskResponse> {
-        return ResponseEntity(taskService.getTask(id), HttpStatus.OK)
+    fun read(@PathVariable id: Long): ResponseEntity<TaskResponse> {
+        return ResponseEntity(taskService.read(id), HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
-    fun updateTask(@PathVariable id: Long, @RequestBody taskBody: TaskBody): ResponseEntity<Unit> {
-        return ResponseEntity(taskService.updateTask(taskBody, id), HttpStatus.OK)
+    fun update(@PathVariable id: Long, @RequestBody taskBody: TaskBody): ResponseEntity<Unit> {
+        return ResponseEntity(taskService.update(taskBody, id), HttpStatus.OK)
+    }
+
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable id: Long): ResponseEntity<Unit> {
+        return ResponseEntity(taskService.delete(id), HttpStatus.NO_CONTENT)
     }
 }

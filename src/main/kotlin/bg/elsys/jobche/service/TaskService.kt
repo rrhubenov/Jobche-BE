@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class TaskService(val taskRepository: TaskRepository) {
-    fun createTask(taskBody: TaskBody): TaskResponse {
+    fun create(taskBody: TaskBody): TaskResponse {
         val task = taskRepository.save(Task(taskBody.title,
                 taskBody.description,
                 taskBody.payment,
@@ -24,7 +24,7 @@ class TaskService(val taskRepository: TaskRepository) {
                 task.dateTime)
     }
 
-    fun getTask(id: Long): TaskResponse {
+    fun read(id: Long): TaskResponse {
         if(taskRepository.existsById(id)) {
             val task = taskRepository.findById(id).get()
             return TaskResponse(task.id,
@@ -36,7 +36,7 @@ class TaskService(val taskRepository: TaskRepository) {
         } else throw TaskNotFoundException()
     }
 
-    fun updateTask(task: TaskBody, id: Long) {
+    fun update(task: TaskBody, id: Long) {
         if(taskRepository.existsById(id)) {
             val taskToUpdate = taskRepository.getOne(id)
             taskToUpdate.title = task.title
@@ -45,6 +45,12 @@ class TaskService(val taskRepository: TaskRepository) {
             taskToUpdate.description = task.description
             taskToUpdate.dateTime = task.dateTime
             taskRepository.save(taskToUpdate)
+        } else throw TaskNotFoundException()
+    }
+
+    fun delete(id: Long) {
+        if(taskRepository.existsById(id)) {
+            taskRepository.deleteById(id)
         } else throw TaskNotFoundException()
     }
 

@@ -49,7 +49,7 @@ class TaskServiceTest {
     @Test
     fun `create task`() {
         every { repository.save(any<Task>()) } returns task
-        val response = taskService.createTask(taskBody)
+        val response = taskService.create(taskBody)
         assertThat(response).isEqualTo(taskResponse)
     }
 
@@ -57,7 +57,7 @@ class TaskServiceTest {
     fun `read task`() {
         every { repository.existsById(anyLong()) } returns true
         every { repository.findById(anyLong()) } returns Optional.of(task)
-        val response = taskService.getTask(anyLong())
+        val response = taskService.read(anyLong())
         assertThat(response).isEqualTo(taskResponse)
     }
 
@@ -67,12 +67,25 @@ class TaskServiceTest {
         every { repository.getOne(anyLong()) } returns task
         every { repository.save(any<Task>()) } returns task
 
-        taskService.updateTask(taskBody, anyLong())
+        taskService.update(taskBody, anyLong())
 
         verify {
             repository.existsById(anyLong())
             repository.getOne(anyLong())
             repository.save(any<Task>())
+        }
+    }
+
+    @Test
+    fun `delete task`() {
+        every { repository.existsById(anyLong()) } returns true
+        every { repository.deleteById(anyLong()) } returns Unit
+
+        taskService.delete(anyLong())
+
+        verify {
+            repository.existsById(anyLong())
+            repository.deleteById(anyLong())
         }
     }
 }

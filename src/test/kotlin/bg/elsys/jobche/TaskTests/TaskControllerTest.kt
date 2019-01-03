@@ -39,28 +39,37 @@ class TaskControllerTest {
 
     @Test
     fun `create task`() {
-        every { taskService.createTask(taskBody) } returns taskResponse
+        every { taskService.create(taskBody) } returns taskResponse
 
-        val result = controller.createTask(taskBody)
+        val result = controller.create(taskBody)
 
         assertThat(result.body).isEqualTo(taskResponse)
     }
 
     @Test
     fun `read task`() {
-        every { taskService.getTask(anyLong()) } returns taskResponse
+        every { taskService.read(anyLong()) } returns taskResponse
 
-        val result = controller.getTask(anyLong())
+        val result = controller.read(anyLong())
 
         assertThat(result.body).isEqualTo(taskResponse)
     }
 
     @Test
     fun `update task`() {
-        every { taskService.updateTask(taskBody, anyLong()) } returns Unit
+        every { taskService.update(taskBody, anyLong()) } returns Unit
 
-        val result = controller.updateTask(anyLong(), taskBody)
+        val result = controller.update(anyLong(), taskBody)
 
         assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
+    }
+
+    @Test
+    fun `delete task`() {
+        every { taskService.delete(anyLong()) } returns Unit
+
+        val result = controller.delete(anyLong())
+
+        assertThat(result.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
     }
 }

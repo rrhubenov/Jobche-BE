@@ -67,7 +67,7 @@ class TaskIntegrationTest {
     }
 
     @Nested
-    inner class createTask {
+    inner class create {
 
         @Test
         fun `create task with user authenticated should return 201`() {
@@ -106,7 +106,7 @@ class TaskIntegrationTest {
     }
 
     @Nested
-    inner class updateTask {
+    inner class update {
         @Test
         fun `update task should return 200 and update task`() {
             //First, create a resource(task)
@@ -137,6 +137,34 @@ class TaskIntegrationTest {
 
             assertThat(updatedTaskResponse.body?.numberOfWorkers).isEqualTo(TASK_NUMBER_OF_WORKERS + 1)
 
+        }
+    }
+
+    @Nested
+    inner class delete() {
+        @Test
+        fun `delete task should return 200 and delete resource`() {
+            //First, create the task
+            val createResponse = restTemplate
+                    .withBasicAuth(EMAIL, PASSWORD)
+                    .postForEntity(CREATE_URL, taskBody, TaskResponse::class.java)
+
+            //Second, delete the task
+            val deleteResponse = restTemplate
+                    .withBasicAuth(EMAIL, PASSWORD)
+                    .exchange(BASE_URL + "/" + createResponse.body?.id,
+                            HttpMethod.DELETE,
+                            null,
+                            Unit::class.java)
+
+            assertThat(deleteResponse.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
+
+            //Check if the task has been deleted successfully
+            val getResponse = restTemplate
+                    .withBasicAuth(EMAIL, PASSWORD)
+                    .getForEntity(READ_URL + createResponse.body?.id, TaskResponse::class.java)
+
+            assertThat(getResponse.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
         }
     }
 

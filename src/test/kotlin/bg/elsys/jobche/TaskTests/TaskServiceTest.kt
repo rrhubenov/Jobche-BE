@@ -8,15 +8,18 @@ import bg.elsys.jobche.service.TaskService
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyLong
 import java.time.LocalDateTime
+import java.util.*
 
 @ExtendWith(MockKExtension::class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TaskServiceTest {
 
     companion object {
@@ -27,6 +30,12 @@ class TaskServiceTest {
         private val DATE_TIME = LocalDateTime.now()
         private val task = Task(TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME)
         private val taskBody = TaskBody(TITLE, PAYMENT, NUMBER_OF_WORKERS, DESCRIPTION, DATE_TIME)
+        private val taskResponse = TaskResponse(anyLong(),
+                taskBody.title,
+                taskBody.description,
+                taskBody.payment,
+                taskBody.numberOfWorkers,
+                taskBody.dateTime)
     }
 
     private val repository: TaskRepository = mockk()
@@ -38,14 +47,32 @@ class TaskServiceTest {
     }
 
     @Test
-    fun createTask() {
+    fun `create task`() {
         every { repository.save(any<Task>()) } returns task
-        val taskResponse = taskService.createTask(taskBody)
-        assertThat(taskResponse).isEqualTo(TaskResponse(anyLong(),
-                taskBody.title,
-                taskBody.description,
-                taskBody.payment,
-                taskBody.numberOfWorkers,
-                taskBody.dateTime))
+        val response = taskService.createTask(taskBody)
+        assertThat(response).isEqualTo(taskResponse)
+    }
+
+    @Test
+    fun `read task`() {
+        every { repository.existsById(anyLong()) } returns true
+        every { repository.findById(anyLong()) } returns Optional.of(task)
+        val response = taskService.getTask(anyLong())
+        assertThat(response).isEqualTo(taskResponse)
+    }
+
+    @Test
+    fun `update task`() {
+        every { repository.existsById(anyLong()) } returns true
+        every { repository.getOne(anyLong()) } returns task
+        every { repository.save(any<Task>()) } returns task
+
+        taskService.updateTask(taskBody, anyLong())
+
+        verify {
+            repository.existsById(anyLong())
+            repository.getOne(anyLong())
+            repository.save(any<Task>())
+        }
     }
 }

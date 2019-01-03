@@ -14,6 +14,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.test.web.client.exchange
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -23,7 +26,7 @@ import java.time.LocalDateTime
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
-class TaskCreateIntegrationTest {
+class TaskIntegrationTest {
 
     companion object {
         const val FIRST_NAME = "Random"
@@ -99,6 +102,41 @@ class TaskCreateIntegrationTest {
                     .getForEntity(READ_URL + taskResponse.body?.id, TaskResponse::class.java)
 
             Assertions.assertThat(getResponse.statusCode).isEqualTo(HttpStatus.OK)
+        }
+    }
+
+    @Nested
+    inner class updateTask {
+        @Test
+        fun `update task should return 200 and update task`() {
+            //First, create a resource(task)
+            val createTaskResponse = restTemplate
+                    .withBasicAuth(EMAIL, PASSWORD)
+                    .postForEntity(CREATE_URL, taskBody, TaskResponse::class.java)
+
+            val updatedTaskBody = TaskBody(TASK_TITLE,
+                    TASK_PAYMENT,
+                    TASK_NUMBER_OF_WORKERS + 1,
+                    TASK_DESCRIPTION,
+                    TASK_TIME_OF_WORK)
+
+            //Second, update the resource(task)
+            val putResponse = restTemplate
+                    .withBasicAuth(EMAIL, PASSWORD)
+                    .exchange(UPDATE_URL + createTaskResponse.body?.id,
+                    HttpMethod.PUT,
+                    HttpEntity(updatedTaskBody),
+                    Unit::class.java)
+
+            assertThat(putResponse.statusCode).isEqualTo(HttpStatus.OK)
+
+            //Third, check that the task has beed updated successfully
+            val updatedTaskResponse = restTemplate
+                    .withBasicAuth(EMAIL, PASSWORD)
+                    .getForEntity(READ_URL + createTaskResponse.body?.id, TaskResponse::class.java)
+
+            assertThat(updatedTaskResponse.body?.numberOfWorkers).isEqualTo(TASK_NUMBER_OF_WORKERS + 1)
+
         }
     }
 

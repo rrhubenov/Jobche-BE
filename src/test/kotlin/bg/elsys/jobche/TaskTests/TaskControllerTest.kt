@@ -11,11 +11,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyLong
+import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
 @ExtendWith(MockKExtension::class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TaskControllerTest {
 
     companion object {
@@ -25,6 +26,7 @@ class TaskControllerTest {
         const val DESCRIPTION = "Test Description"
         val DATE_TIME = LocalDateTime.now()
         val taskResponse = TaskResponse(anyLong(), TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME)
+        val taskBody = TaskBody(TITLE, PAYMENT, NUMBER_OF_WORKERS, DESCRIPTION, DATE_TIME)
     }
 
     private val taskService : TaskService = mockk()
@@ -36,13 +38,29 @@ class TaskControllerTest {
     }
 
     @Test
-    fun testCreateTask() {
-        val taskBody = TaskBody(TITLE, PAYMENT, NUMBER_OF_WORKERS, DESCRIPTION, DATE_TIME)
-
+    fun `create task`() {
         every { taskService.createTask(taskBody) } returns taskResponse
 
         val result = controller.createTask(taskBody)
 
         assertThat(result.body).isEqualTo(taskResponse)
+    }
+
+    @Test
+    fun `read task`() {
+        every { taskService.getTask(anyLong()) } returns taskResponse
+
+        val result = controller.getTask(anyLong())
+
+        assertThat(result.body).isEqualTo(taskResponse)
+    }
+
+    @Test
+    fun `update task`() {
+        every { taskService.updateTask(taskBody, anyLong()) } returns Unit
+
+        val result = controller.updateTask(anyLong(), taskBody)
+
+        assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
     }
 }

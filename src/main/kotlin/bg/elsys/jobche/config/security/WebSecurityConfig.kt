@@ -9,21 +9,21 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import javax.sql.DataSource
 
 
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfig(val userDetailsService: PostgreUserDetailsService) : WebSecurityConfigurerAdapter() {
 
-    private val WHITELISTED_URLS = arrayOf( "/v2/api-docs",
+    private val WHITELISTED_URLS = arrayOf("/v2/api-docs",
             "/swagger-resources",
             "/swagger-resources/**",
             "/configuration/ui",
             "/configuration/security",
             "/swagger-ui.html",
             "/webjars/**",
-            "/users/**")
+            "/users/**",
+            "/actuator/**")
 
     @Bean
     override fun authenticationManagerBean(): AuthenticationManager {

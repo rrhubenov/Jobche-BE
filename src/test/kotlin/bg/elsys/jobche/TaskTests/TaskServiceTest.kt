@@ -2,6 +2,7 @@ package bg.elsys.jobche.TaskTests
 
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.model.Task
+import bg.elsys.jobche.entity.response.TaskPaginatedResponse
 import bg.elsys.jobche.entity.response.TaskResponse
 import bg.elsys.jobche.repositories.TaskRepository
 import bg.elsys.jobche.service.TaskService
@@ -10,12 +11,16 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.anyLong
+import org.mockito.ArgumentMatchers.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import java.time.LocalDateTime
 import java.util.*
 
@@ -53,12 +58,25 @@ class TaskServiceTest {
         assertThat(response).isEqualTo(taskResponse)
     }
 
-    @Test
-    fun `read task`() {
-        every { repository.existsById(anyLong()) } returns true
-        every { repository.findById(anyLong()) } returns Optional.of(task)
-        val response = taskService.read(anyLong())
-        assertThat(response).isEqualTo(taskResponse)
+    @Nested
+    inner class read {
+        @Test
+        fun `read one task`() {
+            every { repository.existsById(anyLong()) } returns true
+            every { repository.findById(anyLong()) } returns Optional.of(task)
+            val response = taskService.read(anyLong())
+            assertThat(response).isEqualTo(taskResponse)
+        }
+
+        @Test
+        fun `read tasks paginated`() {
+            val tasks = listOf(task, task)
+
+            every { repository.findAll(any<Pageable>()) } returns PageImpl<Task>(tasks)
+            val response = taskService.readPaginated(1, 1)
+
+            assertThat(response).isEqualTo(tasks)
+        }
     }
 
     @Test

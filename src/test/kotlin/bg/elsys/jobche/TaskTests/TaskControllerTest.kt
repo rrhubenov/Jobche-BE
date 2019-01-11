@@ -2,17 +2,19 @@ package bg.elsys.jobche.TaskTests
 
 import bg.elsys.jobche.controller.TaskController
 import bg.elsys.jobche.entity.body.task.TaskBody
+import bg.elsys.jobche.entity.model.Task
+import bg.elsys.jobche.entity.response.TaskPaginatedResponse
 import bg.elsys.jobche.entity.response.TaskResponse
 import bg.elsys.jobche.service.TaskService
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.anyLong
+import org.mockito.ArgumentMatchers.*
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
@@ -26,6 +28,9 @@ class TaskControllerTest {
         const val DESCRIPTION = "Test Description"
         val DATE_TIME = LocalDateTime.now()
         val taskResponse = TaskResponse(anyLong(), TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME)
+        val taskPaginatedResponse = TaskPaginatedResponse(listOf(taskResponse, taskResponse))
+        val task = Task(TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME)
+        val tasks = listOf(task, task)
         val taskBody = TaskBody(TITLE, PAYMENT, NUMBER_OF_WORKERS, DESCRIPTION, DATE_TIME)
     }
 
@@ -46,13 +51,27 @@ class TaskControllerTest {
         assertThat(result.body).isEqualTo(taskResponse)
     }
 
-    @Test
-    fun `read task`() {
-        every { taskService.read(anyLong()) } returns taskResponse
 
-        val result = controller.read(anyLong())
+    @Nested
+    inner class read {
+        @Test
+        fun `read one task`() {
+            every { taskService.read(anyLong()) } returns taskResponse
 
-        assertThat(result.body).isEqualTo(taskResponse)
+            val result = controller.read(anyLong())
+
+            assertThat(result.body).isEqualTo(taskResponse)
+        }
+
+        @Test
+        fun `read multiple tasks paginated`() {
+            every { taskService.readPaginated(anyInt(), anyInt()) } returns tasks
+
+            val result = controller.readPaginated(anyInt(), anyInt())
+
+            assertThat(result.body).isEqualTo(taskPaginatedResponse)
+        }
+
     }
 
     @Test

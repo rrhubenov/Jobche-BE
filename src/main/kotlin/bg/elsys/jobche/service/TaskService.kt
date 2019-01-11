@@ -2,9 +2,12 @@ package bg.elsys.jobche.service
 
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.model.Task
+import bg.elsys.jobche.entity.response.TaskPaginatedResponse
 import bg.elsys.jobche.entity.response.TaskResponse
 import bg.elsys.jobche.exceptions.TaskNotFoundException
 import bg.elsys.jobche.repositories.TaskRepository
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
@@ -52,6 +55,14 @@ class TaskService(val taskRepository: TaskRepository) {
         if(taskRepository.existsById(id)) {
             taskRepository.deleteById(id)
         } else throw TaskNotFoundException()
+    }
+
+    fun readPaginated(page: Int, size: Int): List<Task> {
+        return taskRepository.findAll(createPageRequest(page, size)).content
+    }
+
+    private fun createPageRequest(page: Int, size: Int) : Pageable {
+        return PageRequest.of(page, size)
     }
 
 }

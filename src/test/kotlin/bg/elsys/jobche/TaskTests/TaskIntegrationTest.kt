@@ -2,6 +2,7 @@ package bg.elsys.jobche.TaskTests
 
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
+import bg.elsys.jobche.entity.response.TaskPaginatedResponse
 import bg.elsys.jobche.entity.response.TaskResponse
 import bg.elsys.jobche.entity.response.UserResponse
 import org.assertj.core.api.Assertions
@@ -39,8 +40,7 @@ class TaskIntegrationTest {
         const val CREATE_URL = BASE_URL
         const val READ_URL = BASE_URL
         const val UPDATE_URL = BASE_URL
-        const val DELETE_URL = BASE_URL
-        const val GET_ALL_URL = BASE_URL
+        const val GET_PAGINATED = "/tasks?page=0&size=2"
         const val TASK_TITLE = "Test Title"
         const val TASK_PAYMENT = 1
         const val TASK_NUMBER_OF_WORKERS = 1
@@ -92,7 +92,7 @@ class TaskIntegrationTest {
     @Nested
     inner class readTask {
         @Test
-        fun `read task with user authenticated should return 200`() {
+        fun `read one task with user authenticated should return 200`() {
             val taskResponse = restTemplate
                     .withBasicAuth(EMAIL, PASSWORD)
                     .postForEntity(CREATE_URL, taskBody, TaskResponse::class.java)
@@ -102,6 +102,24 @@ class TaskIntegrationTest {
                     .getForEntity(READ_URL + taskResponse.body?.id, TaskResponse::class.java)
 
             Assertions.assertThat(getResponse.statusCode).isEqualTo(HttpStatus.OK)
+        }
+
+        @Test
+        fun `read multiple tasks with user authenticated should return 200 and the tasks`() {
+            //First add multiple tasks
+            val taskResponse1 = restTemplate
+                    .withBasicAuth(EMAIL, PASSWORD)
+                    .postForEntity(CREATE_URL, taskBody, TaskResponse::class.java)
+            val taskResponse2 = restTemplate
+                    .withBasicAuth(EMAIL, PASSWORD)
+                    .postForEntity(CREATE_URL, taskBody, TaskResponse::class.java)
+
+            //Second, get only the first two resources
+            val getResponse = restTemplate
+                    .withBasicAuth(EMAIL, PASSWORD)
+                    .getForEntity(GET_PAGINATED, TaskPaginatedResponse::class.java)
+
+            assertThat(getResponse.body?.tasks).isEqualTo(listOf(taskResponse1.body, taskResponse2.body))
         }
     }
 

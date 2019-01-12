@@ -58,8 +58,8 @@ class UserControllerTest() {
 
     @Test
     fun `remove should return 204`() {
-        every { userService.delete(anyLong()) } returns Unit
-        val result = controller.delete(anyLong())
+        every { userService.delete() } returns Unit
+        val result = controller.delete()
 
         assertThat(result.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
     }
@@ -68,9 +68,9 @@ class UserControllerTest() {
     fun `update should return 200`() {
         val updatedUser = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
 
-        every { userService.update(anyLong(), updatedUser) } returns Unit
+        every { userService.update(updatedUser) } returns Unit
 
-        val result = controller.update(anyLong(), updatedUser)
+        val result = controller.update(updatedUser)
 
         assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
     }

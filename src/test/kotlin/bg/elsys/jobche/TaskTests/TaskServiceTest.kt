@@ -1,10 +1,13 @@
 package bg.elsys.jobche.TaskTests
 
+import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.model.Task
+import bg.elsys.jobche.entity.model.User
 import bg.elsys.jobche.entity.response.TaskPaginatedResponse
 import bg.elsys.jobche.entity.response.TaskResponse
 import bg.elsys.jobche.repositories.TaskRepository
+import bg.elsys.jobche.repositories.UserRepository
 import bg.elsys.jobche.service.TaskService
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
@@ -33,7 +36,8 @@ class TaskServiceTest {
         private const val NUMBER_OF_WORKERS = 2
         private const val DESCRIPTION = "Test Description"
         private val DATE_TIME = LocalDateTime.now()
-        private val task = Task(TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME)
+        private val user = User(anyString(), anyString(), anyString(), anyString())
+        private val task = Task(TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, user.id)
         private val taskBody = TaskBody(TITLE, PAYMENT, NUMBER_OF_WORKERS, DESCRIPTION, DATE_TIME)
         private val taskResponse = TaskResponse(anyLong(),
                 taskBody.title,
@@ -44,16 +48,21 @@ class TaskServiceTest {
     }
 
     private val repository: TaskRepository = mockk()
+    private val userRepository: UserRepository = mockk()
+    private val authenticationDetails: AuthenticationDetails = mockk()
 
     private val taskService: TaskService
 
     init {
-        taskService = TaskService(repository)
+        taskService = TaskService(repository, userRepository, authenticationDetails)
     }
 
     @Test
     fun `create task`() {
+        every { authenticationDetails.getEmail() } returns user.email
+        every { userRepository.findByEmail(anyString()) } returns user
         every { repository.save(any<Task>()) } returns task
+
         val response = taskService.create(taskBody)
         assertThat(response).isEqualTo(taskResponse)
     }
@@ -79,31 +88,46 @@ class TaskServiceTest {
         }
     }
 
-    @Test
-    fun `update task`() {
-        every { repository.existsById(anyLong()) } returns true
-        every { repository.getOne(anyLong()) } returns task
-        every { repository.save(any<Task>()) } returns task
+    @Nested
+    inner class update {
+        @Test
+        fun `update task with valid user`() {
+            every { authenticationDetails.getEmail() } returns user.email
+            every { userRepository.findByEmail(anyString()) } returns user
+            every { repository.existsById(anyLong()) } returns true
+            every { repository.getOne(anyLong()) } returns task
+            every { repository.save(any<Task>()) } returns task
 
-        taskService.update(taskBody, anyLong())
+            taskService.update(taskBody, anyLong())
 
-        verify {
-            repository.existsById(anyLong())
-            repository.getOne(anyLong())
-            repository.save(any<Task>())
+            verify {
+                repository.existsById(anyLong())
+                repository.getOne(anyLong())
+                repository.save(any<Task>())
+            }
         }
     }
 
-    @Test
-    fun `delete task`() {
-        every { repository.existsById(anyLong()) } returns true
-        every { repository.deleteById(anyLong()) } returns Unit
 
-        taskService.delete(anyLong())
+    @Nested
+    inner class delete {
 
-        verify {
-            repository.existsById(anyLong())
-            repository.deleteById(anyLong())
+        @Test
+        fun `delete task`() {
+            every { repository.existsById(anyLong()) } returns true
+            every { authenticationDetails.getEmail() } returns user.email
+            every { userRepository.findByEmail(anyString()) } returns user
+            every { repository.findById(anyLong()) } returns Optional.of(task)
+            every { repository.deleteById(anyLong()) } returns Unit
+
+            taskService.delete(anyLong())
+
+            verify {
+                repository.existsById(anyLong())
+                userRepository.findByEmail(anyString())
+                repository.findById(anyLong())
+                repository.deleteById(anyLong())
+            }
         }
     }
 }

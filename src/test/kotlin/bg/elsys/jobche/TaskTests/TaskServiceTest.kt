@@ -1,6 +1,7 @@
 package bg.elsys.jobche.TaskTests
 
 import bg.elsys.jobche.config.security.AuthenticationDetails
+import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.model.Task
 import bg.elsys.jobche.entity.model.User
@@ -35,16 +36,18 @@ class TaskServiceTest {
         private const val PAYMENT = 10
         private const val NUMBER_OF_WORKERS = 2
         private const val DESCRIPTION = "Test Description"
+        private val LOCATION = Address(anyString(), anyString(), anyString())
         private val DATE_TIME = LocalDateTime.now()
         private val user = User(anyString(), anyString(), anyString(), anyString())
         private val task = Task(TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, user.id)
-        private val taskBody = TaskBody(TITLE, PAYMENT, NUMBER_OF_WORKERS, DESCRIPTION, DATE_TIME)
+        private val taskBody = TaskBody(TITLE, PAYMENT, NUMBER_OF_WORKERS, DESCRIPTION, DATE_TIME, LOCATION)
         private val taskResponse = TaskResponse(anyLong(),
                 taskBody.title,
                 taskBody.description,
                 taskBody.payment,
                 taskBody.numberOfWorkers,
-                taskBody.dateTime)
+                taskBody.dateTime,
+                taskBody.location)
     }
 
     private val repository: TaskRepository = mockk()

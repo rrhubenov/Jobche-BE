@@ -1,5 +1,6 @@
 package bg.elsys.jobche.TaskTests
 
+import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.response.TaskPaginatedResponse
@@ -47,7 +48,8 @@ class TaskIntegrationTest {
         const val TASK_NUMBER_OF_WORKERS = 1
         const val TASK_DESCRIPTION = "Test Description"
         val TASK_TIME_OF_WORK = LocalDateTime.now()
-        val taskBody = TaskBody(TASK_TITLE, TASK_PAYMENT, TASK_NUMBER_OF_WORKERS, TASK_DESCRIPTION, TASK_TIME_OF_WORK)
+        val TASK_LOCATION = Address("Bulgaria", "Sofia", "Krasno Selo")
+        val taskBody = TaskBody(TASK_TITLE, TASK_PAYMENT, TASK_NUMBER_OF_WORKERS, TASK_DESCRIPTION, TASK_TIME_OF_WORK, TASK_LOCATION)
     }
 
     @Autowired
@@ -146,7 +148,8 @@ class TaskIntegrationTest {
                     TASK_PAYMENT,
                     TASK_NUMBER_OF_WORKERS + 1,
                     TASK_DESCRIPTION,
-                    TASK_TIME_OF_WORK)
+                    TASK_TIME_OF_WORK,
+                    TASK_LOCATION)
 
             val createTaskResponse = restTemplate
                     .withBasicAuth(EMAIL, PASSWORD)
@@ -187,7 +190,8 @@ class TaskIntegrationTest {
                     TASK_PAYMENT,
                     TASK_NUMBER_OF_WORKERS + 1,
                     TASK_DESCRIPTION,
-                    TASK_TIME_OF_WORK)
+                    TASK_TIME_OF_WORK,
+                    TASK_LOCATION)
 
             //Create the task
             val createTaskResponse = restTemplate

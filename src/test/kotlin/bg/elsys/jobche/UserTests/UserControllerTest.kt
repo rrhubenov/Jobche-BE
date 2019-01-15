@@ -1,6 +1,7 @@
 package bg.elsys.jobche.UserTests
 
 import bg.elsys.jobche.controller.UserController
+import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserLoginBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.response.UserResponse
@@ -23,6 +24,7 @@ class UserControllerTest() {
         const val LAST_NAME = "Hubenov"
         const val EMAIL = "rrhubenov@gmail.com"
         const val PASSWORD = "password"
+        val DATE_OF_BIRTH = DateOfBirth(1,1,2000)
         val userResponse = UserResponse(ID, FIRST_NAME, LAST_NAME)
     }
 
@@ -47,7 +49,7 @@ class UserControllerTest() {
 
     @Test
     fun `create should return valid user response`() {
-        val userRegisterBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
+        val userRegisterBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
 
         every { userService.create(userRegisterBody) } returns userResponse
 
@@ -66,7 +68,7 @@ class UserControllerTest() {
 
     @Test
     fun `update should return 200`() {
-        val updatedUser = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
+        val updatedUser = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
 
         every { userService.update(updatedUser) } returns Unit
 

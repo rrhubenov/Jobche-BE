@@ -1,5 +1,6 @@
 package bg.elsys.jobche.UserTests
 
+import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserLoginBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.response.UserResponse
@@ -33,6 +34,7 @@ class UserIntegrationTest {
         const val LAST_NAME = "Hubenov"
         const val EMAIL = "rrhubenov@gmail.com"
         const val PASSWORD = "testing1"
+        val DATE_OF_BIRTH = DateOfBirth(1,1,2000)
         lateinit var registerResponse: ResponseEntity<UserResponse>
     }
 
@@ -41,7 +43,7 @@ class UserIntegrationTest {
 
     @BeforeEach
     fun registerUser() {
-        val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
+        val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
         registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
     }
 
@@ -69,7 +71,7 @@ class UserIntegrationTest {
     inner class create {
         @Test
         fun `create should return 201`() {
-            val registerUserBody = UserRegisterBody("Random", "Random", "Random@Random.com", "Random")
+            val registerUserBody = UserRegisterBody("Random", "Random", "Random@Random.com", "Random", DATE_OF_BIRTH)
             val registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
 
             restTemplate.withBasicAuth("Random@Random.com", "Random").delete(REMOVE_URL)
@@ -106,7 +108,7 @@ class UserIntegrationTest {
     inner class update {
         @Test
         fun `user updating himself should return 200 and update the resource`() {
-            val updatedUser = UserRegisterBody(FIRST_NAME + "new", LAST_NAME, EMAIL, PASSWORD)
+            val updatedUser = UserRegisterBody(FIRST_NAME + "new", LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
 
             val putResponse = restTemplate
                     .withBasicAuth(EMAIL, PASSWORD)

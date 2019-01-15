@@ -2,6 +2,7 @@ package bg.elsys.jobche.TaskTests
 
 import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
+import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.response.TaskPaginatedResponse
 import bg.elsys.jobche.entity.response.TaskResponse
@@ -16,13 +17,11 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.test.web.servlet.MockMvc
 import java.time.LocalDateTime
 
 
@@ -47,6 +46,7 @@ class TaskIntegrationTest {
         const val TASK_PAYMENT = 1
         const val TASK_NUMBER_OF_WORKERS = 1
         const val TASK_DESCRIPTION = "Test Description"
+        val DATE_OF_BIRTH = DateOfBirth(1,1,2000)
         val TASK_TIME_OF_WORK = LocalDateTime.now()
         val TASK_LOCATION = Address("Bulgaria", "Sofia", "Krasno Selo")
         val taskBody = TaskBody(TASK_TITLE, TASK_PAYMENT, TASK_NUMBER_OF_WORKERS, TASK_DESCRIPTION, TASK_TIME_OF_WORK, TASK_LOCATION)
@@ -60,7 +60,7 @@ class TaskIntegrationTest {
 
     @BeforeEach
     fun registerUser(){
-        val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
+        val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
         registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
     }
 
@@ -182,7 +182,7 @@ class TaskIntegrationTest {
             val OTHER_PASSWORD = "RandomPassword4"
 
             //Create another user that will try to update a task that does not belong to him
-            val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, OTHER_EMAIL, OTHER_PASSWORD)
+            val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, OTHER_EMAIL, OTHER_PASSWORD, DATE_OF_BIRTH)
             registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
 
             //Create the body for the updated task
@@ -248,7 +248,7 @@ class TaskIntegrationTest {
             val OTHER_PASSWORD = "RandomPassword4"
 
             //Create another user that will try to update a task that does not belong to him
-            val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, OTHER_EMAIL, OTHER_PASSWORD)
+            val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, OTHER_EMAIL, OTHER_PASSWORD, DATE_OF_BIRTH)
             registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
 
             //Create the task

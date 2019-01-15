@@ -1,6 +1,7 @@
 package bg.elsys.jobche.UserTests
 
 import bg.elsys.jobche.config.security.AuthenticationDetails
+import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserLoginBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.model.User
@@ -14,12 +15,8 @@ import io.mockk.verify
 import io.mockk.verifyAll
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.*
-import org.springframework.security.core.Authentication
-import org.springframework.security.core.context.SecurityContext
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import java.util.*
 
@@ -31,8 +28,9 @@ class UserServiceTest {
         const val LAST_NAME = "Hubenov"
         const val EMAIL = "rrhubenov@gmail.com"
         const val PASSWORD = "password"
+        val DATE_OF_BIRTH = DateOfBirth(1,1,2000)
         private val user = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
-        private val userRegister = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
+        private val userRegister = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
         private val userLogin = UserLoginBody(EMAIL, PASSWORD)
     }
 
@@ -82,7 +80,7 @@ class UserServiceTest {
         every { repository.getOneByEmail(anyString()) } returns user
         every { repository.save(user) } returns user
 
-        userService.update( UserRegisterBody(user.firstName, user.lastName, user.email, user.password))
+        userService.update( UserRegisterBody(user.firstName, user.lastName, user.email, user.password, DATE_OF_BIRTH))
 
         verify {
             repository.getOneByEmail(anyString())

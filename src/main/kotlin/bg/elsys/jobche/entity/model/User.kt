@@ -1,17 +1,13 @@
 package bg.elsys.jobche.entity.model
 
 import bg.elsys.jobche.entity.BaseEntity
-import io.swagger.annotations.ApiModelProperty
-import javax.persistence.*
+import javax.persistence.Entity
+import javax.persistence.Table
 
 
 @Entity
-@Table(name = "Users")
-data class User(@ApiModelProperty(required = true)
-                            var firstName: String = "",
-                            @ApiModelProperty(required = true)
-                            var lastName: String = "",
-                            @ApiModelProperty(required = true)
-                            var email: String = "",
-                            @ApiModelProperty(required = true)
-                            var password: String = "") : BaseEntity()
+@Table(name = "users")
+data class User(var firstName: String = "",
+                var lastName: String = "",
+                var email: String = "",
+                var password: String = "") : BaseEntity()

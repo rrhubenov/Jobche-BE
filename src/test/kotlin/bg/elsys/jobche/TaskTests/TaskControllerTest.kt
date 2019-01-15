@@ -1,6 +1,7 @@
 package bg.elsys.jobche.TaskTests
 
 import bg.elsys.jobche.controller.TaskController
+import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.model.Task
 import bg.elsys.jobche.entity.response.TaskPaginatedResponse
@@ -26,12 +27,13 @@ class TaskControllerTest {
         const val PAYMENT = 10
         const val NUMBER_OF_WORKERS = 1
         const val DESCRIPTION = "Test Description"
+        val LOCATION = Address(anyString(), anyString(), anyString())
         val DATE_TIME = LocalDateTime.now()
-        val taskResponse = TaskResponse(anyLong(), TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME)
+        val taskResponse = TaskResponse(anyLong(), TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, LOCATION)
         val taskPaginatedResponse = TaskPaginatedResponse(listOf(taskResponse, taskResponse))
         val task = Task(TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME)
         val tasks = listOf(task, task)
-        val taskBody = TaskBody(TITLE, PAYMENT, NUMBER_OF_WORKERS, DESCRIPTION, DATE_TIME)
+        val taskBody = TaskBody(TITLE, PAYMENT, NUMBER_OF_WORKERS, DESCRIPTION, DATE_TIME, LOCATION)
     }
 
     private val taskService : TaskService = mockk()

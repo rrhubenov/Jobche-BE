@@ -25,14 +25,16 @@ class TaskService(val taskRepository: TaskRepository,
                 taskBody.payment,
                 taskBody.numberOfWorkers,
                 taskBody.dateTime,
-                user!!.id))
+                user!!.id,
+                taskBody.location))
 
         return TaskResponse(task.id,
                 task.title,
                 task.description,
                 task.payment,
                 task.numberOfWorkers,
-                task.dateTime)
+                task.dateTime,
+                task.location)
     }
 
     fun read(id: Long): TaskResponse {
@@ -43,7 +45,8 @@ class TaskService(val taskRepository: TaskRepository,
                     task.description,
                     task.payment,
                     task.numberOfWorkers,
-                    task.dateTime)
+                    task.dateTime,
+                    task.location)
         } else throw TaskNotFoundException()
     }
 

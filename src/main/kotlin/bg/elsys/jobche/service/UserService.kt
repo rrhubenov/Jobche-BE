@@ -24,10 +24,13 @@ class UserService(val userRepository: UserRepository,
     }
 
     fun create(userRegister: UserRegisterBody): UserResponse {
+        val dateOfBirth = userRegister.dateOfBirth
+
         val userDTO = User(userRegister.firstName,
                 userRegister.lastName,
                 userRegister.email,
-                passwordEncoder.encode(userRegister.password))
+                passwordEncoder.encode(userRegister.password),
+                dateOfBirth.toString())
 
         val savedUser = userRepository.save(userDTO)
         return UserResponse(savedUser.id, savedUser.firstName, savedUser.lastName)

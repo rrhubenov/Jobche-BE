@@ -10,4 +10,5 @@ import javax.persistence.Table
 data class User(var firstName: String = "",
                 var lastName: String = "",
                 var email: String = "",
-                var password: String = "") : BaseEntity()
+                var password: String = "",
+                var dateOfBirth: String = "") : BaseEntity()

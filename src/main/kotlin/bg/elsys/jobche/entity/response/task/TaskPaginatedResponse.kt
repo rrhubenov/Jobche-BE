@@ -1,5 +1,3 @@
-package bg.elsys.jobche.entity.response
-
-import bg.elsys.jobche.entity.model.Task
+package bg.elsys.jobche.entity.response.task
 
 data class TaskPaginatedResponse(val tasks: List<TaskResponse>)

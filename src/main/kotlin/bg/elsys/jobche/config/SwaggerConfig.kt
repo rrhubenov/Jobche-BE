@@ -23,8 +23,6 @@ class SwaggerConfig {
                 .build()
                 .apiInfo(apiInfo())
                 .securitySchemes(listOf(BasicAuth("basicAuth")))
-
-//        Docket(DocumentationType.SWAGGER_2).
     }
 
     fun apiInfo() : ApiInfo {

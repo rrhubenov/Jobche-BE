@@ -4,9 +4,9 @@ import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
-import bg.elsys.jobche.entity.response.TaskPaginatedResponse
-import bg.elsys.jobche.entity.response.TaskResponse
-import bg.elsys.jobche.entity.response.UserResponse
+import bg.elsys.jobche.entity.response.task.TaskPaginatedResponse
+import bg.elsys.jobche.entity.response.task.TaskResponse
+import bg.elsys.jobche.entity.response.user.UserResponse
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach

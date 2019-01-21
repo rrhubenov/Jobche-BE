@@ -3,10 +3,10 @@ package bg.elsys.jobche.TaskTests
 import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
+import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.model.Task
 import bg.elsys.jobche.entity.model.User
-import bg.elsys.jobche.entity.response.TaskPaginatedResponse
-import bg.elsys.jobche.entity.response.TaskResponse
+import bg.elsys.jobche.entity.response.task.TaskResponse
 import bg.elsys.jobche.repositories.TaskRepository
 import bg.elsys.jobche.repositories.UserRepository
 import bg.elsys.jobche.service.TaskService
@@ -17,13 +17,9 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.*
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import java.time.LocalDateTime
 import java.util.*
@@ -38,16 +34,19 @@ class TaskServiceTest {
         private const val DESCRIPTION = "Test Description"
         private val LOCATION = Address(anyString(), anyString(), anyString())
         private val DATE_TIME = LocalDateTime.now()
-        private val user = User(anyString(), anyString(), anyString(), anyString())
-        private val task = Task(TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, user.id)
+        private val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
+        private val user = User(anyString(), anyString(), anyString(), anyString(), DATE_OF_BIRTH.toString())
+        private val task = Task(TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, user.id, LOCATION)
         private val taskBody = TaskBody(TITLE, PAYMENT, NUMBER_OF_WORKERS, DESCRIPTION, DATE_TIME, LOCATION)
-        private val taskResponse = TaskResponse(anyLong(),
+        private val taskResponse = TaskResponse(task.id,
                 taskBody.title,
                 taskBody.description,
                 taskBody.payment,
                 taskBody.numberOfWorkers,
                 taskBody.dateTime,
-                taskBody.location)
+                taskBody.location,
+                user.id
+        )
     }
 
     private val repository: TaskRepository = mockk()

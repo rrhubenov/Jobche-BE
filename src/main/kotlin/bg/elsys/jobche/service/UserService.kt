@@ -4,10 +4,9 @@ import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.entity.body.user.UserLoginBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.model.User
-import bg.elsys.jobche.entity.response.UserResponse
+import bg.elsys.jobche.entity.response.user.UserResponse
 import bg.elsys.jobche.exceptions.UserNotFoundException
 import bg.elsys.jobche.repositories.UserRepository
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 

@@ -2,7 +2,7 @@ package bg.elsys.jobche.controller
 
 import bg.elsys.jobche.entity.body.user.UserLoginBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
-import bg.elsys.jobche.entity.response.UserResponse
+import bg.elsys.jobche.entity.response.user.UserResponse
 import bg.elsys.jobche.service.UserService
 import io.swagger.annotations.*
 import org.springframework.http.HttpStatus

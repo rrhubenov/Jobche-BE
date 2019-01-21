@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Repository
 interface UserRepository : JpaRepository<User, Long> {
-    fun findByEmail(username: String) : User?
+    fun findByEmail(email: String) : User?
     fun existsByEmail(email: String): Boolean
     @Transactional
     fun deleteByEmail(email: String)

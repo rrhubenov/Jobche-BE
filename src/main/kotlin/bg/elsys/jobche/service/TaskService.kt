@@ -3,7 +3,7 @@ package bg.elsys.jobche.service
 import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.model.Task
-import bg.elsys.jobche.entity.response.TaskResponse
+import bg.elsys.jobche.entity.response.task.TaskResponse
 import bg.elsys.jobche.exceptions.TaskModificationForbiddenException
 import bg.elsys.jobche.exceptions.TaskNotFoundException
 import bg.elsys.jobche.repositories.TaskRepository
@@ -34,7 +34,8 @@ class TaskService(val taskRepository: TaskRepository,
                 task.payment,
                 task.numberOfWorkers,
                 task.dateTime,
-                task.location)
+                task.location,
+                task.creatorId)
     }
 
     fun read(id: Long): TaskResponse {
@@ -46,15 +47,15 @@ class TaskService(val taskRepository: TaskRepository,
                     task.payment,
                     task.numberOfWorkers,
                     task.dateTime,
-                    task.location)
+                    task.location,
+                    task.creatorId
+            )
         } else throw TaskNotFoundException()
     }
 
     fun update(task: TaskBody, id: Long) {
-        //Get the id of the user that is requesting the update
-        val user = userRepository.findByEmail(authenticationDetails.getEmail())
-
         if(taskRepository.existsById(id)) {
+            val user = userRepository.findByEmail(authenticationDetails.getEmail())
             val taskToUpdate = taskRepository.getOne(id)
 
             if(taskToUpdate.creatorId != user?.id) {

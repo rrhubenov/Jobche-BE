@@ -7,11 +7,11 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "tasks")
-data class Task(var title: String = "",
-                var description: String = "",
-                var payment: Int = 0,
-                var numberOfWorkers: Int = 0,
-                var dateTime: LocalDateTime = LocalDateTime.now(),
-                var creatorId: Long = 0,
+data class Task(var title: String,
+                var description: String,
+                var payment: Int,
+                var numberOfWorkers: Int,
+                var dateTime: LocalDateTime,
+                var creatorId: Long,
                 @Embedded
-                val location: Address = Address("","","")) : BaseEntity()
+                val location: Address) : BaseEntity()

@@ -1,9 +1,8 @@
 package bg.elsys.jobche.controller
 
 import bg.elsys.jobche.entity.body.task.TaskBody
-import bg.elsys.jobche.entity.response.TaskPaginatedResponse
-import bg.elsys.jobche.entity.response.TaskResponse
-import bg.elsys.jobche.entity.response.UserResponse
+import bg.elsys.jobche.entity.response.task.TaskPaginatedResponse
+import bg.elsys.jobche.entity.response.task.TaskResponse
 import bg.elsys.jobche.service.TaskService
 import io.swagger.annotations.*
 import org.springframework.http.HttpStatus
@@ -20,6 +19,7 @@ class TaskController(val taskService: TaskService) {
             response = TaskResponse::class,
             httpMethod = "POST",
             authorizations = arrayOf(Authorization(value="basicAuth")))
+    @ApiResponses(ApiResponse(code = 201, message = "Success", response = TaskResponse::class))
     fun create(@RequestBody taskBody: TaskBody): ResponseEntity<TaskResponse> {
         return ResponseEntity(taskService.create(taskBody), HttpStatus.CREATED)
     }
@@ -60,7 +60,7 @@ class TaskController(val taskService: TaskService) {
         val tasks = taskService.readPaginated(page, size)
 
         val taskResponses = tasks.map {
-            TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location)
+            TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId)
         }.toMutableList()
 
         return ResponseEntity(TaskPaginatedResponse(taskResponses), HttpStatus.OK)

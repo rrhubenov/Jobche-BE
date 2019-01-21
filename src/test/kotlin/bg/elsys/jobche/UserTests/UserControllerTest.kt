@@ -4,7 +4,7 @@ import bg.elsys.jobche.controller.UserController
 import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserLoginBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
-import bg.elsys.jobche.entity.response.UserResponse
+import bg.elsys.jobche.entity.response.user.UserResponse
 import bg.elsys.jobche.service.UserService
 import io.mockk.every
 import io.mockk.junit5.MockKExtension

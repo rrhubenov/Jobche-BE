@@ -5,7 +5,7 @@ import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserLoginBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.model.User
-import bg.elsys.jobche.entity.response.UserResponse
+import bg.elsys.jobche.entity.response.user.UserResponse
 import bg.elsys.jobche.repositories.UserRepository
 import bg.elsys.jobche.service.UserService
 import io.mockk.every
@@ -29,7 +29,7 @@ class UserServiceTest {
         const val EMAIL = "rrhubenov@gmail.com"
         const val PASSWORD = "password"
         val DATE_OF_BIRTH = DateOfBirth(1,1,2000)
-        private val user = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
+        private val user = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH.toString())
         private val userRegister = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
         private val userLogin = UserLoginBody(EMAIL, PASSWORD)
     }
@@ -50,7 +50,7 @@ class UserServiceTest {
         every { repository.findByEmail(EMAIL) } returns user
 
         val result = userService.login(userLogin)
-        val expectedResult = UserResponse(0, "Radoslav", "Hubenov")
+        val expectedResult = UserResponse(user.id, "Radoslav", "Hubenov")
         assertThat(result).isEqualTo(expectedResult)
     }
 
@@ -60,7 +60,7 @@ class UserServiceTest {
 
         val userResponse = userService.create(userRegister)
 
-        assertThat(userResponse).isEqualTo(UserResponse(anyLong(), userRegister.firstName, userRegister.lastName))
+        assertThat(userResponse).isEqualTo(UserResponse(user.id, userRegister.firstName, userRegister.lastName))
     }
 
     @Test

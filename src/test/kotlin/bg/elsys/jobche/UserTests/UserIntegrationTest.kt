@@ -3,7 +3,7 @@ package bg.elsys.jobche.UserTests
 import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserLoginBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
-import bg.elsys.jobche.entity.response.UserResponse
+import bg.elsys.jobche.entity.response.user.UserResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach

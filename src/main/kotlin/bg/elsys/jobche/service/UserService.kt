@@ -5,6 +5,7 @@ import bg.elsys.jobche.entity.body.user.UserLoginBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.model.User
 import bg.elsys.jobche.entity.response.user.UserResponse
+import bg.elsys.jobche.exceptions.EmailExistsException
 import bg.elsys.jobche.exceptions.UserNotFoundException
 import bg.elsys.jobche.repositories.UserRepository
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -23,6 +24,11 @@ class UserService(val userRepository: UserRepository,
     }
 
     fun create(userRegister: UserRegisterBody): UserResponse {
+        if (userRepository.existsByEmail(userRegister.email)) {
+            throw EmailExistsException()
+        }
+
+
         val dateOfBirth = userRegister.dateOfBirth
 
         val userDTO = User(userRegister.firstName,

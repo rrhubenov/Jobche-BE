@@ -11,6 +11,7 @@ import bg.elsys.jobche.entity.response.user.UserResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -94,58 +95,73 @@ class ApplicationIntegrationTests {
         restTemplate
                 .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
                 .delete(USER_DELETE_URL)
-
-        System.out.print("ads")
     }
 
-    @Test
-    fun `create application should return 201 and the expected response`() {
-        val applicationResponse = createApplication()
+    @Nested
+    inner class create {
+        @Test
+        fun `create application should return 201 and the expected response`() {
+            val applicationResponse = createApplication()
 
-        val expectedResponse = ApplicationResponse(applicationResponse.body?.id, userApplicantId!!, taskId!!, false)
+            val expectedResponse = ApplicationResponse(applicationResponse.body?.id, userApplicantId!!, taskId!!, false)
 
-        restTemplate
-                .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
-                .delete(BASE_APPLICATION_URL + "/" + applicationResponse.body?.id)
+            restTemplate
+                    .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
+                    .delete(BASE_APPLICATION_URL + "/" + applicationResponse.body?.id)
 
-        assertThat(applicationResponse.statusCode).isEqualTo(HttpStatus.CREATED)
-        assertThat(applicationResponse.body).isEqualTo(expectedResponse)
+            assertThat(applicationResponse.statusCode).isEqualTo(HttpStatus.CREATED)
+            assertThat(applicationResponse.body).isEqualTo(expectedResponse)
 
+        }
     }
 
-    @Test
-    fun `delete application should return 204`() {
-        //First, create the application
-        val createResponse = createApplication()
 
-        //Second, delete the application
-        val deleteResponse = restTemplate
-                .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
-                .exchange(BASE_APPLICATION_URL + "/" + createResponse.body?.id,
-                        HttpMethod.DELETE,
-                        null,
-                        Unit::class.java)
+    @Nested
+    inner class delete {
+        @Test
+        fun `delete application should return 204`() {
+            //First, create the application
+            val createResponse = createApplication()
 
-        assertThat(deleteResponse.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
+            //Second, delete the application
+            val deleteResponse = restTemplate
+                    .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
+                    .exchange(BASE_APPLICATION_URL + "/" + createResponse.body?.id,
+                            HttpMethod.DELETE,
+                            null,
+                            Unit::class.java)
+
+            assertThat(deleteResponse.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
+        }
     }
 
-    @Test
-    fun `accept application of user should return 200`() {
-        //First, create the application
-        val createResponse = createApplication()
+    @Nested
+    inner class accept {
+        @Test
+        fun `accept application of user should return 200`() {
+            //First, create the application
+            val createResponse = createApplication()
 
-        //Second, creator of task must approve the application
-        val approveResponse = restTemplate
-                .withBasicAuth(EMAIL, PASSWORD)
-                .getForEntity(APPROVE_APPLICATION_URL + createResponse.body?.id, Unit::class.java)
+            //Second, creator of task must approve the application
+            val approveResponse = restTemplate
+                    .withBasicAuth(EMAIL, PASSWORD)
+                    .getForEntity(APPROVE_APPLICATION_URL + createResponse.body?.id, Unit::class.java)
 
-        assertThat(approveResponse.statusCode).isEqualTo(HttpStatus.OK)
+            assertThat(approveResponse.statusCode).isEqualTo(HttpStatus.OK)
 
-        //Remove the application
-        restTemplate
-                .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
-                .delete(BASE_APPLICATION_URL + "/" + createResponse.body?.id)
+            //Remove the application
+            restTemplate
+                    .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
+                    .delete(BASE_APPLICATION_URL + "/" + createResponse.body?.id)
+        }
     }
+
+    @Nested
+    inner class read {
+        @Test
+        fun `list
+    }
+
 
     fun createApplication(): ResponseEntity<ApplicationResponse> {
         val applicationBody = ApplicationBody(taskId!!)

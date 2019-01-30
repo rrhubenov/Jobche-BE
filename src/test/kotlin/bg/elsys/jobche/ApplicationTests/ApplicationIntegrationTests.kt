@@ -174,7 +174,7 @@ class ApplicationIntegrationTests {
 
             val getResponse = restTemplate
                     .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
-                    .getForEntity("/users/applications?page=0&size=10", ApplicationPaginatedResponse::class.java)
+                    .getForEntity("/users/me/applications?page=0&size=10", ApplicationPaginatedResponse::class.java)
 
             assertThat(getResponse.body?.applications).isEqualTo(listOf(applicationResponse.body))
 

@@ -77,6 +77,15 @@ class TaskControllerTest {
             assertThat(result.body).isEqualTo(taskPaginatedResponse)
         }
 
+        @Test
+        fun `read my tasks paginated`() {
+            every { taskService.readMePaginated(anyInt(), anyInt()) } returns tasks
+
+            val result = controller.readMePaginated(anyInt(), anyInt())
+
+            assertThat(result.body).isEqualTo(taskPaginatedResponse)
+        }
+
     }
 
     @Test

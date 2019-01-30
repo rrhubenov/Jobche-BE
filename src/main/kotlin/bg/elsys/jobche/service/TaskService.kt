@@ -89,6 +89,12 @@ class TaskService(val taskRepository: TaskRepository,
         return taskRepository.findAll(createPageRequest(page, size)).content
     }
 
+    fun readMePaginated(page: Int, size: Int): List<Task> {
+        val user = userRepository.findByEmail(authenticationDetails.getEmail())
+
+        return taskRepository.findAllByCreatorId(createPageRequest(page, size), user?.id).content
+    }
+
     private fun createPageRequest(page: Int, size: Int): Pageable {
         return PageRequest.of(page, size)
     }

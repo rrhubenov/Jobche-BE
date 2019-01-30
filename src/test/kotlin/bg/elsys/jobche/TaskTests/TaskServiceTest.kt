@@ -18,8 +18,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers.anyLong
-import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchers.*
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import java.time.LocalDateTime
@@ -86,6 +85,19 @@ class TaskServiceTest {
 
             every { repository.findAll(any<Pageable>()) } returns PageImpl<Task>(tasks)
             val response = taskService.readPaginated(1, 1)
+
+            assertThat(response).isEqualTo(tasks)
+        }
+
+        @Test
+        fun `read my tasks paginated`() {
+            val tasks = listOf(task, task)
+
+            every { authenticationDetails.getEmail() } returns anyString()
+            every { userRepository.findByEmail(anyString()) } returns user
+            every { repository.findAllByCreatorId(any<Pageable>(), user.id) } returns PageImpl<Task>(tasks)
+
+            val response = taskService.readMePaginated(1, 1)
 
             assertThat(response).isEqualTo(tasks)
         }

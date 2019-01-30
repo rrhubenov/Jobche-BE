@@ -1,10 +1,11 @@
-package bg.elsys.jobche.ApplicationTasks
+package bg.elsys.jobche.ApplicationTests
 
 import bg.elsys.jobche.entity.body.application.ApplicationBody
 import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
+import bg.elsys.jobche.entity.response.application.ApplicationPaginatedResponse
 import bg.elsys.jobche.entity.response.application.ApplicationResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
 import bg.elsys.jobche.entity.response.user.UserResponse
@@ -64,17 +65,20 @@ class ApplicationIntegrationTests {
 
     @BeforeEach
     fun setup() {
+        //Create a user that will create the task
         val userCreatorBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
         userCreatorResponse = restTemplate.postForEntity(REGISTER_URL, userCreatorBody, UserResponse::class.java)
         userCreatorId = userCreatorResponse.body?.id
 
         val userApplicantBody = UserRegisterBody("Applicant", "Applicant", APPLICANT_EMAIL, APPLICANT_PASSWORD, DateOfBirth(2, 3, 2001))
 
+        //Create the user that will apply for the task
         userApplicantResponse = restTemplate.postForEntity(REGISTER_URL, userApplicantBody, UserResponse::class.java)
         userApplicantId = userApplicantResponse.body?.id
 
         val taskBody = TaskBody(TASK_TITLE, TASK_PAYMENT, TASK_NUMBER_OF_WORKERS, TASK_DESCRIPTION, TASK_TIME_OF_WORK, TASK_LOCATION)
 
+        //Create the task
         taskResponse = restTemplate
                 .withBasicAuth(EMAIL, PASSWORD)
                 .postForEntity(CREATE_URL, taskBody, TaskResponse::class.java)
@@ -88,13 +92,8 @@ class ApplicationIntegrationTests {
                 .withBasicAuth(EMAIL, PASSWORD)
                 .delete("/tasks/" + taskId)
 
-        restTemplate
-                .withBasicAuth(EMAIL, PASSWORD)
-                .delete(USER_DELETE_URL)
-
-        restTemplate
-                .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
-                .delete(USER_DELETE_URL)
+        deleteUser(EMAIL, PASSWORD)
+        deleteUser(APPLICANT_EMAIL, APPLICANT_PASSWORD)
     }
 
     @Nested
@@ -105,13 +104,11 @@ class ApplicationIntegrationTests {
 
             val expectedResponse = ApplicationResponse(applicationResponse.body?.id, userApplicantId!!, taskId!!, false)
 
-            restTemplate
-                    .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
-                    .delete(BASE_APPLICATION_URL + "/" + applicationResponse.body?.id)
 
             assertThat(applicationResponse.statusCode).isEqualTo(HttpStatus.CREATED)
             assertThat(applicationResponse.body).isEqualTo(expectedResponse)
 
+            deleteApplication(applicationResponse.body?.id)
         }
     }
 
@@ -150,16 +147,39 @@ class ApplicationIntegrationTests {
             assertThat(approveResponse.statusCode).isEqualTo(HttpStatus.OK)
 
             //Remove the application
-            restTemplate
-                    .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
-                    .delete(BASE_APPLICATION_URL + "/" + createResponse.body?.id)
+            deleteApplication(createResponse.body?.id)
         }
     }
 
     @Nested
     inner class read {
         @Test
-        fun `list
+        fun `get list of applications for task`() {
+            //Create application
+            val applicationResponse = createApplication()
+
+            val getResponse = restTemplate
+                    .withBasicAuth(EMAIL, PASSWORD)
+                    .getForEntity("/tasks/" + taskId + "/applications?page=0&size=2", ApplicationPaginatedResponse::class.java)
+
+            assertThat(getResponse.body?.applications).isEqualTo(listOf(applicationResponse.body))
+
+            deleteApplication(applicationResponse.body?.id)
+        }
+
+        @Test
+        fun `get list of applications from user`() {
+            //Create application
+            val applicationResponse = createApplication()
+
+            val getResponse = restTemplate
+                    .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
+                    .getForEntity("/users/applications?page=0&size=10", ApplicationPaginatedResponse::class.java)
+
+            assertThat(getResponse.body?.applications).isEqualTo(listOf(applicationResponse.body))
+
+            deleteApplication(applicationResponse.body?.id)
+        }
     }
 
 
@@ -169,5 +189,17 @@ class ApplicationIntegrationTests {
         return restTemplate
                 .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
                 .postForEntity(CREATE_APPLICATION_URL, applicationBody, ApplicationResponse::class.java)
+    }
+
+    fun deleteUser(email: String, password: String) {
+        restTemplate
+                .withBasicAuth(email, password)
+                .delete(USER_DELETE_URL)
+    }
+
+    fun deleteApplication(applicationId: Long?) {
+        restTemplate
+                .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
+                .delete(BASE_APPLICATION_URL + "/" + applicationId)
     }
 }

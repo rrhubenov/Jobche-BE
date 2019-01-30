@@ -1,4 +1,4 @@
-package bg.elsys.jobche.ApplicationTasks
+package bg.elsys.jobche.ApplicationTests
 
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.config.security.AuthenticationDetails
@@ -18,6 +18,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.ArgumentMatchers.anyString
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
@@ -103,6 +105,51 @@ class ApplicationServiceTest {
                 appRepository.getOne(anyLong())
                 appRepository.save(application)
             }
+        }
+    }
+
+    @Nested
+    inner class read {
+        @Test
+        fun `get applications for task`() {
+            val applications = listOf(application, application)
+
+            every { authenticationDetails.getEmail() } returns anyString()
+            every { userRepository.findByEmail(anyString()) } returns user
+            every { taskRepository.existsById(task.id) } returns true
+            every { taskRepository.findById(task.id) } returns Optional.of(task)
+            every { appRepository.findAll(any<Pageable>()) } returns PageImpl<Application>(applications)
+
+            val result = service.getApplicationsForTask( task.id, 1, 1)
+
+            verify {
+                authenticationDetails.getEmail()
+                userRepository.findByEmail(anyString())
+                taskRepository.existsById(task.id)
+                taskRepository.findById(task.id)
+                appRepository.findAll(any<Pageable>())
+            }
+
+            assertThat(result).isEqualTo(applications)
+        }
+
+        @Test
+        fun `get applications from user`() {
+            val applications = listOf(application, application)
+
+            every { authenticationDetails.getEmail() } returns anyString()
+            every { userRepository.findByEmail(anyString()) } returns user
+            every { appRepository.findAllByUser(any<Pageable>(), user) } returns PageImpl<Application>(applications)
+
+            val result = service.getApplicationsForUser(1, 1)
+
+            verify {
+                authenticationDetails.getEmail()
+                userRepository.findByEmail(anyString())
+                appRepository.findAllByUser(any<Pageable>(), user)
+            }
+
+            assertThat(result).isEqualTo(applications)
         }
     }
 }

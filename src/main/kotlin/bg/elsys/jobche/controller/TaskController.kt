@@ -1,8 +1,11 @@
 package bg.elsys.jobche.controller
 
 import bg.elsys.jobche.entity.body.task.TaskBody
+import bg.elsys.jobche.entity.response.application.ApplicationPaginatedResponse
+import bg.elsys.jobche.entity.response.application.ApplicationResponse
 import bg.elsys.jobche.entity.response.task.TaskPaginatedResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
+import bg.elsys.jobche.service.ApplicationService
 import bg.elsys.jobche.service.TaskService
 import io.swagger.annotations.*
 import org.springframework.http.HttpStatus
@@ -12,7 +15,7 @@ import org.springframework.web.bind.annotation.*
 @Api(value = "Task Operations", description = "All operations for tasks")
 @RestController
 @RequestMapping("/tasks")
-class TaskController(val taskService: TaskService) {
+class TaskController(val taskService: TaskService, val applicationService: ApplicationService) {
 
     @PostMapping
     @ApiOperation(value = "Create task",
@@ -64,5 +67,21 @@ class TaskController(val taskService: TaskService) {
         }.toMutableList()
 
         return ResponseEntity(TaskPaginatedResponse(taskResponses), HttpStatus.OK)
+    }
+
+    @GetMapping("/{taskId}/applications")
+    @ApiOperation(value = "Get applications for task",
+            httpMethod = "GET",
+            authorizations = arrayOf(Authorization(value="basicAuth")))
+    @ApiResponses(ApiResponse(code = 200, message = "Success", response = ApplicationPaginatedResponse::class))
+    fun getApplications(@PathVariable taskId: Long, @RequestParam("page") page: Int, @RequestParam("size") size: Int): ResponseEntity<ApplicationPaginatedResponse> {
+        val applicationList = applicationService.getApplicationsForTask(taskId, page, size)
+        val applicationResponseList = mutableListOf<ApplicationResponse>()
+
+        for(app in applicationList) {
+            applicationResponseList.add(ApplicationResponse(app.id, app.user.id, app.task.id, app.accepted))
+        }
+
+        return ResponseEntity(ApplicationPaginatedResponse(applicationResponseList), HttpStatus.OK)
     }
 }

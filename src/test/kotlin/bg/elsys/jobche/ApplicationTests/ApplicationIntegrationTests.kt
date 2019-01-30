@@ -1,16 +1,18 @@
-package bg.elsys.jobche.ApplicationTasks
+package bg.elsys.jobche.ApplicationTests
 
 import bg.elsys.jobche.entity.body.application.ApplicationBody
 import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
+import bg.elsys.jobche.entity.response.application.ApplicationPaginatedResponse
 import bg.elsys.jobche.entity.response.application.ApplicationResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
 import bg.elsys.jobche.entity.response.user.UserResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -63,17 +65,20 @@ class ApplicationIntegrationTests {
 
     @BeforeEach
     fun setup() {
+        //Create a user that will create the task
         val userCreatorBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
         userCreatorResponse = restTemplate.postForEntity(REGISTER_URL, userCreatorBody, UserResponse::class.java)
         userCreatorId = userCreatorResponse.body?.id
 
         val userApplicantBody = UserRegisterBody("Applicant", "Applicant", APPLICANT_EMAIL, APPLICANT_PASSWORD, DateOfBirth(2, 3, 2001))
 
+        //Create the user that will apply for the task
         userApplicantResponse = restTemplate.postForEntity(REGISTER_URL, userApplicantBody, UserResponse::class.java)
         userApplicantId = userApplicantResponse.body?.id
 
         val taskBody = TaskBody(TASK_TITLE, TASK_PAYMENT, TASK_NUMBER_OF_WORKERS, TASK_DESCRIPTION, TASK_TIME_OF_WORK, TASK_LOCATION)
 
+        //Create the task
         taskResponse = restTemplate
                 .withBasicAuth(EMAIL, PASSWORD)
                 .postForEntity(CREATE_URL, taskBody, TaskResponse::class.java)
@@ -87,65 +92,96 @@ class ApplicationIntegrationTests {
                 .withBasicAuth(EMAIL, PASSWORD)
                 .delete("/tasks/" + taskId)
 
-        restTemplate
-                .withBasicAuth(EMAIL, PASSWORD)
-                .delete(USER_DELETE_URL)
-
-        restTemplate
-                .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
-                .delete(USER_DELETE_URL)
-
-        System.out.print("ads")
+        deleteUser(EMAIL, PASSWORD)
+        deleteUser(APPLICANT_EMAIL, APPLICANT_PASSWORD)
     }
 
-    @Test
-    fun `create application should return 201 and the expected response`() {
-        val applicationResponse = createApplication()
+    @Nested
+    inner class create {
+        @Test
+        fun `create application should return 201 and the expected response`() {
+            val applicationResponse = createApplication()
 
-        val expectedResponse = ApplicationResponse(applicationResponse.body?.id, userApplicantId!!, taskId!!, false)
+            val expectedResponse = ApplicationResponse(applicationResponse.body?.id, userApplicantId!!, taskId!!, false)
 
-        restTemplate
-                .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
-                .delete(BASE_APPLICATION_URL + "/" + applicationResponse.body?.id)
 
-        assertThat(applicationResponse.statusCode).isEqualTo(HttpStatus.CREATED)
-        assertThat(applicationResponse.body).isEqualTo(expectedResponse)
+            assertThat(applicationResponse.statusCode).isEqualTo(HttpStatus.CREATED)
+            assertThat(applicationResponse.body).isEqualTo(expectedResponse)
 
+            deleteApplication(applicationResponse.body?.id)
+        }
     }
 
-    @Test
-    fun `delete application should return 204`() {
-        //First, create the application
-        val createResponse = createApplication()
 
-        //Second, delete the application
-        val deleteResponse = restTemplate
-                .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
-                .exchange(BASE_APPLICATION_URL + "/" + createResponse.body?.id,
-                        HttpMethod.DELETE,
-                        null,
-                        Unit::class.java)
+    @Nested
+    inner class delete {
+        @Test
+        fun `delete application should return 204`() {
+            //First, create the application
+            val createResponse = createApplication()
 
-        assertThat(deleteResponse.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
+            //Second, delete the application
+            val deleteResponse = restTemplate
+                    .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
+                    .exchange(BASE_APPLICATION_URL + "/" + createResponse.body?.id,
+                            HttpMethod.DELETE,
+                            null,
+                            Unit::class.java)
+
+            assertThat(deleteResponse.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
+        }
     }
 
-    @Test
-    fun `accept application of user should return 200`() {
-        //First, create the application
-        val createResponse = createApplication()
+    @Nested
+    inner class accept {
+        @Test
+        fun `accept application of user should return 200`() {
+            //First, create the application
+            val createResponse = createApplication()
 
-        //Second, creator of task must approve the application
-        val approveResponse = restTemplate
-                .withBasicAuth(EMAIL, PASSWORD)
-                .getForEntity(APPROVE_APPLICATION_URL + createResponse.body?.id, Unit::class.java)
+            //Second, creator of task must approve the application
+            val approveResponse = restTemplate
+                    .withBasicAuth(EMAIL, PASSWORD)
+                    .getForEntity(APPROVE_APPLICATION_URL + createResponse.body?.id, Unit::class.java)
 
-        assertThat(approveResponse.statusCode).isEqualTo(HttpStatus.OK)
+            assertThat(approveResponse.statusCode).isEqualTo(HttpStatus.OK)
 
-        //Remove the application
-        restTemplate
-                .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
-                .delete(BASE_APPLICATION_URL + "/" + createResponse.body?.id)
+            //Remove the application
+            deleteApplication(createResponse.body?.id)
+        }
     }
+
+    @Nested
+    inner class read {
+        @Test
+        fun `get list of applications for task`() {
+            //Create application
+            val applicationResponse = createApplication()
+
+            val getResponse = restTemplate
+                    .withBasicAuth(EMAIL, PASSWORD)
+                    .getForEntity("/tasks/" + taskId + "/applications?page=0&size=2", ApplicationPaginatedResponse::class.java)
+
+            assertThat(getResponse.body?.applications).isEqualTo(listOf(applicationResponse.body))
+
+            deleteApplication(applicationResponse.body?.id)
+        }
+
+        @Test
+        fun `get list of applications from user`() {
+            //Create application
+            val applicationResponse = createApplication()
+
+            val getResponse = restTemplate
+                    .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
+                    .getForEntity("/users/applications?page=0&size=10", ApplicationPaginatedResponse::class.java)
+
+            assertThat(getResponse.body?.applications).isEqualTo(listOf(applicationResponse.body))
+
+            deleteApplication(applicationResponse.body?.id)
+        }
+    }
+
 
     fun createApplication(): ResponseEntity<ApplicationResponse> {
         val applicationBody = ApplicationBody(taskId!!)
@@ -153,5 +189,17 @@ class ApplicationIntegrationTests {
         return restTemplate
                 .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
                 .postForEntity(CREATE_APPLICATION_URL, applicationBody, ApplicationResponse::class.java)
+    }
+
+    fun deleteUser(email: String, password: String) {
+        restTemplate
+                .withBasicAuth(email, password)
+                .delete(USER_DELETE_URL)
+    }
+
+    fun deleteApplication(applicationId: Long?) {
+        restTemplate
+                .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
+                .delete(BASE_APPLICATION_URL + "/" + applicationId)
     }
 }

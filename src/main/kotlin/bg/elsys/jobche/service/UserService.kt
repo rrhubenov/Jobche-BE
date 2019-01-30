@@ -1,6 +1,7 @@
 package bg.elsys.jobche.service
 
 import bg.elsys.jobche.config.security.AuthenticationDetails
+import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserLoginBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.model.User
@@ -19,7 +20,7 @@ class UserService(val userRepository: UserRepository,
     fun login(userLogin: UserLoginBody): UserResponse {
         if (userRepository.existsByEmail(userLogin.email)) {
             val user = userRepository.findByEmail(userLogin.email)
-            return UserResponse(user?.id, user?.firstName, user?.lastName)
+            return UserResponse(user?.id, user?.firstName, user?.lastName, toDateOfBirth(user!!.dateOfBirth))
         } else throw UserNotFoundException()
     }
 
@@ -27,7 +28,6 @@ class UserService(val userRepository: UserRepository,
         if (userRepository.existsByEmail(userRegister.email)) {
             throw EmailExistsException()
         }
-
 
         val dateOfBirth = userRegister.dateOfBirth
 
@@ -38,7 +38,7 @@ class UserService(val userRepository: UserRepository,
                 dateOfBirth.toString())
 
         val savedUser = userRepository.save(userDTO)
-        return UserResponse(savedUser.id, savedUser.firstName, savedUser.lastName)
+        return UserResponse(savedUser.id, savedUser.firstName, savedUser.lastName, toDateOfBirth(savedUser.dateOfBirth))
     }
 
     fun delete() {
@@ -57,8 +57,13 @@ class UserService(val userRepository: UserRepository,
     fun read(id: Long): UserResponse {
         if( userRepository.existsById(id) ) {
             val user = userRepository.findById(id).get()
-            return UserResponse(user.id, user.firstName, user.lastName)
+            return UserResponse(user.id, user.firstName, user.lastName, toDateOfBirth(user.dateOfBirth))
         } else throw UserNotFoundException()
+    }
+
+    fun toDateOfBirth(date: String): DateOfBirth {
+        val values = date.split("-")
+        return DateOfBirth(values.get(0).toInt(), values.get(1).toInt(), values.get(2).toInt())
     }
 
 }

@@ -50,17 +50,19 @@ class UserServiceTest {
         every { repository.findByEmail(EMAIL) } returns user
 
         val result = userService.login(userLogin)
-        val expectedResult = UserResponse(user.id, "Radoslav", "Hubenov")
+        val expectedResult = UserResponse(user.id, "Radoslav", "Hubenov", DATE_OF_BIRTH)
         assertThat(result).isEqualTo(expectedResult)
     }
 
     @Test
     fun `create should return valid user response`() {
+        every { repository.existsByEmail(userRegister.email) } returns false
         every { repository.save(any<User>()) } returns user
 
         val userResponse = userService.create(userRegister)
 
-        assertThat(userResponse).isEqualTo(UserResponse(user.id, userRegister.firstName, userRegister.lastName))
+        assertThat(userResponse).isEqualTo(UserResponse(user.id, userRegister.firstName,
+                userRegister.lastName, DATE_OF_BIRTH))
     }
 
     @Test
@@ -99,5 +101,12 @@ class UserServiceTest {
             repository.existsById(anyLong())
             repository.findById(anyLong())
         }
+    }
+
+    @Test
+    fun `test dateOfBirth string to DateOfBirth`() {
+        val dateOfBirthString = "1-1-2000"
+
+        assertThat(userService.toDateOfBirth(dateOfBirthString)).isEqualTo(DATE_OF_BIRTH)
     }
 }

@@ -1,4 +1,4 @@
-package bg.elsys.jobche.ApplicationTasks
+package bg.elsys.jobche.ApplicationTests
 
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.controller.ApplicationController

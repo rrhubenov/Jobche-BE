@@ -1,11 +1,16 @@
 package bg.elsys.jobche.TaskTests
 
+import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.controller.TaskController
 import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
+import bg.elsys.jobche.entity.model.Application
 import bg.elsys.jobche.entity.model.Task
+import bg.elsys.jobche.entity.model.User
+import bg.elsys.jobche.entity.response.application.ApplicationResponse
 import bg.elsys.jobche.entity.response.task.TaskPaginatedResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
+import bg.elsys.jobche.service.ApplicationService
 import bg.elsys.jobche.service.TaskService
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
@@ -16,6 +21,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.*
 import org.springframework.http.HttpStatus
+import sun.management.snmp.AdaptorBootstrap
 import java.time.LocalDateTime
 
 @ExtendWith(MockKExtension::class)
@@ -37,11 +43,12 @@ class TaskControllerTest {
     }
 
     private val taskService : TaskService = mockk()
+    private val applicationService: ApplicationService = mockk()
 
     private val controller: TaskController
 
     init {
-        controller = TaskController(taskService)
+        controller = TaskController(taskService, applicationService)
     }
 
     @Test
@@ -92,5 +99,16 @@ class TaskControllerTest {
         val result = controller.delete(anyLong())
 
         assertThat(result.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
+    }
+
+    @Test
+    fun `get applications for task`() {
+        every { applicationService.getApplicationsForTask(task.id, 1, 1) } returns
+                listOf(DefaultValues.application)
+
+        val result = controller.getApplications(task.id, 1, 1)
+
+        assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
+        assertThat(result.body?.applications).isEqualTo(listOf(DefaultValues.applicationResponse))
     }
 }

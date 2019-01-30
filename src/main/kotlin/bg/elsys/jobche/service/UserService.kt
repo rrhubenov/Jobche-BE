@@ -55,7 +55,7 @@ class UserService(val userRepository: UserRepository,
     }
 
     fun read(id: Long): UserResponse {
-        if( userRepository.existsById(id) ) {
+        if (userRepository.existsById(id)) {
             val user = userRepository.findById(id).get()
             return UserResponse(user.id, user.firstName, user.lastName, toDateOfBirth(user.dateOfBirth))
         } else throw UserNotFoundException()

@@ -16,7 +16,8 @@ import io.mockk.verifyAll
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers.*
+import org.mockito.ArgumentMatchers.anyLong
+import org.mockito.ArgumentMatchers.anyString
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import java.util.*
 
@@ -28,7 +29,7 @@ class UserServiceTest {
         const val LAST_NAME = "Hubenov"
         const val EMAIL = "rrhubenov@gmail.com"
         const val PASSWORD = "password"
-        val DATE_OF_BIRTH = DateOfBirth(1,1,2000)
+        val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         private val user = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH.toString())
         private val userRegister = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
         private val userLogin = UserLoginBody(EMAIL, PASSWORD)
@@ -74,7 +75,8 @@ class UserServiceTest {
 
         verifyAll {
             authenticationDetails.getEmail()
-            repository.deleteByEmail(anyString())  }
+            repository.deleteByEmail(anyString())
+        }
     }
 
     @Test
@@ -82,7 +84,7 @@ class UserServiceTest {
         every { repository.getOneByEmail(anyString()) } returns user
         every { repository.save(user) } returns user
 
-        userService.update( UserRegisterBody(user.firstName, user.lastName, user.email, user.password, DATE_OF_BIRTH))
+        userService.update(UserRegisterBody(user.firstName, user.lastName, user.email, user.password, DATE_OF_BIRTH))
 
         verify {
             repository.getOneByEmail(anyString())

@@ -14,7 +14,7 @@ class PostgreUserDetailsService(val userRepository: UserRepository) : UserDetail
     override fun loadUserByUsername(email: String): UserDetails {
         val user = userRepository.findByEmail(email)
 
-        if(user == null) {
+        if (user == null) {
             throw UserNotFoundException()
         }
 

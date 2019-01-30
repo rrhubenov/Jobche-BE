@@ -28,7 +28,7 @@ class DefaultValues {
         private const val LAST_NAME = "Hubenov"
         private const val EMAIL = "rrhubenov@gmail.com"
         private const val PASSWORD = "password"
-        private val DATE_OF_BIRTH = DateOfBirth(1,1,2000)
+        private val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         val user = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH.toString())
 
         //Application

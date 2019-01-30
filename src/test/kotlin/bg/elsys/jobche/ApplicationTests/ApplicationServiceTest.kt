@@ -39,7 +39,7 @@ class ApplicationServiceTest {
     val service: ApplicationService = ApplicationService(appRepository, userRepository, taskRepository, authenticationDetails)
 
     init {
-        every {authenticationDetails.getEmail() } returns anyString()
+        every { authenticationDetails.getEmail() } returns anyString()
     }
 
     @Nested
@@ -120,7 +120,7 @@ class ApplicationServiceTest {
             every { taskRepository.findById(task.id) } returns Optional.of(task)
             every { appRepository.findAll(any<Pageable>()) } returns PageImpl<Application>(applications)
 
-            val result = service.getApplicationsForTask( task.id, 1, 1)
+            val result = service.getApplicationsForTask(task.id, 1, 1)
 
             verify {
                 authenticationDetails.getEmail()

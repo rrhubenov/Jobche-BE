@@ -26,7 +26,7 @@ class UserControllerTest() {
         const val LAST_NAME = "Hubenov"
         const val EMAIL = "rrhubenov@gmail.com"
         const val PASSWORD = "password"
-        val DATE_OF_BIRTH = DateOfBirth(1,1,2000)
+        val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         val userResponse = UserResponse(ID, FIRST_NAME, LAST_NAME, DATE_OF_BIRTH)
     }
 

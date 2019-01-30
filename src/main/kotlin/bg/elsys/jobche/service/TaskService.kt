@@ -39,7 +39,7 @@ class TaskService(val taskRepository: TaskRepository,
     }
 
     fun read(id: Long): TaskResponse {
-        if(taskRepository.existsById(id)) {
+        if (taskRepository.existsById(id)) {
             val task = taskRepository.findById(id).get()
             return TaskResponse(task.id,
                     task.title,
@@ -54,11 +54,11 @@ class TaskService(val taskRepository: TaskRepository,
     }
 
     fun update(task: TaskBody, id: Long) {
-        if(taskRepository.existsById(id)) {
+        if (taskRepository.existsById(id)) {
             val user = userRepository.findByEmail(authenticationDetails.getEmail())
             val taskToUpdate = taskRepository.getOne(id)
 
-            if(taskToUpdate.creatorId != user?.id) {
+            if (taskToUpdate.creatorId != user?.id) {
                 throw TaskModificationForbiddenException()
             }
 
@@ -73,11 +73,11 @@ class TaskService(val taskRepository: TaskRepository,
     }
 
     fun delete(id: Long) {
-        if(taskRepository.existsById(id)) {
+        if (taskRepository.existsById(id)) {
             val task = taskRepository.findById(id)
             val user = userRepository.findByEmail(authenticationDetails.getEmail())
 
-            if(task.get().creatorId != user!!.id) {
+            if (task.get().creatorId != user!!.id) {
                 throw TaskModificationForbiddenException()
             }
 
@@ -89,7 +89,7 @@ class TaskService(val taskRepository: TaskRepository,
         return taskRepository.findAll(createPageRequest(page, size)).content
     }
 
-    private fun createPageRequest(page: Int, size: Int) : Pageable {
+    private fun createPageRequest(page: Int, size: Int): Pageable {
         return PageRequest.of(page, size)
     }
 

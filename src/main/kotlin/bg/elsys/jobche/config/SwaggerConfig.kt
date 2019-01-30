@@ -25,7 +25,7 @@ class SwaggerConfig {
                 .securitySchemes(listOf(BasicAuth("basicAuth")))
     }
 
-    fun apiInfo() : ApiInfo {
+    fun apiInfo(): ApiInfo {
         return ApiInfo("Jobche",
                 "Application for creating ads for easy and fast work",
                 "BETA",

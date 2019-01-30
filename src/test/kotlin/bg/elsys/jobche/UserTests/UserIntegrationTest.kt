@@ -34,7 +34,7 @@ class UserIntegrationTest {
         const val LAST_NAME = "Hubenov"
         const val EMAIL = "rrhubenov@gmail.com"
         const val PASSWORD = "testing1"
-        val DATE_OF_BIRTH = DateOfBirth(1,1,2000)
+        val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         lateinit var registerResponse: ResponseEntity<UserResponse>
     }
 

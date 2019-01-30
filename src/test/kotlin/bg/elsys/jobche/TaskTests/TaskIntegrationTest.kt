@@ -46,7 +46,7 @@ class TaskIntegrationTest {
         const val TASK_PAYMENT = 1
         const val TASK_NUMBER_OF_WORKERS = 1
         const val TASK_DESCRIPTION = "Test Description"
-        val DATE_OF_BIRTH = DateOfBirth(1,1,2000)
+        val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         val TASK_TIME_OF_WORK = LocalDateTime.now()
         val TASK_LOCATION = Address("Bulgaria", "Sofia", "Krasno Selo")
         val taskBody = TaskBody(TASK_TITLE, TASK_PAYMENT, TASK_NUMBER_OF_WORKERS, TASK_DESCRIPTION, TASK_TIME_OF_WORK, TASK_LOCATION)
@@ -59,7 +59,7 @@ class TaskIntegrationTest {
     lateinit var registerResponse: ResponseEntity<UserResponse>
 
     @BeforeEach
-    fun registerUser(){
+    fun registerUser() {
         val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
         registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
     }
@@ -158,9 +158,9 @@ class TaskIntegrationTest {
             val putResponse = restTemplate
                     .withBasicAuth(EMAIL, PASSWORD)
                     .exchange(UPDATE_URL + createTaskResponse.body?.id,
-                    HttpMethod.PUT,
-                    HttpEntity(updatedTaskBody),
-                    Unit::class.java)
+                            HttpMethod.PUT,
+                            HttpEntity(updatedTaskBody),
+                            Unit::class.java)
 
             assertThat(putResponse.statusCode).isEqualTo(HttpStatus.OK)
 

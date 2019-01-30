@@ -7,7 +7,7 @@ import javax.persistence.Table
 import javax.persistence.UniqueConstraint
 
 @Entity
-@Table(name = "applications", uniqueConstraints = [ UniqueConstraint(columnNames = ["user_id", "task_id"]) ])
+@Table(name = "applications", uniqueConstraints = [UniqueConstraint(columnNames = ["user_id", "task_id"])])
 data class Application(@ManyToOne(optional = false)
                        val user: User,
                        @ManyToOne(optional = false)

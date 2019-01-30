@@ -60,7 +60,7 @@ class UserController(val userService: UserService, val applicationService: Appli
         return ResponseEntity(userService.read(id), HttpStatus.OK)
     }
 
-    @GetMapping("/applications")
+    @GetMapping("/me/applications")
     @ApiOperation(value = "Read info of user",
             httpMethod = "GET",
             authorizations = arrayOf(Authorization(value = "basicAuth")))

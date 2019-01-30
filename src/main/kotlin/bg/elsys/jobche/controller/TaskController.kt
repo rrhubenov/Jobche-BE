@@ -84,4 +84,19 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
 
         return ResponseEntity(ApplicationPaginatedResponse(applicationResponseList), HttpStatus.OK)
     }
+
+    @GetMapping("/me")
+    @ApiOperation(value = "Read my tasks paginated",
+            httpMethod = "GET",
+            authorizations = arrayOf(Authorization(value = "basicAuth")))
+    @ApiResponses(ApiResponse(code = 200, message = "Success", response = TaskPaginatedResponse::class))
+    fun readMePaginated(@RequestParam("page") page: Int, @RequestParam("size") size: Int): ResponseEntity<TaskPaginatedResponse> {
+        val tasks = taskService.readMePaginated(page, size)
+
+        val taskResponses = tasks.map {
+            TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId)
+        }.toMutableList()
+
+        return ResponseEntity(TaskPaginatedResponse(taskResponses), HttpStatus.OK)
+    }
 }

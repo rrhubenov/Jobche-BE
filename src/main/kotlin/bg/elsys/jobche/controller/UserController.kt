@@ -61,10 +61,10 @@ class UserController(val userService: UserService, val applicationService: Appli
     }
 
     @GetMapping("/me/applications")
-    @ApiOperation(value = "Read info of user",
+    @ApiOperation(value = "Read applications created by user",
             httpMethod = "GET",
             authorizations = arrayOf(Authorization(value = "basicAuth")))
-    @ApiResponses(ApiResponse(code = 200, message = "Success", response = UserResponse::class))
+    @ApiResponses(ApiResponse(code = 200, message = "Success", response = ApplicationPaginatedResponse::class))
     fun getApplications(@RequestParam("page") page: Int, @RequestParam("size") size: Int): ResponseEntity<ApplicationPaginatedResponse> {
         val applicationList = applicationService.getApplicationsForUser(page, size)
         val applicationResponseList = mutableListOf<ApplicationResponse>()

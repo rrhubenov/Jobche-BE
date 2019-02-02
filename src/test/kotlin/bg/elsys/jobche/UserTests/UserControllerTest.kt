@@ -1,9 +1,12 @@
 package bg.elsys.jobche.UserTests
 
+import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.controller.UserController
+import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserLoginBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
-import bg.elsys.jobche.entity.response.UserResponse
+import bg.elsys.jobche.entity.response.user.UserResponse
+import bg.elsys.jobche.service.ApplicationService
 import bg.elsys.jobche.service.UserService
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
@@ -23,15 +26,17 @@ class UserControllerTest() {
         const val LAST_NAME = "Hubenov"
         const val EMAIL = "rrhubenov@gmail.com"
         const val PASSWORD = "password"
-        val userResponse = UserResponse(ID, FIRST_NAME, LAST_NAME)
+        val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
+        val userResponse = UserResponse(ID, FIRST_NAME, LAST_NAME, DATE_OF_BIRTH)
     }
 
     private val userService: UserService = mockk()
+    private val applicationService: ApplicationService = mockk()
 
     private val controller: UserController
 
     init {
-        controller = UserController(userService)
+        controller = UserController(userService, applicationService)
     }
 
     @Test
@@ -47,7 +52,7 @@ class UserControllerTest() {
 
     @Test
     fun `create should return valid user response`() {
-        val userRegisterBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
+        val userRegisterBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
 
         every { userService.create(userRegisterBody) } returns userResponse
 
@@ -58,19 +63,19 @@ class UserControllerTest() {
 
     @Test
     fun `remove should return 204`() {
-        every { userService.delete(anyLong()) } returns Unit
-        val result = controller.delete(anyLong())
+        every { userService.delete() } returns Unit
+        val result = controller.delete()
 
         assertThat(result.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
     }
 
     @Test
     fun `update should return 200`() {
-        val updatedUser = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
+        val updatedUser = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
 
-        every { userService.update(anyLong(), updatedUser) } returns Unit
+        every { userService.update(updatedUser) } returns Unit
 
-        val result = controller.update(anyLong(), updatedUser)
+        val result = controller.update(updatedUser)
 
         assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
     }
@@ -83,5 +88,15 @@ class UserControllerTest() {
 
         assertThat(result.body).isEqualTo(userResponse)
         assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
+    }
+
+    @Test
+    fun `get applications created from user should return 200 and appplications list`() {
+        every { applicationService.getApplicationsForUser(1, 1) } returns listOf(DefaultValues.application)
+
+        val result = controller.getApplications(1, 1)
+
+        assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
+        assertThat(result.body?.applications).isEqualTo(listOf(DefaultValues.applicationResponse))
     }
 }

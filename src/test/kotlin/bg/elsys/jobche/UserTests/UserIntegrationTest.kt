@@ -1,8 +1,9 @@
 package bg.elsys.jobche.UserTests
 
+import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserLoginBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
-import bg.elsys.jobche.entity.response.UserResponse
+import bg.elsys.jobche.entity.response.user.UserResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -24,13 +25,16 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 class UserIntegrationTest {
 
     companion object {
-        const val BASE_URL = "/users/"
+        const val BASE_URL = "/users"
         const val REGISTER_URL = BASE_URL
-        const val LOGIN_URL = BASE_URL + "login"
+        const val LOGIN_URL = BASE_URL + "/login"
+        const val REMOVE_URL = BASE_URL
+        const val UPDATE_URL = BASE_URL
         const val FIRST_NAME = "Radoslav"
         const val LAST_NAME = "Hubenov"
         const val EMAIL = "rrhubenov@gmail.com"
         const val PASSWORD = "testing1"
+        val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         lateinit var registerResponse: ResponseEntity<UserResponse>
     }
 
@@ -39,13 +43,15 @@ class UserIntegrationTest {
 
     @BeforeEach
     fun registerUser() {
-        val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
+        val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
         registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
     }
 
     @AfterEach
     fun deleteUser() {
-        restTemplate.delete(BASE_URL + registerResponse.body?.id)
+        restTemplate
+                .withBasicAuth(EMAIL, PASSWORD)
+                .delete(REMOVE_URL)
     }
 
     @Nested
@@ -65,8 +71,10 @@ class UserIntegrationTest {
     inner class create {
         @Test
         fun `create should return 201`() {
-            val registerUserBody = UserRegisterBody("Random", "Random", "Random@Random.com", "Random")
+            val registerUserBody = UserRegisterBody("Random", "Random", "Random@Random.com", "Random", DATE_OF_BIRTH)
             val registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
+
+            restTemplate.withBasicAuth("Random@Random.com", "Random").delete(REMOVE_URL)
 
             assertThat(registerResponse.statusCode).isEqualTo(HttpStatus.CREATED)
         }
@@ -76,12 +84,12 @@ class UserIntegrationTest {
     @Nested
     inner class remove {
         @Test
-        fun `remove should return 200 and delete resource`() {
+        fun `user removing himself should return 200 and delete resource`() {
             //Delete user and check if it exists
 
             val deleteResponse = restTemplate
                     .withBasicAuth(EMAIL, PASSWORD)
-                    .exchange(BASE_URL + registerResponse.body?.id,
+                    .exchange(REMOVE_URL,
                             HttpMethod.DELETE,
                             null,
                             Unit::class.java)
@@ -94,26 +102,27 @@ class UserIntegrationTest {
 
             assertThat(loginResponse.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
         }
-
     }
 
     @Nested
     inner class update {
         @Test
-        fun `update should return 200 and update the resource`() {
-            val updatedUser = UserRegisterBody(FIRST_NAME + "new", LAST_NAME, EMAIL, PASSWORD)
+        fun `user updating himself should return 200 and update the resource`() {
+            val updatedUser = UserRegisterBody(FIRST_NAME + "new", LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
 
             val putResponse = restTemplate
                     .withBasicAuth(EMAIL, PASSWORD)
-                    .exchange(BASE_URL + registerResponse.body?.id,
+                    .exchange(UPDATE_URL,
                             HttpMethod.PUT,
                             HttpEntity(updatedUser),
                             Unit::class.java)
 
             assertThat(putResponse.statusCode).isEqualTo(HttpStatus.OK)
 
-            val readResponse = restTemplate
-                    .getForEntity(BASE_URL + registerResponse.body?.id, UserResponse::class.java)
+            val readResponse =
+                    restTemplate
+                            .withBasicAuth(EMAIL, PASSWORD)
+                            .getForEntity(BASE_URL + "/" + registerResponse.body?.id, UserResponse::class.java)
 
             assertThat(readResponse.body?.firstName).isEqualTo(FIRST_NAME + "new")
         }
@@ -126,7 +135,7 @@ class UserIntegrationTest {
         fun `read should return 200 and a valid user response`() {
             val readResponse = restTemplate
                     .withBasicAuth(EMAIL, PASSWORD)
-                    .getForEntity(BASE_URL + registerResponse.body?.id, UserResponse::class.java)
+                    .getForEntity(BASE_URL + "/" + registerResponse.body?.id, UserResponse::class.java)
 
             assertThat(readResponse.statusCode).isEqualTo(HttpStatus.OK)
 

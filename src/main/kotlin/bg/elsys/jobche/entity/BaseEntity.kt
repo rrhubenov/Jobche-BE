@@ -11,11 +11,11 @@ import javax.persistence.*
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
 @JsonIgnoreProperties(value = ["createdAt", "updatedAt"], allowGetters = true)
-abstract class BaseEntity       (
+abstract class BaseEntity(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "id", nullable = false, updatable = false)
-        val id: Long = 0,
+        val id: Long = 1,
 
         @Temporal(TemporalType.TIMESTAMP)
         @Column(name = "created_at", nullable = false, updatable = false)

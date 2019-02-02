@@ -2,6 +2,7 @@ package bg.elsys.jobche.config.security
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -17,12 +18,13 @@ class WebSecurityConfig(val userDetailsService: PostgreUserDetailsService) : Web
 
     private val WHITELISTED_URLS = arrayOf("/v2/api-docs",
             "/swagger-resources",
+            "/csrf",
+            "/",
             "/swagger-resources/**",
             "/configuration/ui",
             "/configuration/security",
             "/swagger-ui.html",
             "/webjars/**",
-            "/users/**",
             "/actuator/**")
 
     @Bean
@@ -44,11 +46,13 @@ class WebSecurityConfig(val userDetailsService: PostgreUserDetailsService) : Web
     }
 
     override fun configure(http: HttpSecurity) {
-        http.csrf().disable()
         http.authorizeRequests()
+                .antMatchers(HttpMethod.POST, "/users").permitAll()
+                .antMatchers(HttpMethod.POST, "/users/login").permitAll()
                 .antMatchers(*WHITELISTED_URLS).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()
+        http.csrf().disable()
     }
 }

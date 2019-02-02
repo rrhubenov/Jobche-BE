@@ -1,10 +1,13 @@
 package bg.elsys.jobche.TaskTests
 
+import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.controller.TaskController
+import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.model.Task
-import bg.elsys.jobche.entity.response.TaskPaginatedResponse
-import bg.elsys.jobche.entity.response.TaskResponse
+import bg.elsys.jobche.entity.response.task.TaskPaginatedResponse
+import bg.elsys.jobche.entity.response.task.TaskResponse
+import bg.elsys.jobche.service.ApplicationService
 import bg.elsys.jobche.service.TaskService
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
@@ -12,7 +15,6 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.*
 import org.springframework.http.HttpStatus
@@ -26,20 +28,23 @@ class TaskControllerTest {
         const val PAYMENT = 10
         const val NUMBER_OF_WORKERS = 1
         const val DESCRIPTION = "Test Description"
+        val LOCATION = Address(anyString(), anyString(), anyString())
         val DATE_TIME = LocalDateTime.now()
-        val taskResponse = TaskResponse(anyLong(), TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME)
-        val taskPaginatedResponse = TaskPaginatedResponse(listOf(taskResponse, taskResponse))
-        val task = Task(TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME)
+        const val CREATOR_ID = 1L
+        val task = Task(TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, CREATOR_ID, LOCATION)
         val tasks = listOf(task, task)
-        val taskBody = TaskBody(TITLE, PAYMENT, NUMBER_OF_WORKERS, DESCRIPTION, DATE_TIME)
+        val taskBody = TaskBody(TITLE, PAYMENT, NUMBER_OF_WORKERS, DESCRIPTION, DATE_TIME, LOCATION)
+        val taskResponse = TaskResponse(task.id, TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, LOCATION, CREATOR_ID)
+        val taskPaginatedResponse = TaskPaginatedResponse(listOf(taskResponse, taskResponse))
     }
 
-    private val taskService : TaskService = mockk()
+    private val taskService: TaskService = mockk()
+    private val applicationService: ApplicationService = mockk()
 
     private val controller: TaskController
 
     init {
-        controller = TaskController(taskService)
+        controller = TaskController(taskService, applicationService)
     }
 
     @Test
@@ -72,6 +77,15 @@ class TaskControllerTest {
             assertThat(result.body).isEqualTo(taskPaginatedResponse)
         }
 
+        @Test
+        fun `read my tasks paginated`() {
+            every { taskService.readMePaginated(anyInt(), anyInt()) } returns tasks
+
+            val result = controller.readMePaginated(anyInt(), anyInt())
+
+            assertThat(result.body).isEqualTo(taskPaginatedResponse)
+        }
+
     }
 
     @Test
@@ -90,5 +104,16 @@ class TaskControllerTest {
         val result = controller.delete(anyLong())
 
         assertThat(result.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
+    }
+
+    @Test
+    fun `get applications for task`() {
+        every { applicationService.getApplicationsForTask(task.id, 1, 1) } returns
+                listOf(DefaultValues.application)
+
+        val result = controller.getApplications(task.id, 1, 1)
+
+        assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
+        assertThat(result.body?.applications).isEqualTo(listOf(DefaultValues.applicationResponse))
     }
 }

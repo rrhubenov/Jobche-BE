@@ -63,7 +63,7 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
         val tasks = taskService.readPaginated(page, size)
 
         val taskResponses = tasks.map {
-            TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId)
+            TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId, it.paymentType)
         }.toMutableList()
 
         return ResponseEntity(TaskPaginatedResponse(taskResponses), HttpStatus.OK)
@@ -94,7 +94,7 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
         val tasks = taskService.readMePaginated(page, size)
 
         val taskResponses = tasks.map {
-            TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId)
+            TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId, it.paymentType)
         }.toMutableList()
 
         return ResponseEntity(TaskPaginatedResponse(taskResponses), HttpStatus.OK)

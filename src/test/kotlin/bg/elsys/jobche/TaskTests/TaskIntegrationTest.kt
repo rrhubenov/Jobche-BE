@@ -1,9 +1,11 @@
 package bg.elsys.jobche.TaskTests
 
+import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
+import bg.elsys.jobche.entity.model.task.PaymentType
 import bg.elsys.jobche.entity.response.task.TaskPaginatedResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
 import bg.elsys.jobche.entity.response.user.UserResponse
@@ -32,8 +34,6 @@ class TaskIntegrationTest {
     companion object {
         const val FIRST_NAME = "Random"
         const val LAST_NAME = "Random"
-        const val EMAIL = "random@random.com"
-        const val PASSWORD = "random"
 
         const val REGISTER_URL = "/users"
 
@@ -53,7 +53,11 @@ class TaskIntegrationTest {
         val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         val TASK_TIME_OF_WORK = LocalDateTime.now()
         val TASK_LOCATION = Address("Bulgaria", "Sofia", "Krasno Selo")
-        val taskBody = TaskBody(TASK_TITLE, TASK_PAYMENT, TASK_NUMBER_OF_WORKERS, TASK_DESCRIPTION, TASK_TIME_OF_WORK, TASK_LOCATION)
+        val TASK_PAYMENT_TYPE = PaymentType.BY_HOUR
+        val taskBody = DefaultValues.taskBody
+        val registerUserBody = DefaultValues.userRegisterBody
+        val EMAIL = registerUserBody.email
+        val PASSWORD = registerUserBody.password
     }
 
     @Autowired
@@ -64,7 +68,6 @@ class TaskIntegrationTest {
 
     @BeforeEach
     fun registerUser() {
-        val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
         registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
     }
 
@@ -155,7 +158,9 @@ class TaskIntegrationTest {
                     TASK_NUMBER_OF_WORKERS + 1,
                     TASK_DESCRIPTION,
                     TASK_TIME_OF_WORK,
-                    TASK_LOCATION)
+                    TASK_LOCATION,
+                    TASK_PAYMENT_TYPE
+            )
 
             val createTaskResponse = createTask()
             //Update the resource(task)
@@ -195,7 +200,9 @@ class TaskIntegrationTest {
                     TASK_NUMBER_OF_WORKERS + 1,
                     TASK_DESCRIPTION,
                     TASK_TIME_OF_WORK,
-                    TASK_LOCATION)
+                    TASK_LOCATION,
+                    TASK_PAYMENT_TYPE
+            )
 
             //Create the task
             val createTaskResponse = createTask()

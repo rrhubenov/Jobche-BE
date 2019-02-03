@@ -1,4 +1,4 @@
-package bg.elsys.jobche.repositories
+package bg.elsys.jobche.repository
 
 import bg.elsys.jobche.entity.model.Application
 import bg.elsys.jobche.entity.model.User

@@ -21,13 +21,9 @@ import org.springframework.http.HttpStatus
 class UserControllerTest() {
 
     companion object {
-        const val ID = 1L
-        const val FIRST_NAME = "Radosalv"
-        const val LAST_NAME = "Hubenov"
-        const val EMAIL = "rrhubenov@gmail.com"
-        const val PASSWORD = "password"
-        val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
-        val userResponse = UserResponse(ID, FIRST_NAME, LAST_NAME, DATE_OF_BIRTH)
+        val userResponse = DefaultValues.userResponse
+        val userRegisterBody = DefaultValues.userRegisterBody
+        val userLoginBody = DefaultValues.userLoginBody
     }
 
     private val userService: UserService = mockk()
@@ -41,19 +37,15 @@ class UserControllerTest() {
 
     @Test
     fun `login should return valid user response`() {
-        val userLogin = UserLoginBody(EMAIL, PASSWORD)
+        every { userService.login(userLoginBody) } returns userResponse
 
-        every { userService.login(userLogin) } returns userResponse
-
-        val result = controller.login(userLogin)
+        val result = controller.login(userLoginBody)
 
         assertThat(result.body).isEqualTo(userResponse)
     }
 
     @Test
     fun `create should return valid user response`() {
-        val userRegisterBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
-
         every { userService.create(userRegisterBody) } returns userResponse
 
         val result = controller.create(userRegisterBody)
@@ -71,11 +63,9 @@ class UserControllerTest() {
 
     @Test
     fun `update should return 200`() {
-        val updatedUser = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
+        every { userService.update(userRegisterBody) } returns Unit
 
-        every { userService.update(updatedUser) } returns Unit
-
-        val result = controller.update(updatedUser)
+        val result = controller.update(userRegisterBody)
 
         assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
     }

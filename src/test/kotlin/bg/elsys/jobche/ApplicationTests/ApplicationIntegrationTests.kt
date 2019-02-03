@@ -1,5 +1,6 @@
 package bg.elsys.jobche.ApplicationTests
 
+import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.entity.body.application.ApplicationBody
 import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
@@ -76,7 +77,7 @@ class ApplicationIntegrationTests {
         userApplicantResponse = restTemplate.postForEntity(REGISTER_URL, userApplicantBody, UserResponse::class.java)
         userApplicantId = userApplicantResponse.body?.id
 
-        val taskBody = TaskBody(TASK_TITLE, TASK_PAYMENT, TASK_NUMBER_OF_WORKERS, TASK_DESCRIPTION, TASK_TIME_OF_WORK, TASK_LOCATION)
+        val taskBody = DefaultValues.taskBody
 
         //Create the task
         taskResponse = restTemplate

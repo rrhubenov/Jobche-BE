@@ -2,12 +2,12 @@ package bg.elsys.jobche.service
 
 import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.entity.body.task.TaskBody
-import bg.elsys.jobche.entity.model.Task
+import bg.elsys.jobche.entity.model.task.Task
 import bg.elsys.jobche.entity.response.task.TaskResponse
-import bg.elsys.jobche.exceptions.TaskModificationForbiddenException
-import bg.elsys.jobche.exceptions.TaskNotFoundException
-import bg.elsys.jobche.repositories.TaskRepository
-import bg.elsys.jobche.repositories.UserRepository
+import bg.elsys.jobche.exception.TaskModificationForbiddenException
+import bg.elsys.jobche.exception.TaskNotFoundException
+import bg.elsys.jobche.repository.TaskRepository
+import bg.elsys.jobche.repository.UserRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -26,7 +26,9 @@ class TaskService(val taskRepository: TaskRepository,
                 taskBody.numberOfWorkers,
                 taskBody.dateTime,
                 user!!.id,
-                taskBody.location))
+                taskBody.location,
+                taskBody.paymentType
+        ))
 
         return TaskResponse(task.id,
                 task.title,
@@ -35,7 +37,9 @@ class TaskService(val taskRepository: TaskRepository,
                 task.numberOfWorkers,
                 task.dateTime,
                 task.location,
-                task.creatorId)
+                task.creatorId,
+                task.paymentType
+        )
     }
 
     fun read(id: Long): TaskResponse {
@@ -48,7 +52,8 @@ class TaskService(val taskRepository: TaskRepository,
                     task.numberOfWorkers,
                     task.dateTime,
                     task.location,
-                    task.creatorId
+                    task.creatorId,
+                    task.paymentType
             )
         } else throw TaskNotFoundException()
     }

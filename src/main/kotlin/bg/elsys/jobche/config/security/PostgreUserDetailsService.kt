@@ -1,7 +1,7 @@
 package bg.elsys.jobche.config.security
 
-import bg.elsys.jobche.exceptions.UserNotFoundException
-import bg.elsys.jobche.repositories.UserRepository
+import bg.elsys.jobche.exception.UserNotFoundException
+import bg.elsys.jobche.repository.UserRepository
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails

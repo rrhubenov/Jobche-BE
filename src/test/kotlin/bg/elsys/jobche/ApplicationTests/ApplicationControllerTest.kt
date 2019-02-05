@@ -32,7 +32,7 @@ class ApplicationControllerTest {
 
     init {
         controller = ApplicationController(service)
-        applicationResponse = ApplicationResponse(ID, user.id, task.id, false)
+        applicationResponse = DefaultValues.applicationResponse
         applicationBody = ApplicationBody(task.id)
     }
 

@@ -1,10 +1,13 @@
 package bg.elsys.jobche.ApplicationTests
 
+import bg.elsys.jobche.DefaultValues
+import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.application.ApplicationBody
 import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
+import bg.elsys.jobche.entity.model.User
 import bg.elsys.jobche.entity.response.application.ApplicationPaginatedResponse
 import bg.elsys.jobche.entity.response.application.ApplicationResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
@@ -29,28 +32,16 @@ import java.time.LocalDateTime
 class ApplicationIntegrationTests {
     companion object {
         //User constants
-        const val FIRST_NAME = "Radoslav"
-        const val LAST_NAME = "Hubenov"
-        val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
-        const val EMAIL = "random@random.com"
-        const val PASSWORD = "random"
-        const val APPLICANT_EMAIL = "applicant@app.com"
-        const val APPLICANT_PASSWORD = "randompass"
         const val REGISTER_URL = "/users"
         const val USER_DELETE_URL = "/users"
+        val user = DefaultValues.user
+        val userApplicant = User("Applicant", "Applicant", "applicant@app.com", "randompass", DateOfBirth(2, 3, 2001).toString())
         //Task constants
         const val CREATE_URL = "/tasks"
-        const val TASK_TITLE = "Test Title"
-        const val TASK_PAYMENT = 1
-        const val TASK_NUMBER_OF_WORKERS = 1
-        const val TASK_DESCRIPTION = "Test Description"
-        val TASK_TIME_OF_WORK = LocalDateTime.now()
-        val TASK_LOCATION = Address("Bulgaria", "Sofia", "Krasno Selo")
         //Application constants
         const val BASE_APPLICATION_URL = "/application"
         const val CREATE_APPLICATION_URL = BASE_APPLICATION_URL
         const val APPROVE_APPLICATION_URL = BASE_APPLICATION_URL + "/approve/"
-
     }
 
     @Autowired
@@ -59,41 +50,43 @@ class ApplicationIntegrationTests {
     lateinit var userCreatorResponse: ResponseEntity<UserResponse>
     lateinit var userApplicantResponse: ResponseEntity<UserResponse>
     lateinit var taskResponse: ResponseEntity<TaskResponse>
-    var taskId: Long? = 0
     var userCreatorId: Long? = 0
-    var userApplicantId: Long? = 0
+    var applicantId: Long? = 0
+    var taskId: Long? = 0
 
     @BeforeEach
     fun setup() {
         //Create a user that will create the task
-        val userCreatorBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
+        val userCreatorBody = DefaultValues.userRegisterBody
         userCreatorResponse = restTemplate.postForEntity(REGISTER_URL, userCreatorBody, UserResponse::class.java)
         userCreatorId = userCreatorResponse.body?.id
 
-        val userApplicantBody = UserRegisterBody("Applicant", "Applicant", APPLICANT_EMAIL, APPLICANT_PASSWORD, DateOfBirth(2, 3, 2001))
 
         //Create the user that will apply for the task
+        val userApplicantBody = UserRegisterBody(userApplicant.firstName, userApplicant.lastName, userApplicant.email, userApplicant.password, Converters().toDateOfBirth(userApplicant.dateOfBirth))
         userApplicantResponse = restTemplate.postForEntity(REGISTER_URL, userApplicantBody, UserResponse::class.java)
-        userApplicantId = userApplicantResponse.body?.id
-
-        val taskBody = TaskBody(TASK_TITLE, TASK_PAYMENT, TASK_NUMBER_OF_WORKERS, TASK_DESCRIPTION, TASK_TIME_OF_WORK, TASK_LOCATION)
+        applicantId = userApplicantResponse.body?.id
 
         //Create the task
+        val taskBody = DefaultValues.taskBody
         taskResponse = restTemplate
-                .withBasicAuth(EMAIL, PASSWORD)
+                .withBasicAuth(user.email, user.password)
                 .postForEntity(CREATE_URL, taskBody, TaskResponse::class.java)
-
         taskId = taskResponse.body?.id
+
     }
 
     @AfterEach
     fun cleanUp() {
         restTemplate
-                .withBasicAuth(EMAIL, PASSWORD)
+                .withBasicAuth(user.email, user.password)
                 .delete("/tasks/" + taskId)
 
-        deleteUser(EMAIL, PASSWORD)
-        deleteUser(APPLICANT_EMAIL, APPLICANT_PASSWORD)
+        deleteUser(user.email, user.password)
+        deleteUser(userApplicant.email, userApplicant.password)
+
+        System.out.println("asd")
+
     }
 
     @Nested
@@ -102,8 +95,7 @@ class ApplicationIntegrationTests {
         fun `create application should return 201 and the expected response`() {
             val applicationResponse = createApplication()
 
-            val expectedResponse = ApplicationResponse(applicationResponse.body?.id, userApplicantId!!, taskId!!, false)
-
+            val expectedResponse = ApplicationResponse(applicationResponse.body?.id, userApplicantResponse.body, taskResponse.body, false)
 
             assertThat(applicationResponse.statusCode).isEqualTo(HttpStatus.CREATED)
             assertThat(applicationResponse.body).isEqualTo(expectedResponse)
@@ -122,7 +114,7 @@ class ApplicationIntegrationTests {
 
             //Second, delete the application
             val deleteResponse = restTemplate
-                    .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
+                    .withBasicAuth(userApplicant.email, userApplicant.password)
                     .exchange(BASE_APPLICATION_URL + "/" + createResponse.body?.id,
                             HttpMethod.DELETE,
                             null,
@@ -141,7 +133,7 @@ class ApplicationIntegrationTests {
 
             //Second, creator of task must approve the application
             val approveResponse = restTemplate
-                    .withBasicAuth(EMAIL, PASSWORD)
+                    .withBasicAuth(user.email, user.password)
                     .getForEntity(APPROVE_APPLICATION_URL + createResponse.body?.id, Unit::class.java)
 
             assertThat(approveResponse.statusCode).isEqualTo(HttpStatus.OK)
@@ -159,7 +151,7 @@ class ApplicationIntegrationTests {
             val applicationResponse = createApplication()
 
             val getResponse = restTemplate
-                    .withBasicAuth(EMAIL, PASSWORD)
+                    .withBasicAuth(user.email, user.password)
                     .getForEntity("/tasks/" + taskId + "/applications?page=0&size=2", ApplicationPaginatedResponse::class.java)
 
             assertThat(getResponse.body?.applications).isEqualTo(listOf(applicationResponse.body))
@@ -173,7 +165,7 @@ class ApplicationIntegrationTests {
             val applicationResponse = createApplication()
 
             val getResponse = restTemplate
-                    .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
+                    .withBasicAuth(userApplicant.email, userApplicant.password)
                     .getForEntity("/users/me/applications?page=0&size=10", ApplicationPaginatedResponse::class.java)
 
             assertThat(getResponse.body?.applications).isEqualTo(listOf(applicationResponse.body))
@@ -187,7 +179,7 @@ class ApplicationIntegrationTests {
         val applicationBody = ApplicationBody(taskId!!)
 
         return restTemplate
-                .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
+                .withBasicAuth(userApplicant.email, userApplicant.password)
                 .postForEntity(CREATE_APPLICATION_URL, applicationBody, ApplicationResponse::class.java)
     }
 
@@ -199,7 +191,7 @@ class ApplicationIntegrationTests {
 
     fun deleteApplication(applicationId: Long?) {
         restTemplate
-                .withBasicAuth(APPLICANT_EMAIL, APPLICANT_PASSWORD)
+                .withBasicAuth(userApplicant.email, userApplicant.password)
                 .delete(BASE_APPLICATION_URL + "/" + applicationId)
     }
 }

@@ -4,10 +4,7 @@ import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.entity.body.application.ApplicationBody
 import bg.elsys.jobche.entity.model.Application
 import bg.elsys.jobche.entity.model.Task
-import bg.elsys.jobche.exceptions.ResourceForbiddenException
-import bg.elsys.jobche.exceptions.ResourceNotFoundException
-import bg.elsys.jobche.exceptions.TaskNotFoundException
-import bg.elsys.jobche.exceptions.UserNotFoundException
+import bg.elsys.jobche.exceptions.*
 import bg.elsys.jobche.repositories.ApplicationRepository
 import bg.elsys.jobche.repositories.TaskRepository
 import bg.elsys.jobche.repositories.UserRepository
@@ -60,14 +57,23 @@ class ApplicationService(val appRepository: ApplicationRepository,
         } else throw ResourceNotFoundException()
 
         if (task.creatorId == user?.id) {
-            return appRepository.findAll(createPageRequest(page, size)).content
+            val result = appRepository.findAll(createPageRequest(page, size)).content
+
+            if(result.isEmpty()) {
+                throw NoContentException()
+            } else return result
+
         } else throw ResourceForbiddenException()
     }
 
     fun getApplicationsForUser(page: Int, size: Int): List<Application> {
         val user = userRepository.findByEmail(authenticationDetails.getEmail())
 
-        return appRepository.findAllByUser(createPageRequest(page, size), user).content
+        val result = appRepository.findAllByUser(createPageRequest(page, size), user).content
+
+        if(result.isEmpty()) {
+            throw NoContentException()
+        } else return result
     }
 
     private fun createPageRequest(page: Int, size: Int): Pageable {

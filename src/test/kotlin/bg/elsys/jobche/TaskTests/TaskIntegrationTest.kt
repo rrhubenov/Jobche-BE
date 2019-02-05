@@ -52,7 +52,7 @@ class TaskIntegrationTest {
         const val TASK_DESCRIPTION = "Test Description"
         val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         val TASK_TIME_OF_WORK = LocalDateTime.now()
-        val TASK_LOCATION = Address("Bulgaria", "Sofia", "Krasno Selo")
+        val TASK_LOCATION = Address("Bulgaria", "Sofia")
         val TASK_PAYMENT_TYPE = PaymentType.BY_HOUR
         val taskBody = DefaultValues.taskBody
         val registerUserBody = DefaultValues.userRegisterBody

@@ -25,8 +25,7 @@ class DefaultValues {
         private const val DESCRIPTION = "Test Description"
         private const val COUNTRY = "Bulgaria"
         private const val CITY = "Sofia"
-        private const val NEIGHBORHOOD = "Krasno selo"
-        private val LOCATION = Address(COUNTRY, CITY, NEIGHBORHOOD)
+        private val LOCATION = Address(COUNTRY, CITY)
         private val DATE_TIME = LocalDateTime.now()
         private const val CREATOR_ID = 1L
         private val PAYMENT_TYPE = PaymentType.BY_HOUR

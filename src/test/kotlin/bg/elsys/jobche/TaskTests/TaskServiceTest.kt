@@ -45,8 +45,8 @@ class TaskServiceTest {
         every { userRepository.findByEmail(user.email) } returns user
         every { repository.save(any<Task>()) } returns task
 
-        val response = taskService.create(taskBody)
-        assertThat(response).isEqualTo(taskResponse)
+        val result = taskService.create(taskBody)
+        assertThat(result).isEqualTo(task)
     }
 
     @Nested
@@ -55,18 +55,18 @@ class TaskServiceTest {
         fun `read one task`() {
             every { repository.existsById(anyLong()) } returns true
             every { repository.findById(anyLong()) } returns Optional.of(task)
-            val response = taskService.read(anyLong())
-            assertThat(response).isEqualTo(taskResponse)
+            val result = taskService.read(anyLong())
+            assertThat(result).isEqualTo(task)
         }
 
         @Test
-        fun `read tasks paginated`() {
+        fun `read tasks paginated without filter`() {
             val tasks = listOf(task, task)
 
             every { repository.findAll(any<Pageable>()) } returns PageImpl<Task>(tasks)
-            val response = taskService.readPaginated(1, 1)
+            val result = taskService.readPaginated(1, 1, null)
 
-            assertThat(response).isEqualTo(tasks)
+            assertThat(result).isEqualTo(tasks)
         }
 
         @Test
@@ -77,9 +77,9 @@ class TaskServiceTest {
             every { userRepository.findByEmail(anyString()) } returns user
             every { repository.findAllByCreatorId(any<Pageable>(), user.id) } returns PageImpl<Task>(tasks)
 
-            val response = taskService.readMePaginated(1, 1)
+            val result = taskService.readMePaginated(1, 1)
 
-            assertThat(response).isEqualTo(tasks)
+            assertThat(result).isEqualTo(tasks)
         }
     }
 

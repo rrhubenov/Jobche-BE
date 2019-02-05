@@ -46,7 +46,7 @@ class ApplicationIntegrationTests {
         const val TASK_NUMBER_OF_WORKERS = 1
         const val TASK_DESCRIPTION = "Test Description"
         val TASK_TIME_OF_WORK = LocalDateTime.now()
-        val TASK_LOCATION = Address("Bulgaria", "Sofia", "Krasno Selo")
+        val TASK_LOCATION = Address("Bulgaria", "Sofia")
         //Application constants
         const val BASE_APPLICATION_URL = "/application"
         const val CREATE_APPLICATION_URL = BASE_APPLICATION_URL

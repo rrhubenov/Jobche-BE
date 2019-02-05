@@ -55,7 +55,6 @@ ext {
     oauthVersion = "2.3.4.RELEASE"
 }
 
-
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-actuator')
     implementation('org.springframework.boot:spring-boot-starter-web')

@@ -2,11 +2,6 @@ package bg.elsys.jobche.TaskTests
 
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.controller.TaskController
-import bg.elsys.jobche.entity.body.task.Address
-import bg.elsys.jobche.entity.body.task.TaskBody
-import bg.elsys.jobche.entity.model.task.Task
-import bg.elsys.jobche.entity.response.task.TaskPaginatedResponse
-import bg.elsys.jobche.entity.response.task.TaskResponse
 import bg.elsys.jobche.service.ApplicationService
 import bg.elsys.jobche.service.TaskService
 import io.mockk.every
@@ -18,7 +13,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.*
 import org.springframework.http.HttpStatus
-import java.time.LocalDateTime
 
 @ExtendWith(MockKExtension::class)
 class TaskControllerTest {
@@ -42,7 +36,7 @@ class TaskControllerTest {
 
     @Test
     fun `create task`() {
-        every { taskService.create(taskBody) } returns taskResponse
+        every { taskService.create(taskBody) } returns task
 
         val result = controller.create(taskBody)
 
@@ -54,7 +48,7 @@ class TaskControllerTest {
     inner class read {
         @Test
         fun `read one task`() {
-            every { taskService.read(anyLong()) } returns taskResponse
+            every { taskService.read(anyLong()) } returns task
 
             val result = controller.read(anyLong())
 
@@ -62,7 +56,7 @@ class TaskControllerTest {
         }
 
         @Test
-        fun `read multiple tasks paginated`() {
+        fun `read multiple tasks paginated without filtering`() {
             every { taskService.readPaginated(anyInt(), anyInt()) } returns tasks
 
             val result = controller.readPaginated(anyInt(), anyInt())

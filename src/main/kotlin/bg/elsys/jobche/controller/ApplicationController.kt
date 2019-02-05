@@ -1,5 +1,6 @@
 package bg.elsys.jobche.controller
 
+import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.application.ApplicationBody
 import bg.elsys.jobche.entity.response.application.ApplicationResponse
 import bg.elsys.jobche.service.ApplicationService
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*
 @Api(value = "Application operations", description = "Operations for creating and approving user applications for tasks")
 @RestController
 @RequestMapping("/application")
-class ApplicationController(val service: ApplicationService) {
+class ApplicationController(val service: ApplicationService, val converters: Converters = Converters()) {
 
     @PostMapping
     @ApiOperation(value = "Create application",
@@ -22,9 +23,10 @@ class ApplicationController(val service: ApplicationService) {
     fun create(@RequestBody applicationBody: ApplicationBody): ResponseEntity<ApplicationResponse> {
         val application = service.create(applicationBody)
 
-        val applicationResponse = ApplicationResponse(application.id, application.user.id, application.task.id, application.accepted)
-
-        return ResponseEntity(applicationResponse, HttpStatus.CREATED)
+        with(converters) {
+            val applicationResponse = ApplicationResponse(application.id, application.user.response, application.task.response, application.accepted)
+            return ResponseEntity(applicationResponse, HttpStatus.CREATED)
+        }
     }
 
     @DeleteMapping("/{id}")

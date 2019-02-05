@@ -1,7 +1,7 @@
 package bg.elsys.jobche.service
 
 import bg.elsys.jobche.config.security.AuthenticationDetails
-import bg.elsys.jobche.entity.body.user.DateOfBirth
+import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.user.UserLoginBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.model.User
@@ -15,12 +15,15 @@ import org.springframework.stereotype.Service
 @Service
 class UserService(val userRepository: UserRepository,
                   val passwordEncoder: PasswordEncoder,
-                  val authenticationDetails: AuthenticationDetails) {
+                  val authenticationDetails: AuthenticationDetails,
+                  val converters: Converters = Converters()) {
 
     fun login(userLogin: UserLoginBody): UserResponse {
         if (userRepository.existsByEmail(userLogin.email)) {
             val user = userRepository.findByEmail(userLogin.email)
-            return UserResponse(user?.id, user?.firstName, user?.lastName, toDateOfBirth(user!!.dateOfBirth))
+            with(converters) {
+                return user!!.response
+            }
         } else throw UserNotFoundException()
     }
 
@@ -38,7 +41,9 @@ class UserService(val userRepository: UserRepository,
                 dateOfBirth.toString())
 
         val savedUser = userRepository.save(userDTO)
-        return UserResponse(savedUser.id, savedUser.firstName, savedUser.lastName, toDateOfBirth(savedUser.dateOfBirth))
+        with(converters) {
+            return savedUser.response
+        }
     }
 
     fun delete() {
@@ -57,13 +62,10 @@ class UserService(val userRepository: UserRepository,
     fun read(id: Long): UserResponse {
         if (userRepository.existsById(id)) {
             val user = userRepository.findById(id).get()
-            return UserResponse(user.id, user.firstName, user.lastName, toDateOfBirth(user.dateOfBirth))
+            with(converters) {
+                return user.response
+            }
         } else throw UserNotFoundException()
-    }
-
-    fun toDateOfBirth(date: String): DateOfBirth {
-        val values = date.split("-")
-        return DateOfBirth(values.get(0).toInt(), values.get(1).toInt(), values.get(2).toInt())
     }
 
 }

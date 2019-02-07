@@ -8,14 +8,10 @@ import bg.elsys.jobche.exception.ResourceForbiddenException
 import bg.elsys.jobche.exception.ResourceNotFoundException
 import bg.elsys.jobche.exception.TaskNotFoundException
 import bg.elsys.jobche.exception.UserNotFoundException
+import bg.elsys.jobche.exceptions.NoContentException
 import bg.elsys.jobche.repository.ApplicationRepository
 import bg.elsys.jobche.repository.TaskRepository
 import bg.elsys.jobche.repository.UserRepository
-import bg.elsys.jobche.entity.model.Task
-import bg.elsys.jobche.exceptions.*
-import bg.elsys.jobche.repositories.ApplicationRepository
-import bg.elsys.jobche.repositories.TaskRepository
-import bg.elsys.jobche.repositories.UserRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -67,7 +63,7 @@ class ApplicationService(val appRepository: ApplicationRepository,
         if (task.creatorId == user?.id) {
             val result = appRepository.findAll(createPageRequest(page, size)).content
 
-            if(result.isEmpty()) {
+            if (result.isEmpty()) {
                 throw NoContentException()
             } else return result
 
@@ -79,7 +75,7 @@ class ApplicationService(val appRepository: ApplicationRepository,
 
         val result = appRepository.findAllByUser(createPageRequest(page, size), user).content
 
-        if(result.isEmpty()) {
+        if (result.isEmpty()) {
             throw NoContentException()
         } else return result
     }

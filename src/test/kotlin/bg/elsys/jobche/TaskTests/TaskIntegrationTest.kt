@@ -5,7 +5,6 @@ import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
-import bg.elsys.jobche.entity.model.task.PaymentType
 import bg.elsys.jobche.entity.response.task.TaskPaginatedResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
 import bg.elsys.jobche.entity.response.user.UserResponse
@@ -53,7 +52,6 @@ class TaskIntegrationTest {
         val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         val TASK_TIME_OF_WORK = LocalDateTime.now()
         val TASK_LOCATION = Address("Bulgaria", "Sofia")
-        val TASK_PAYMENT_TYPE = PaymentType.BY_HOUR
         val taskBody = DefaultValues.taskBody
         val registerUserBody = DefaultValues.userRegisterBody
         val EMAIL = registerUserBody.email
@@ -158,8 +156,7 @@ class TaskIntegrationTest {
                     TASK_NUMBER_OF_WORKERS + 1,
                     TASK_DESCRIPTION,
                     TASK_TIME_OF_WORK,
-                    TASK_LOCATION,
-                    TASK_PAYMENT_TYPE
+                    TASK_LOCATION
             )
 
             val createTaskResponse = createTask()
@@ -200,8 +197,7 @@ class TaskIntegrationTest {
                     TASK_NUMBER_OF_WORKERS + 1,
                     TASK_DESCRIPTION,
                     TASK_TIME_OF_WORK,
-                    TASK_LOCATION,
-                    TASK_PAYMENT_TYPE
+                    TASK_LOCATION
             )
 
             //Create the task

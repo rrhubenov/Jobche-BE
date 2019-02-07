@@ -1,8 +1,8 @@
 package bg.elsys.jobche.controller
 
 import bg.elsys.jobche.converter.Converters
+import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
-import bg.elsys.jobche.entity.model.task.PaymentType
 import bg.elsys.jobche.entity.response.application.ApplicationPaginatedResponse
 import bg.elsys.jobche.entity.response.application.ApplicationResponse
 import bg.elsys.jobche.entity.response.task.TaskPaginatedResponse
@@ -35,8 +35,7 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
                 task.numberOfWorkers,
                 task.dateTime,
                 task.location,
-                task.creatorId,
-                task.paymentType
+                task.creatorId
         )
 
         return ResponseEntity(taskResponse, HttpStatus.CREATED)
@@ -56,8 +55,7 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
                 task.numberOfWorkers,
                 task.dateTime,
                 task.location,
-                task.creatorId,
-                task.paymentType)
+                task.creatorId)
 
         return ResponseEntity(taskResponse, HttpStatus.OK)
 
@@ -92,13 +90,12 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
                       @RequestParam("pStart", required = false) paymentStart: Int? = null,
                       @RequestParam("numWStart", required = false) numWStart: Int? = null,
                       @RequestParam("dateStart", required = false) dateStart: LocalDateTime? = null,
-                      @RequestParam("location", required = false) location: Address? = null,
-                      @RequestParam("pType", required = false) pType: PaymentType? = null): ResponseEntity<TaskPaginatedResponse> {
+                      @RequestParam("location", required = false) location: Address? = null): ResponseEntity<TaskPaginatedResponse> {
 
-        val tasks = taskService.readPaginated(page, size, title, paymentStart, numWStart, dateStart, location, pType)
+        val tasks = taskService.readPaginated(page, size, title, paymentStart, numWStart, dateStart, location)
 
         val taskResponses = tasks.map {
-            TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId, it.paymentType)
+            TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId)
         }.toMutableList()
 
         return ResponseEntity(TaskPaginatedResponse(taskResponses), HttpStatus.OK)
@@ -131,7 +128,7 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
         val tasks = taskService.readMePaginated(page, size)
 
         val taskResponses = tasks.map {
-            TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId, it.paymentType)
+            TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId)
         }.toMutableList()
 
         return ResponseEntity(TaskPaginatedResponse(taskResponses), HttpStatus.OK)

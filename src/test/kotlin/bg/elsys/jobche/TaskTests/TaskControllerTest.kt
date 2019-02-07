@@ -5,7 +5,6 @@ import bg.elsys.jobche.controller.TaskController
 import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
-import bg.elsys.jobche.entity.model.Task
 import bg.elsys.jobche.entity.response.task.TaskPaginatedResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
 import bg.elsys.jobche.service.ApplicationService

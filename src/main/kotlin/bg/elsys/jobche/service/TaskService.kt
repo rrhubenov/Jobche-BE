@@ -3,7 +3,6 @@ package bg.elsys.jobche.service
 import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
-import bg.elsys.jobche.entity.model.task.PaymentType
 import bg.elsys.jobche.entity.model.task.Task
 import bg.elsys.jobche.exception.TaskModificationForbiddenException
 import bg.elsys.jobche.exception.TaskNotFoundException
@@ -28,8 +27,7 @@ class TaskService(val taskRepository: TaskRepository,
                 taskBody.numberOfWorkers,
                 taskBody.dateTime,
                 user!!.id,
-                taskBody.location,
-                taskBody.paymentType
+                taskBody.location
         ))
     }
 
@@ -76,8 +74,7 @@ class TaskService(val taskRepository: TaskRepository,
                       paymentStart: Int? = null,
                       numWStart: Int? = null,
                       dateStart: LocalDateTime? = null,
-                      location: Address? = null,
-                      pType: PaymentType? = null): List<Task> {
+                      location: Address? = null): List<Task> {
 
         return taskRepository.findAll(createPageRequest(page, size)).content
     }

@@ -16,5 +16,4 @@ data class Task(var title: String,
                 var dateTime: LocalDateTime,
                 var creatorId: Long,
                 @Embedded
-                val location: Address,
-                val paymentType: PaymentType) : BaseEntity()
+                val location: Address) : BaseEntity()

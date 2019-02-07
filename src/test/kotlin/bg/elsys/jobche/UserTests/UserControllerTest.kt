@@ -2,6 +2,7 @@ package bg.elsys.jobche.UserTests
 
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.controller.UserController
+import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserLoginBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody

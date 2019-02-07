@@ -2,6 +2,7 @@ package bg.elsys.jobche.UserTests
 
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.config.security.AuthenticationDetails
+import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.model.User
 import bg.elsys.jobche.repository.UserRepository
@@ -107,6 +108,6 @@ class UserServiceTest {
     fun `test dateOfBirth string to DateOfBirth`() {
         val dateOfBirthString = "1-1-2000"
 
-        assertThat(userService.toDateOfBirth(dateOfBirthString)).isEqualTo(DATE_OF_BIRTH)
+        assertThat(Converters().toDateOfBirth(dateOfBirthString)).isEqualTo(DATE_OF_BIRTH)
     }
 }

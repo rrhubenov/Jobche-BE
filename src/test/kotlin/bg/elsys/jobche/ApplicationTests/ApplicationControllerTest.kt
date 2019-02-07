@@ -29,6 +29,8 @@ class ApplicationControllerTest {
 
     init {
         controller = ApplicationController(service)
+        applicationResponse = DefaultValues.applicationResponse
+        applicationBody = ApplicationBody(task.id)
     }
 
     @Test

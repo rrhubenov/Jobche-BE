@@ -1,6 +1,6 @@
 package bg.elsys.jobche.controller
 
-import bg.elsys.jobche.entity.body.task.Address
+import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.model.task.PaymentType
 import bg.elsys.jobche.entity.response.application.ApplicationPaginatedResponse
@@ -18,7 +18,7 @@ import java.time.LocalDateTime
 @Api(value = "Task Operations", description = "All operations for tasks")
 @RestController
 @RequestMapping("/tasks")
-class TaskController(val taskService: TaskService, val applicationService: ApplicationService) {
+class TaskController(val taskService: TaskService, val applicationService: ApplicationService, val converters: Converters = Converters()) {
 
     @PostMapping
     @ApiOperation(value = "Create task",
@@ -113,8 +113,10 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
         val applicationList = applicationService.getApplicationsForTask(taskId, page, size)
         val applicationResponseList = mutableListOf<ApplicationResponse>()
 
-        for (app in applicationList) {
-            applicationResponseList.add(ApplicationResponse(app.id, app.user.id, app.task.id, app.accepted))
+        with(converters) {
+            for (app in applicationList) {
+                applicationResponseList.add(ApplicationResponse(app.id, app.user.response, app.task.response, app.accepted))
+            }
         }
 
         return ResponseEntity(ApplicationPaginatedResponse(applicationResponseList), HttpStatus.OK)

@@ -1,5 +1,6 @@
 package bg.elsys.jobche
 
+import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.application.ApplicationBody
 import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
@@ -28,10 +29,9 @@ class DefaultValues {
         private val LOCATION = Address(COUNTRY, CITY)
         private val DATE_TIME = LocalDateTime.now()
         private const val CREATOR_ID = 1L
-        private val PAYMENT_TYPE = PaymentType.BY_HOUR
-        val task = Task(TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, CREATOR_ID, LOCATION, PAYMENT_TYPE)
-        val taskBody = TaskBody(TITLE, PAYMENT, NUMBER_OF_WORKERS, DESCRIPTION, DATE_TIME, LOCATION, PAYMENT_TYPE)
-        val taskResponse = TaskResponse(task.id, TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, LOCATION, CREATOR_ID, PAYMENT_TYPE)
+        val task = Task(TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, CREATOR_ID, LOCATION)
+        val taskBody = TaskBody(TITLE, PAYMENT, NUMBER_OF_WORKERS, DESCRIPTION, DATE_TIME, LOCATION)
+        val taskResponse = TaskResponse(task.id, TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, LOCATION, CREATOR_ID)
         val taskPaginatedResponse = TaskPaginatedResponse(listOf(taskResponse, taskResponse))
 
         //User
@@ -48,7 +48,7 @@ class DefaultValues {
         //Application
         private const val ACCEPTED = false
         val application = Application(user, task, ACCEPTED)
-        val applicationResponse = ApplicationResponse(application.id, application.user.id, application.task.id, application.accepted)
+        val applicationResponse = ApplicationResponse(application.id, userResponse, taskResponse, application.accepted)
         val applicationBody = ApplicationBody(task.id)
     }
 }

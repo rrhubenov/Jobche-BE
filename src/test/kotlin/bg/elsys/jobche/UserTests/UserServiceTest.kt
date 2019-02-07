@@ -4,7 +4,9 @@ import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.user.DateOfBirth
+import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.model.User
+import bg.elsys.jobche.entity.response.user.UserResponse
 import bg.elsys.jobche.repository.UserRepository
 import bg.elsys.jobche.service.UserService
 import io.mockk.every
@@ -29,10 +31,9 @@ class UserServiceTest {
         const val EMAIL = "rrhubenov@gmail.com"
         const val PASSWORD = "password"
         val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
-        private val user = DefaultValues.user
+        private val user = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH.toString())
         private val userRegister = DefaultValues.userRegisterBody
         private val userLogin = DefaultValues.userLoginBody
-        private val userResponse = DefaultValues.userResponse
     }
 
     private val repository: UserRepository = mockk()
@@ -51,8 +52,8 @@ class UserServiceTest {
         every { repository.findByEmail(EMAIL) } returns user
 
         val result = userService.login(userLogin)
-
-        assertThat(result).isEqualTo(userResponse)
+        val expectedResult = UserResponse(user.id, "Radoslav", "Hubenov", DATE_OF_BIRTH)
+        assertThat(result).isEqualTo(expectedResult)
     }
 
     @Test
@@ -60,9 +61,10 @@ class UserServiceTest {
         every { repository.existsByEmail(userRegister.email) } returns false
         every { repository.save(any<User>()) } returns user
 
-        val response = userService.create(userRegister)
+        val userResponse = userService.create(userRegister)
 
-        assertThat(response).isEqualTo(userResponse)
+        assertThat(userResponse).isEqualTo(UserResponse(user.id, userRegister.firstName,
+                userRegister.lastName, DATE_OF_BIRTH))
     }
 
     @Test
@@ -83,7 +85,7 @@ class UserServiceTest {
         every { repository.getOneByEmail(anyString()) } returns user
         every { repository.save(user) } returns user
 
-        userService.update(userRegister)
+        userService.update(UserRegisterBody(user.firstName, user.lastName, user.email, user.password, DATE_OF_BIRTH))
 
         verify {
             repository.getOneByEmail(anyString())

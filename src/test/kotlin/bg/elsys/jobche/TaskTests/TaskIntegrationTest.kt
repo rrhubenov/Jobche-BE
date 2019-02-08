@@ -149,7 +149,7 @@ class TaskIntegrationTest {
         @Test
         fun `read multiple tasks with user authenticated filtering by title should return 200 and the filtered tasks`() {
             //Create one task
-            val taskResponse1 = createTask()
+             createTask()
 
             //Expected Result
             val taskResponse2 = restTemplate
@@ -166,7 +166,8 @@ class TaskIntegrationTest {
                     .withBasicAuth(EMAIL, PASSWORD)
                     .getForEntity(GET_PAGINATED + "&title=Filter", TaskPaginatedResponse::class.java)
 
-            assertThat(getResponse.body).isEqualTo(listOf(taskResponse2))
+            assertThat(getResponse.statusCode).isEqualTo(HttpStatus.OK)
+            assertThat(getResponse.body?.tasks).isEqualTo(listOf(taskResponse2.body))
         }
     }
 

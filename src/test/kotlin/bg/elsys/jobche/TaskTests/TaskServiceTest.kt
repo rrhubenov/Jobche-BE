@@ -63,7 +63,7 @@ class TaskServiceTest {
         fun `read tasks paginated without filter`() {
             val tasks = listOf(task, task)
 
-            every { repository.findAll(any<Pageable>()) } returns PageImpl<Task>(tasks)
+            every { repository.findAll(any<Pageable>(), null, null, null, null, null, null, null, null) } returns tasks
             val result = taskService.readPaginated(1, 1, null)
 
             assertThat(result).isEqualTo(tasks)

@@ -86,16 +86,16 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
     @ApiResponses(ApiResponse(code = 200, message = "Success", response = TaskPaginatedResponse::class))
     fun readPaginated(@RequestParam("page") page: Int,
                       @RequestParam("size") size: Int,
-                      @RequestParam("title", required = false) title: String?,
-                      @RequestParam("pStart", required = false) paymentStart: Int?,
-                      @RequestParam("pEnd", required = false) paymentEnd: Int?,
-                      @RequestParam("numWStart", required = false) numWStart: Int?,
-                      @RequestParam("numWEnd", required = false) numWEnd: Int?,
+                      @RequestParam("title", required = false) title: String? = null,
+                      @RequestParam("pStart", required = false) paymentStart: Int? = null,
+                      @RequestParam("pEnd", required = false) paymentEnd: Int? = null,
+                      @RequestParam("numWStart", required = false) numWStart: Int? = null,
+                      @RequestParam("numWEnd", required = false) numWEnd: Int? = null,
                       @RequestParam("dateStart", required = false)
-                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) dateStart: LocalDateTime?,
+                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) dateStart: LocalDateTime? = null,
                       @RequestParam("dateEnd", required = false)
-                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) dateEnd: LocalDateTime?,
-                      @RequestParam("city", required = false) city: String?): ResponseEntity<TaskPaginatedResponse> {
+                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) dateEnd: LocalDateTime? = null,
+                      @RequestParam("city", required = false) city: String? = null): ResponseEntity<TaskPaginatedResponse> {
 
         val tasks = taskService.readPaginated(page, size, title, paymentStart, paymentEnd, numWStart, numWEnd, dateStart, dateEnd, city)
 

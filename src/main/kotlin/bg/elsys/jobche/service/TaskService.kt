@@ -75,8 +75,9 @@ class TaskService(val taskRepository: TaskRepository,
                       numWStart: Int?,
                       numWEnd: Int?,
                       dateStart: LocalDateTime?,
+                      dateEnd: LocalDateTime?,
                       city: String?): List<Task> {
-        return taskRepository.findAll(createPageRequest(page, size), title, paymentStart, paymentEnd, numWStart, numWEnd, dateStart, city)
+        return taskRepository.findAll(createPageRequest(page, size), title, paymentStart, paymentEnd, numWStart, numWEnd, dateStart, dateEnd, city)
     }
 
 

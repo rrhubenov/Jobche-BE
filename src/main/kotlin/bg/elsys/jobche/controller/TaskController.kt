@@ -9,6 +9,7 @@ import bg.elsys.jobche.entity.response.task.TaskResponse
 import bg.elsys.jobche.service.ApplicationService
 import bg.elsys.jobche.service.TaskService
 import io.swagger.annotations.*
+import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -90,10 +91,13 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
                       @RequestParam("pEnd", required = false) paymentEnd: Int?,
                       @RequestParam("numWStart", required = false) numWStart: Int?,
                       @RequestParam("numWEnd", required = false) numWEnd: Int?,
-                      @RequestParam("dateStart", required = false) dateStart: LocalDateTime?,
+                      @RequestParam("dateStart", required = false)
+                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) dateStart: LocalDateTime?,
+                      @RequestParam("dateEnd", required = false)
+                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) dateEnd: LocalDateTime?,
                       @RequestParam("city", required = false) city: String?): ResponseEntity<TaskPaginatedResponse> {
 
-        val tasks = taskService.readPaginated(page, size, title, paymentStart, paymentEnd, numWStart, numWEnd, dateStart, city)
+        val tasks = taskService.readPaginated(page, size, title, paymentStart, paymentEnd, numWStart, numWEnd, dateStart, dateEnd, city)
 
         val taskResponses = tasks.map {
             TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId)

@@ -1,6 +1,7 @@
 package bg.elsys.jobche.repository
 
 import bg.elsys.jobche.entity.model.task.Task
+import org.apache.tomcat.jni.Local
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -22,12 +23,13 @@ interface CustomTaskRepository {
                 numWStart: Int?,
                 numWEnd: Int?,
                 dateStart: LocalDateTime?,
+                dateEnd: LocalDateTime?,
                 city: String?): List<Task>
 }
 
 @Repository
 class CustomTaskRepositoryImpl(val em: EntityManager) : CustomTaskRepository {
-    override fun findAll(pageable: Pageable, title: String?, paymentStart: Int?, paymentEnd: Int?, numWStart: Int?, numWEnd: Int?, dateStart: LocalDateTime?, city: String?): List<Task> {
+    override fun findAll(pageable: Pageable, title: String?, paymentStart: Int?, paymentEnd: Int?, numWStart: Int?, numWEnd: Int?, dateStart: LocalDateTime?, dateEnd: LocalDateTime?, city: String?): List<Task> {
         val cb = em.criteriaBuilder
         val cq = cb.createQuery(Task::class.java)
 
@@ -58,7 +60,15 @@ class CustomTaskRepositoryImpl(val em: EntityManager) : CustomTaskRepository {
             predicates.add(cb.equal(task.get<String>("location").get<String>("city"), city))
         }
 
-            cq.where(*predicates.toTypedArray())
+        if (dateStart != null) {
+            predicates.add(cb.greaterThanOrEqualTo(task.get<LocalDateTime>("dateTime"), dateStart))
+        }
+
+        if (dateEnd != null) {
+            predicates.add(cb.lessThanOrEqualTo(task.get<LocalDateTime>("dateTime"), dateEnd))
+        }
+
+        cq.where(*predicates.toTypedArray())
 
         return em.createQuery(cq).resultList
     }

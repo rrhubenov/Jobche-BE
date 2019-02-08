@@ -1,7 +1,6 @@
 package bg.elsys.jobche.service
 
 import bg.elsys.jobche.config.security.AuthenticationDetails
-import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.model.task.Task
 import bg.elsys.jobche.exception.TaskModificationForbiddenException
@@ -76,8 +75,8 @@ class TaskService(val taskRepository: TaskRepository,
                       numWStart: Int?,
                       numWEnd: Int?,
                       dateStart: LocalDateTime?,
-                      location: Address?): List<Task> {
-        return taskRepository.findAll(createPageRequest(page, size), title, paymentStart, paymentEnd, numWStart, numWEnd, dateStart, location)
+                      city: String?): List<Task> {
+        return taskRepository.findAll(createPageRequest(page, size), title, paymentStart, paymentEnd, numWStart, numWEnd, dateStart, city)
     }
 
 

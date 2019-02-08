@@ -1,6 +1,5 @@
 package bg.elsys.jobche.repository
 
-import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.model.task.Task
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -23,12 +22,12 @@ interface CustomTaskRepository {
                 numWStart: Int?,
                 numWEnd: Int?,
                 dateStart: LocalDateTime?,
-                location: Address?): List<Task>
+                city: String?): List<Task>
 }
 
 @Repository
 class CustomTaskRepositoryImpl(val em: EntityManager) : CustomTaskRepository {
-    override fun findAll(pageable: Pageable, title: String?, paymentStart: Int?, paymentEnd: Int?, numWStart: Int?, numWEnd: Int?, dateStart: LocalDateTime?, location: Address?): List<Task> {
+    override fun findAll(pageable: Pageable, title: String?, paymentStart: Int?, paymentEnd: Int?, numWStart: Int?, numWEnd: Int?, dateStart: LocalDateTime?, city: String?): List<Task> {
         val cb = em.criteriaBuilder
         val cq = cb.createQuery(Task::class.java)
 
@@ -55,8 +54,8 @@ class CustomTaskRepositoryImpl(val em: EntityManager) : CustomTaskRepository {
             predicates.add(cb.lessThanOrEqualTo(task.get("numberOfWorkers"), numWEnd))
         }
 
-        if (location != null) {
-            predicates.add(cb.equal(task.get<String>("city"), location.city))
+        if (city != null) {
+            predicates.add(cb.equal(task.get<String>("location").get<String>("city"), city))
         }
 
             cq.where(*predicates.toTypedArray())

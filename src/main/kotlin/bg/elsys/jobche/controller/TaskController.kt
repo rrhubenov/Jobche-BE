@@ -1,7 +1,6 @@
 package bg.elsys.jobche.controller
 
 import bg.elsys.jobche.converter.Converters
-import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.response.application.ApplicationPaginatedResponse
 import bg.elsys.jobche.entity.response.application.ApplicationResponse
@@ -92,9 +91,9 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
                       @RequestParam("numWStart", required = false) numWStart: Int?,
                       @RequestParam("numWEnd", required = false) numWEnd: Int?,
                       @RequestParam("dateStart", required = false) dateStart: LocalDateTime?,
-                      @RequestParam("location", required = false) location: Address?): ResponseEntity<TaskPaginatedResponse> {
+                      @RequestParam("city", required = false) city: String?): ResponseEntity<TaskPaginatedResponse> {
 
-        val tasks = taskService.readPaginated(page, size, title, paymentStart, paymentEnd, numWStart, numWEnd, dateStart, location)
+        val tasks = taskService.readPaginated(page, size, title, paymentStart, paymentEnd, numWStart, numWEnd, dateStart, city)
 
         val taskResponses = tasks.map {
             TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId)

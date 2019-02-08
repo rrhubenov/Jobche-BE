@@ -145,6 +145,29 @@ class TaskIntegrationTest {
 
             deleteTask(taskResponse.body?.id)
         }
+
+        @Test
+        fun `read multiple tasks with user authenticated filtering by title should return 200 and the filtered tasks`() {
+            //Create one task
+            val taskResponse1 = createTask()
+
+            //Expected Result
+            val taskResponse2 = restTemplate
+                    .withBasicAuth(EMAIL, PASSWORD)
+                    .postForEntity(CREATE_URL, TaskBody("Filter",
+                            10,
+                            3,
+                            "SomeDesc",
+                            LocalDateTime.now(),
+                            Address("Bulgaria", "Sofia") )
+                            , TaskResponse::class.java)
+
+            val getResponse = restTemplate
+                    .withBasicAuth(EMAIL, PASSWORD)
+                    .getForEntity(GET_PAGINATED + "&title=Filter", TaskPaginatedResponse::class.java)
+
+            assertThat(getResponse.body).isEqualTo(listOf(taskResponse2))
+        }
     }
 
     @Nested

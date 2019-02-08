@@ -70,13 +70,14 @@ class TaskService(val taskRepository: TaskRepository,
     }
 
     fun readPaginated(page: Int, size: Int,
-                      title: String? = null,
-                      paymentStart: Int? = null,
-                      numWStart: Int? = null,
-                      dateStart: LocalDateTime? = null,
-                      location: Address? = null): List<Task> {
-
-        return taskRepository.findAll(createPageRequest(page, size)).content
+                      title: String?,
+                      paymentStart: Int?,
+                      paymentEnd: Int?,
+                      numWStart: Int?,
+                      numWEnd: Int?,
+                      dateStart: LocalDateTime?,
+                      location: Address?): List<Task> {
+        return taskRepository.findAll(createPageRequest(page, size), title, paymentStart, paymentEnd, numWStart, numWEnd, dateStart, location)
     }
 
 

@@ -86,13 +86,15 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
     @ApiResponses(ApiResponse(code = 200, message = "Success", response = TaskPaginatedResponse::class))
     fun readPaginated(@RequestParam("page") page: Int,
                       @RequestParam("size") size: Int,
-                      @RequestParam("title", required = false) title: String? = null,
-                      @RequestParam("pStart", required = false) paymentStart: Int? = null,
-                      @RequestParam("numWStart", required = false) numWStart: Int? = null,
-                      @RequestParam("dateStart", required = false) dateStart: LocalDateTime? = null,
-                      @RequestParam("location", required = false) location: Address? = null): ResponseEntity<TaskPaginatedResponse> {
+                      @RequestParam("title", required = false) title: String?,
+                      @RequestParam("pStart", required = false) paymentStart: Int?,
+                      @RequestParam("pEnd", required = false) paymentEnd: Int?,
+                      @RequestParam("numWStart", required = false) numWStart: Int?,
+                      @RequestParam("numWEnd", required = false) numWEnd: Int?,
+                      @RequestParam("dateStart", required = false) dateStart: LocalDateTime?,
+                      @RequestParam("location", required = false) location: Address?): ResponseEntity<TaskPaginatedResponse> {
 
-        val tasks = taskService.readPaginated(page, size, title, paymentStart, numWStart, dateStart, location)
+        val tasks = taskService.readPaginated(page, size, title, paymentStart, paymentEnd, numWStart, numWEnd, dateStart, location)
 
         val taskResponses = tasks.map {
             TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId)

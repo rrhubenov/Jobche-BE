@@ -1,5 +1,6 @@
 package bg.elsys.jobche.UserTests
 
+import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserLoginBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
@@ -32,10 +33,12 @@ class UserIntegrationTest {
         const val UPDATE_URL = BASE_URL
         const val FIRST_NAME = "Radoslav"
         const val LAST_NAME = "Hubenov"
-        const val EMAIL = "rrhubenov@gmail.com"
-        const val PASSWORD = "testing1"
         val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
+        private val registerUserBody = DefaultValues.userRegisterBody
+        private val loginUserBody = DefaultValues.userLoginBody
         lateinit var registerResponse: ResponseEntity<UserResponse>
+        val EMAIL = registerUserBody.email
+        val PASSWORD = registerUserBody.password
     }
 
     @Autowired
@@ -43,7 +46,6 @@ class UserIntegrationTest {
 
     @BeforeEach
     fun registerUser() {
-        val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
         registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
     }
 
@@ -58,8 +60,6 @@ class UserIntegrationTest {
     inner class login {
         @Test
         fun `login should return 200`() {
-            val loginUserBody = UserLoginBody(EMAIL, PASSWORD)
-
             val loginResponse = restTemplate.postForEntity(LOGIN_URL, loginUserBody, UserResponse::class.java)
 
             assertThat(loginResponse.statusCode).isEqualTo(HttpStatus.OK)
@@ -71,11 +71,6 @@ class UserIntegrationTest {
     inner class create {
         @Test
         fun `create should return 201`() {
-            val registerUserBody = UserRegisterBody("Random", "Random", "Random@Random.com", "Random", DATE_OF_BIRTH)
-            val registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
-
-            restTemplate.withBasicAuth("Random@Random.com", "Random").delete(REMOVE_URL)
-
             assertThat(registerResponse.statusCode).isEqualTo(HttpStatus.CREATED)
         }
     }
@@ -86,7 +81,6 @@ class UserIntegrationTest {
         @Test
         fun `user removing himself should return 200 and delete resource`() {
             //Delete user and check if it exists
-
             val deleteResponse = restTemplate
                     .withBasicAuth(EMAIL, PASSWORD)
                     .exchange(REMOVE_URL,
@@ -95,8 +89,6 @@ class UserIntegrationTest {
                             Unit::class.java)
 
             assertThat(deleteResponse.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
-
-            val loginUserBody = UserLoginBody(EMAIL, PASSWORD)
 
             val loginResponse = restTemplate.postForEntity(LOGIN_URL, loginUserBody, UserResponse::class.java)
 

@@ -2,11 +2,10 @@ package bg.elsys.jobche.ApplicationTests
 
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.config.security.AuthenticationDetails
-import bg.elsys.jobche.entity.body.application.ApplicationBody
 import bg.elsys.jobche.entity.model.Application
-import bg.elsys.jobche.repositories.ApplicationRepository
-import bg.elsys.jobche.repositories.TaskRepository
-import bg.elsys.jobche.repositories.UserRepository
+import bg.elsys.jobche.repository.ApplicationRepository
+import bg.elsys.jobche.repository.TaskRepository
+import bg.elsys.jobche.repository.UserRepository
 import bg.elsys.jobche.service.ApplicationService
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
@@ -27,8 +26,9 @@ class ApplicationServiceTest {
     companion object {
         val user = DefaultValues.user
         val task = DefaultValues.task
-        val applicationBody = ApplicationBody(task.id)
-        val application = Application(user, task)
+        val applicationBody = DefaultValues.applicationBody
+        val application = DefaultValues.application
+        val applications = listOf(application, application)
     }
 
     val appRepository: ApplicationRepository = mockk()
@@ -112,8 +112,6 @@ class ApplicationServiceTest {
     inner class read {
         @Test
         fun `get applications for task`() {
-            val applications = listOf(application, application)
-
             every { authenticationDetails.getEmail() } returns anyString()
             every { userRepository.findByEmail(anyString()) } returns user
             every { taskRepository.existsById(task.id) } returns true
@@ -135,8 +133,6 @@ class ApplicationServiceTest {
 
         @Test
         fun `get applications from user`() {
-            val applications = listOf(application, application)
-
             every { authenticationDetails.getEmail() } returns anyString()
             every { userRepository.findByEmail(anyString()) } returns user
             every { appRepository.findAllByUser(any<Pageable>(), user) } returns PageImpl<Application>(applications)

@@ -1,5 +1,6 @@
 package bg.elsys.jobche.TaskTests
 
+import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.body.user.DateOfBirth
@@ -32,8 +33,6 @@ class TaskIntegrationTest {
     companion object {
         const val FIRST_NAME = "Random"
         const val LAST_NAME = "Random"
-        const val EMAIL = "random@random.com"
-        const val PASSWORD = "random"
 
         const val REGISTER_URL = "/users"
 
@@ -52,8 +51,11 @@ class TaskIntegrationTest {
         const val TASK_DESCRIPTION = "Test Description"
         val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         val TASK_TIME_OF_WORK = LocalDateTime.now()
-        val TASK_LOCATION = Address("Bulgaria", "Sofia", "Krasno Selo")
-        val taskBody = TaskBody(TASK_TITLE, TASK_PAYMENT, TASK_NUMBER_OF_WORKERS, TASK_DESCRIPTION, TASK_TIME_OF_WORK, TASK_LOCATION)
+        val TASK_LOCATION = Address("Bulgaria", "Sofia")
+        val taskBody = DefaultValues.taskBody
+        val registerUserBody = DefaultValues.userRegisterBody
+        val EMAIL = registerUserBody.email
+        val PASSWORD = registerUserBody.password
     }
 
     @Autowired
@@ -64,7 +66,6 @@ class TaskIntegrationTest {
 
     @BeforeEach
     fun registerUser() {
-        val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
         registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
     }
 
@@ -144,6 +145,30 @@ class TaskIntegrationTest {
 
             deleteTask(taskResponse.body?.id)
         }
+
+        @Test
+        fun `read multiple tasks with user authenticated filtering by title should return 200 and the filtered tasks`() {
+            //Create one task
+             createTask()
+
+            //Expected Result
+            val taskResponse2 = restTemplate
+                    .withBasicAuth(EMAIL, PASSWORD)
+                    .postForEntity(CREATE_URL, TaskBody("Filter",
+                            10,
+                            3,
+                            "SomeDesc",
+                            LocalDateTime.now(),
+                            Address("Bulgaria", "Sofia") )
+                            , TaskResponse::class.java)
+
+            val getResponse = restTemplate
+                    .withBasicAuth(EMAIL, PASSWORD)
+                    .getForEntity(GET_PAGINATED + "&title=Filter", TaskPaginatedResponse::class.java)
+
+            assertThat(getResponse.statusCode).isEqualTo(HttpStatus.OK)
+            assertThat(getResponse.body?.tasks).isEqualTo(listOf(taskResponse2.body))
+        }
     }
 
     @Nested
@@ -155,7 +180,8 @@ class TaskIntegrationTest {
                     TASK_NUMBER_OF_WORKERS + 1,
                     TASK_DESCRIPTION,
                     TASK_TIME_OF_WORK,
-                    TASK_LOCATION)
+                    TASK_LOCATION
+            )
 
             val createTaskResponse = createTask()
             //Update the resource(task)
@@ -195,7 +221,8 @@ class TaskIntegrationTest {
                     TASK_NUMBER_OF_WORKERS + 1,
                     TASK_DESCRIPTION,
                     TASK_TIME_OF_WORK,
-                    TASK_LOCATION)
+                    TASK_LOCATION
+            )
 
             //Create the task
             val createTaskResponse = createTask()

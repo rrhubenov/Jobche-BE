@@ -1,6 +1,7 @@
 package bg.elsys.jobche.entity.model
 
 import bg.elsys.jobche.entity.BaseEntity
+import bg.elsys.jobche.entity.model.task.Task
 import javax.persistence.Entity
 import javax.persistence.ManyToOne
 import javax.persistence.Table

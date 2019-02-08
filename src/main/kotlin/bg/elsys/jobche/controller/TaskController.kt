@@ -9,9 +9,11 @@ import bg.elsys.jobche.entity.response.task.TaskResponse
 import bg.elsys.jobche.service.ApplicationService
 import bg.elsys.jobche.service.TaskService
 import io.swagger.annotations.*
+import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDateTime
 
 @Api(value = "Task Operations", description = "All operations for tasks")
 @RestController
@@ -25,7 +27,18 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
             authorizations = arrayOf(Authorization(value = "basicAuth")))
     @ApiResponses(ApiResponse(code = 201, message = "Success", response = TaskResponse::class))
     fun create(@RequestBody taskBody: TaskBody): ResponseEntity<TaskResponse> {
-        return ResponseEntity(taskService.create(taskBody), HttpStatus.CREATED)
+        val task = taskService.create(taskBody)
+        val taskResponse = TaskResponse(task.id,
+                task.title,
+                task.description,
+                task.payment,
+                task.numberOfWorkers,
+                task.dateTime,
+                task.location,
+                task.creatorId
+        )
+
+        return ResponseEntity(taskResponse, HttpStatus.CREATED)
     }
 
     @GetMapping("/{id}")
@@ -34,7 +47,18 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
             authorizations = arrayOf(Authorization(value = "basicAuth")))
     @ApiResponses(ApiResponse(code = 200, message = "Success", response = TaskResponse::class))
     fun read(@PathVariable id: Long): ResponseEntity<TaskResponse> {
-        return ResponseEntity(taskService.read(id), HttpStatus.OK)
+        val task = taskService.read(id)
+        val taskResponse = TaskResponse(task.id,
+                task.title,
+                task.description,
+                task.payment,
+                task.numberOfWorkers,
+                task.dateTime,
+                task.location,
+                task.creatorId)
+
+        return ResponseEntity(taskResponse, HttpStatus.OK)
+
     }
 
     @PutMapping("/{id}")
@@ -60,8 +84,20 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
             httpMethod = "GET",
             authorizations = arrayOf(Authorization(value = "basicAuth")))
     @ApiResponses(ApiResponse(code = 200, message = "Success", response = TaskPaginatedResponse::class))
-    fun readPaginated(@RequestParam("page") page: Int, @RequestParam("size") size: Int): ResponseEntity<TaskPaginatedResponse> {
-        val tasks = taskService.readPaginated(page, size)
+    fun readPaginated(@RequestParam("page") page: Int,
+                      @RequestParam("size") size: Int,
+                      @RequestParam("title", required = false) title: String? = null,
+                      @RequestParam("pStart", required = false) paymentStart: Int? = null,
+                      @RequestParam("pEnd", required = false) paymentEnd: Int? = null,
+                      @RequestParam("numWStart", required = false) numWStart: Int? = null,
+                      @RequestParam("numWEnd", required = false) numWEnd: Int? = null,
+                      @RequestParam("dateStart", required = false)
+                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) dateStart: LocalDateTime? = null,
+                      @RequestParam("dateEnd", required = false)
+                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) dateEnd: LocalDateTime? = null,
+                      @RequestParam("city", required = false) city: String? = null): ResponseEntity<TaskPaginatedResponse> {
+
+        val tasks = taskService.readPaginated(page, size, title, paymentStart, paymentEnd, numWStart, numWEnd, dateStart, dateEnd, city)
 
         val taskResponses = tasks.map {
             TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId)

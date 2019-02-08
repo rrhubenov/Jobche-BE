@@ -8,7 +8,7 @@ import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserLoginBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.model.Application
-import bg.elsys.jobche.entity.model.Task
+import bg.elsys.jobche.entity.model.task.Task
 import bg.elsys.jobche.entity.model.User
 import bg.elsys.jobche.entity.response.application.ApplicationResponse
 import bg.elsys.jobche.entity.response.task.TaskPaginatedResponse

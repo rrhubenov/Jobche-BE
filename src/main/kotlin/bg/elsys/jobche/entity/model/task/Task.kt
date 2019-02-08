@@ -1,4 +1,4 @@
-package bg.elsys.jobche.entity.model
+package bg.elsys.jobche.entity.model.task
 
 import bg.elsys.jobche.entity.BaseEntity
 import bg.elsys.jobche.entity.body.task.Address

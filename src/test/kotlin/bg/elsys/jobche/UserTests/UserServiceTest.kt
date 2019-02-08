@@ -1,13 +1,13 @@
 package bg.elsys.jobche.UserTests
 
+import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.user.DateOfBirth
-import bg.elsys.jobche.entity.body.user.UserLoginBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.model.User
 import bg.elsys.jobche.entity.response.user.UserResponse
-import bg.elsys.jobche.repositories.UserRepository
+import bg.elsys.jobche.repository.UserRepository
 import bg.elsys.jobche.service.UserService
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
@@ -32,8 +32,8 @@ class UserServiceTest {
         const val PASSWORD = "password"
         val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         private val user = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH.toString())
-        private val userRegister = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
-        private val userLogin = UserLoginBody(EMAIL, PASSWORD)
+        private val userRegister = DefaultValues.userRegisterBody
+        private val userLogin = DefaultValues.userLoginBody
     }
 
     private val repository: UserRepository = mockk()

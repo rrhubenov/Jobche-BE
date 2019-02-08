@@ -5,7 +5,6 @@ import bg.elsys.jobche.controller.TaskController
 import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
-import bg.elsys.jobche.entity.model.Task
 import bg.elsys.jobche.entity.response.task.TaskPaginatedResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
 import bg.elsys.jobche.service.ApplicationService
@@ -19,24 +18,16 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.*
 import org.springframework.http.HttpStatus
-import java.time.LocalDateTime
 
 @ExtendWith(MockKExtension::class)
 class TaskControllerTest {
 
     companion object {
-        const val TITLE = "Test Title"
-        const val PAYMENT = 10
-        const val NUMBER_OF_WORKERS = 1
-        const val DESCRIPTION = "Test Description"
-        val LOCATION = Address(anyString(), anyString(), anyString())
-        val DATE_TIME = LocalDateTime.now()
-        const val CREATOR_ID = 1L
-        val task = Task(TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, CREATOR_ID, LOCATION)
+        val task = DefaultValues.task
         val tasks = listOf(task, task)
-        val taskBody = TaskBody(TITLE, PAYMENT, NUMBER_OF_WORKERS, DESCRIPTION, DATE_TIME, LOCATION)
-        val taskResponse = TaskResponse(task.id, TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, LOCATION, CREATOR_ID)
-        val taskPaginatedResponse = TaskPaginatedResponse(listOf(taskResponse, taskResponse))
+        val taskBody = DefaultValues.taskBody
+        val taskResponse = DefaultValues.taskResponse
+        val taskPaginatedResponse = DefaultValues.taskPaginatedResponse
     }
 
     private val taskService: TaskService = mockk()
@@ -50,7 +41,7 @@ class TaskControllerTest {
 
     @Test
     fun `create task`() {
-        every { taskService.create(taskBody) } returns taskResponse
+        every { taskService.create(taskBody) } returns task
 
         val result = controller.create(taskBody)
 
@@ -62,7 +53,7 @@ class TaskControllerTest {
     inner class read {
         @Test
         fun `read one task`() {
-            every { taskService.read(anyLong()) } returns taskResponse
+            every { taskService.read(anyLong()) } returns task
 
             val result = controller.read(anyLong())
 
@@ -70,7 +61,7 @@ class TaskControllerTest {
         }
 
         @Test
-        fun `read multiple tasks paginated`() {
+        fun `read multiple tasks paginated without filtering`() {
             every { taskService.readPaginated(anyInt(), anyInt()) } returns tasks
 
             val result = controller.readPaginated(anyInt(), anyInt())

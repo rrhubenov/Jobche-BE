@@ -19,25 +19,20 @@ import org.springframework.http.HttpStatus
 class ApplicationControllerTest {
 
     companion object {
-        const val ID = 1L
-        val user = DefaultValues.user
-        val task = DefaultValues.task
-    }
+        private val applicationResponse = DefaultValues.applicationResponse
+        private val applicationBody = DefaultValues.applicationBody
+        private val application = DefaultValues.application
 
-    val applicationBody: ApplicationBody
-    val applicationResponse: ApplicationResponse
+    }
     private val controller: ApplicationController
     private val service: ApplicationService = mockk()
-    private val application = Application(user, task)
 
     init {
         controller = ApplicationController(service)
-        applicationResponse = DefaultValues.applicationResponse
-        applicationBody = ApplicationBody(task.id)
     }
 
     @Test
-    fun create() {
+    fun `create should return application response`() {
         every { service.create(applicationBody) } returns application
 
         val result = controller.create(applicationBody)
@@ -47,9 +42,9 @@ class ApplicationControllerTest {
 
     @Test
     fun `delete should return 204`() {
-        every { service.delete(ID) } returns Unit
+        every { service.delete(application.id) } returns Unit
 
-        val result = controller.delete(ID)
+        val result = controller.delete(application.id)
 
         assertThat(result.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
     }

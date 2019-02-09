@@ -2,17 +2,13 @@ package bg.elsys.jobche.UserTests
 
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.controller.UserController
-import bg.elsys.jobche.converter.Converters
-import bg.elsys.jobche.entity.body.user.DateOfBirth
-import bg.elsys.jobche.entity.body.user.UserLoginBody
-import bg.elsys.jobche.entity.body.user.UserRegisterBody
-import bg.elsys.jobche.entity.response.user.UserResponse
 import bg.elsys.jobche.service.ApplicationService
 import bg.elsys.jobche.service.UserService
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyLong
@@ -45,13 +41,17 @@ class UserControllerTest() {
         assertThat(result.body).isEqualTo(userResponse)
     }
 
-    @Test
-    fun `create should return valid user response`() {
-        every { userService.create(userRegisterBody) } returns userResponse
 
-        val result = controller.create(userRegisterBody)
+    @Nested
+    inner class create() {
+        @Test
+        fun `create should return valid user response`() {
+            every { userService.create(userRegisterBody) } returns userResponse
 
-        assertThat(result.body).isEqualTo(userResponse)
+            val result = controller.create(userRegisterBody)
+
+            assertThat(result.body).isEqualTo(userResponse)
+        }
     }
 
     @Test

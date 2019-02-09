@@ -15,7 +15,7 @@ class Converters {
         get() = TaskResponse(id, title, description, payment, numberOfWorkers, dateTime, location, creatorId)
 
     val User.response
-        get() = UserResponse(id, firstName, lastName, toDateOfBirth(dateOfBirth))
+        get() = UserResponse(id, firstName, lastName, toDateOfBirth(dateOfBirth), phoneNum)
 
     val Application.response
         get() = ApplicationResponse(id, user.response, task.response, accepted)

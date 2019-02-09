@@ -8,6 +8,7 @@ import bg.elsys.jobche.entity.model.User
 import bg.elsys.jobche.entity.response.user.UserResponse
 import bg.elsys.jobche.exception.EmailExistsException
 import bg.elsys.jobche.exception.UserNotFoundException
+import bg.elsys.jobche.exceptions.PhoneNumberExistsException
 import bg.elsys.jobche.repository.UserRepository
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -32,13 +33,19 @@ class UserService(val userRepository: UserRepository,
             throw EmailExistsException()
         }
 
+        if (userRepository.existsByPhoneNum(userRegister.phoneNum)) {
+            throw PhoneNumberExistsException()
+        }
+
         val dateOfBirth = userRegister.dateOfBirth
 
         val userDTO = User(userRegister.firstName,
                 userRegister.lastName,
                 userRegister.email,
                 passwordEncoder.encode(userRegister.password),
-                dateOfBirth.toString())
+                dateOfBirth.toString(),
+                userRegister.phoneNum
+        )
 
         val savedUser = userRepository.save(userDTO)
         with(converters) {
@@ -56,6 +63,8 @@ class UserService(val userRepository: UserRepository,
         user.lastName = updatedUser.lastName
         user.email = updatedUser.email
         user.password = passwordEncoder.encode(updatedUser.password)
+        user.dateOfBirth = updatedUser.dateOfBirth.toString()
+        user.phoneNum = updatedUser.phoneNum
         userRepository.save(user)
     }
 

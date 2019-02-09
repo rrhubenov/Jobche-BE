@@ -14,4 +14,6 @@ interface UserRepository : JpaRepository<User, Long> {
 
     @Transactional
     fun getOneByEmail(email: String): User
+
+    fun existsByPhoneNum(phoneNum: String): Boolean
 }

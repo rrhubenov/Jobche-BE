@@ -210,9 +210,10 @@ class TaskIntegrationTest {
         fun `user updating a foreign task should return 403`() {
             val OTHER_EMAIL = "RandomEmail@abc.com"
             val OTHER_PASSWORD = "RandomPassword4"
+            val OTHER_PHONE_NUM = "0878637676"
 
             //Create another user that will try to update a task that does not belong to him
-            val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, OTHER_EMAIL, OTHER_PASSWORD, DATE_OF_BIRTH)
+            val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, OTHER_EMAIL, OTHER_PASSWORD, DATE_OF_BIRTH, OTHER_PHONE_NUM)
             registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
 
             //Create the body for the updated task
@@ -273,9 +274,10 @@ class TaskIntegrationTest {
         fun `user deleting a foreign task should return 403`() {
             val OTHER_EMAIL = "RandomEmail@abc.com"
             val OTHER_PASSWORD = "RandomPassword4"
+            val OTHER_PHONE_NUM = "087863767"
 
             //Create another user that will try to update a task that does not belong to him
-            val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, OTHER_EMAIL, OTHER_PASSWORD, DATE_OF_BIRTH)
+            val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, OTHER_EMAIL, OTHER_PASSWORD, DATE_OF_BIRTH, OTHER_PHONE_NUM)
             registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
 
             //Create the task

@@ -3,8 +3,6 @@ package bg.elsys.jobche.ApplicationTests
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.application.ApplicationBody
-import bg.elsys.jobche.entity.body.task.Address
-import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.model.User
@@ -25,7 +23,6 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.time.LocalDateTime
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
@@ -35,7 +32,7 @@ class ApplicationIntegrationTests {
         const val REGISTER_URL = "/users"
         const val USER_DELETE_URL = "/users"
         val user = DefaultValues.user
-        val userApplicant = User("Applicant", "Applicant", "applicant@app.com", "randompass", DateOfBirth(2, 3, 2001).toString())
+        val userApplicant = User("Applicant", "Applicant", "applicant@app.com", "randompass", DateOfBirth(2, 3, 2001).toString(), "0878900955")
         //Task constants
         const val CREATE_URL = "/tasks"
         //Application constants
@@ -63,7 +60,7 @@ class ApplicationIntegrationTests {
 
 
         //Create the user that will apply for the task
-        val userApplicantBody = UserRegisterBody(userApplicant.firstName, userApplicant.lastName, userApplicant.email, userApplicant.password, Converters().toDateOfBirth(userApplicant.dateOfBirth))
+        val userApplicantBody = UserRegisterBody(userApplicant.firstName, userApplicant.lastName, userApplicant.email, userApplicant.password, Converters().toDateOfBirth(userApplicant.dateOfBirth), userApplicant.phoneNum)
         userApplicantResponse = restTemplate.postForEntity(REGISTER_URL, userApplicantBody, UserResponse::class.java)
         applicantId = userApplicantResponse.body?.id
 

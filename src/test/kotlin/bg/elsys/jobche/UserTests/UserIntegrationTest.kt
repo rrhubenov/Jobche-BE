@@ -2,7 +2,6 @@ package bg.elsys.jobche.UserTests
 
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.entity.body.user.DateOfBirth
-import bg.elsys.jobche.entity.body.user.UserLoginBody
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.response.user.UserResponse
 import org.assertj.core.api.Assertions.assertThat
@@ -34,6 +33,7 @@ class UserIntegrationTest {
         const val FIRST_NAME = "Radoslav"
         const val LAST_NAME = "Hubenov"
         val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
+        const val PHONE_NUM = "0878555373"
         private val registerUserBody = DefaultValues.userRegisterBody
         private val loginUserBody = DefaultValues.userLoginBody
         lateinit var registerResponse: ResponseEntity<UserResponse>
@@ -73,6 +73,22 @@ class UserIntegrationTest {
         fun `create should return 201`() {
             assertThat(registerResponse.statusCode).isEqualTo(HttpStatus.CREATED)
         }
+
+        @Test
+        fun `creating a user with an already existing phone number should return 400`() {
+            val invalidUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, "Random@asd.com", PASSWORD, DATE_OF_BIRTH, PHONE_NUM)
+            val invalidRegisterResponse = restTemplate.postForEntity(REGISTER_URL, invalidUserBody, UserResponse::class.java)
+
+            assertThat(invalidRegisterResponse.statusCode).isEqualTo(HttpStatus.CONFLICT)
+        }
+
+        @Test
+        fun `creating a user with an already existing email should return 400`() {
+            val invalidUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH, "0878637676")
+            val invalidRegisterResponse = restTemplate.postForEntity(REGISTER_URL, invalidUserBody, UserResponse::class.java)
+
+            assertThat(invalidRegisterResponse.statusCode).isEqualTo(HttpStatus.CONFLICT)
+        }
     }
 
 
@@ -100,7 +116,7 @@ class UserIntegrationTest {
     inner class update {
         @Test
         fun `user updating himself should return 200 and update the resource`() {
-            val updatedUser = UserRegisterBody(FIRST_NAME + "new", LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
+            val updatedUser = UserRegisterBody(FIRST_NAME + "new", LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH, PHONE_NUM)
 
             val putResponse = restTemplate
                     .withBasicAuth(EMAIL, PASSWORD)

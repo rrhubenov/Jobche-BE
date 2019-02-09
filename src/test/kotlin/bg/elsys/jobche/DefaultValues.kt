@@ -1,6 +1,5 @@
 package bg.elsys.jobche
 
-import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.application.ApplicationBody
 import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
@@ -39,9 +38,10 @@ class DefaultValues {
         private const val EMAIL = "rrhubenov@gmail.com"
         private const val PASSWORD = "password"
         private val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
-        val user = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH.toString())
-        val userRegisterBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH)
-        val userResponse = UserResponse(user.id, FIRST_NAME, LAST_NAME, DATE_OF_BIRTH)
+        private const val PHONE_NUM = "0878555373"
+        val user = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH.toString(), PHONE_NUM)
+        val userRegisterBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH, PHONE_NUM)
+        val userResponse = UserResponse(user.id, FIRST_NAME, LAST_NAME, DATE_OF_BIRTH, PHONE_NUM)
         val userLoginBody = UserLoginBody(EMAIL, PASSWORD)
 
         //Application

@@ -7,6 +7,8 @@ import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.model.User
 import bg.elsys.jobche.entity.response.user.UserResponse
+import bg.elsys.jobche.exception.EmailExistsException
+import bg.elsys.jobche.exceptions.PhoneNumberExistsException
 import bg.elsys.jobche.repository.UserRepository
 import bg.elsys.jobche.service.UserService
 import io.mockk.every
@@ -15,6 +17,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.verifyAll
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatExceptionOfType
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyLong
@@ -31,7 +35,8 @@ class UserServiceTest {
         const val EMAIL = "rrhubenov@gmail.com"
         const val PASSWORD = "password"
         val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
-        private val user = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH.toString())
+        const val PHONE_NUM = "0878555373"
+        private val user = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH.toString(), PHONE_NUM)
         private val userRegister = DefaultValues.userRegisterBody
         private val userLogin = DefaultValues.userLoginBody
     }
@@ -52,19 +57,45 @@ class UserServiceTest {
         every { repository.findByEmail(EMAIL) } returns user
 
         val result = userService.login(userLogin)
-        val expectedResult = UserResponse(user.id, "Radoslav", "Hubenov", DATE_OF_BIRTH)
+        val expectedResult = UserResponse(user.id, user.firstName, "Hubenov", DATE_OF_BIRTH, PHONE_NUM)
         assertThat(result).isEqualTo(expectedResult)
     }
 
-    @Test
-    fun `create should return valid user response`() {
-        every { repository.existsByEmail(userRegister.email) } returns false
-        every { repository.save(any<User>()) } returns user
+    @Nested
+    inner class create {
+        @Test
+        fun `create should return valid user response`() {
+            every { repository.existsByEmail(userRegister.email) } returns false
+            every { repository.existsByPhoneNum(userRegister.phoneNum) } returns false
+            every { repository.save(any<User>()) } returns user
 
-        val userResponse = userService.create(userRegister)
+            val userResponse = userService.create(userRegister)
 
-        assertThat(userResponse).isEqualTo(UserResponse(user.id, userRegister.firstName,
-                userRegister.lastName, DATE_OF_BIRTH))
+            assertThat(userResponse).isEqualTo(UserResponse(user.id, userRegister.firstName,
+                    userRegister.lastName, DATE_OF_BIRTH, PHONE_NUM))
+        }
+
+        @Test
+        fun `create with already existing phone should throw exception`() {
+            every { repository.existsByEmail(userRegister.email) } returns false
+            every { repository.existsByPhoneNum(userRegister.phoneNum) } returns true
+            every { repository.save(any<User>()) } returns user
+
+            assertThatExceptionOfType(PhoneNumberExistsException::class.java).isThrownBy {
+                userService.create(userRegister)
+            }
+        }
+
+        @Test
+        fun `create with already existing email should throw exception`() {
+            every { repository.existsByEmail(userRegister.email) } returns true
+            every { repository.existsByPhoneNum(userRegister.phoneNum) } returns true
+            every { repository.save(any<User>()) } returns user
+
+            assertThatExceptionOfType(EmailExistsException::class.java).isThrownBy {
+                userService.create(userRegister)
+            }
+        }
     }
 
     @Test
@@ -85,7 +116,7 @@ class UserServiceTest {
         every { repository.getOneByEmail(anyString()) } returns user
         every { repository.save(user) } returns user
 
-        userService.update(UserRegisterBody(user.firstName, user.lastName, user.email, user.password, DATE_OF_BIRTH))
+        userService.update(UserRegisterBody(user.firstName, user.lastName, user.email, user.password, DATE_OF_BIRTH, user.phoneNum))
 
         verify {
             repository.getOneByEmail(anyString())

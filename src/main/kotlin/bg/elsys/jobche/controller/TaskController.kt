@@ -35,7 +35,9 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
                 task.numberOfWorkers,
                 task.dateTime,
                 task.location,
-                task.creatorId
+                task.creatorId,
+                task.acceptedWorkersCount
+
         )
 
         return ResponseEntity(taskResponse, HttpStatus.CREATED)
@@ -55,7 +57,9 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
                 task.numberOfWorkers,
                 task.dateTime,
                 task.location,
-                task.creatorId)
+                task.creatorId,
+                task.acceptedWorkersCount
+        )
 
         return ResponseEntity(taskResponse, HttpStatus.OK)
 
@@ -100,7 +104,7 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
         val tasks = taskService.readPaginated(page, size, title, paymentStart, paymentEnd, numWStart, numWEnd, dateStart, dateEnd, city)
 
         val taskResponses = tasks.map {
-            TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId)
+            TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId, it.acceptedWorkersCount)
         }.toMutableList()
 
         return ResponseEntity(TaskPaginatedResponse(taskResponses), HttpStatus.OK)
@@ -133,7 +137,7 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
         val tasks = taskService.readMePaginated(page, size)
 
         val taskResponses = tasks.map {
-            TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId)
+            TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId, it.acceptedWorkersCount)
         }.toMutableList()
 
         return ResponseEntity(TaskPaginatedResponse(taskResponses), HttpStatus.OK)

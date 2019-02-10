@@ -34,7 +34,8 @@ class ApplicationIntegrationTests {
         val user = DefaultValues.user
         val userApplicant = User("Applicant", "Applicant", "applicant@app.com", "randompass", DateOfBirth(2, 3, 2001).toString(), "0878900955")
         //Task constants
-        const val CREATE_URL = "/tasks"
+        const val TASK_URL = "/tasks"
+        const val CREATE_TASK_URL = TASK_URL
         //Application constants
         const val BASE_APPLICATION_URL = "/application"
         const val CREATE_APPLICATION_URL = BASE_APPLICATION_URL
@@ -68,7 +69,7 @@ class ApplicationIntegrationTests {
         val taskBody = DefaultValues.taskBody
         taskResponse = restTemplate
                 .withBasicAuth(user.email, user.password)
-                .postForEntity(CREATE_URL, taskBody, TaskResponse::class.java)
+                .postForEntity(CREATE_TASK_URL, taskBody, TaskResponse::class.java)
         taskId = taskResponse.body?.id
 
     }
@@ -124,7 +125,7 @@ class ApplicationIntegrationTests {
     @Nested
     inner class accept {
         @Test
-        fun `accept application of user should return 200`() {
+        fun `accept application of user should return 200 and increase accepted workers count`() {
             //First, create the application
             val createResponse = createApplication()
 
@@ -134,6 +135,14 @@ class ApplicationIntegrationTests {
                     .getForEntity(APPROVE_APPLICATION_URL + createResponse.body?.id, Unit::class.java)
 
             assertThat(approveResponse.statusCode).isEqualTo(HttpStatus.OK)
+
+            //Check that accepted workers count is increased by 1
+            val getResponse = restTemplate
+                    .withBasicAuth(user.email, user.password)
+                    .getForEntity(TASK_URL + taskResponse.body?.id, TaskResponse::class.java)
+
+            assertThat(getResponse.statusCode).isEqualTo(HttpStatus.OK)
+            assertThat(getResponse.body?.acceptedWorkersCount).isEqualTo(1)
 
             //Remove the application
             deleteApplication(createResponse.body?.id)

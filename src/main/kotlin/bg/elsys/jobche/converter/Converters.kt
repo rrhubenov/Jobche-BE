@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 @Component
 class Converters {
     val Task.response
-        get() = TaskResponse(id, title, description, payment, numberOfWorkers, dateTime, location, creatorId)
+        get() = TaskResponse(id, title, description, payment, numberOfWorkers, dateTime, location, creatorId, acceptedWorkersCount)
 
     val User.response
         get() = UserResponse(id, firstName, lastName, toDateOfBirth(dateOfBirth), phoneNum)

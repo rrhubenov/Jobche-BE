@@ -139,7 +139,7 @@ class ApplicationIntegrationTests {
             //Check that accepted workers count is increased by 1
             val getResponse = restTemplate
                     .withBasicAuth(user.email, user.password)
-                    .getForEntity(TASK_URL + taskResponse.body?.id, TaskResponse::class.java)
+                    .getForEntity(TASK_URL + "/" + taskResponse.body?.id, TaskResponse::class.java)
 
             assertThat(getResponse.statusCode).isEqualTo(HttpStatus.OK)
             assertThat(getResponse.body?.acceptedWorkersCount).isEqualTo(1)

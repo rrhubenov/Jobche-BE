@@ -46,9 +46,9 @@ class TaskService(val taskRepository: TaskRepository,
                 throw TaskModificationForbiddenException()
             }
 
-            if (task.numberOfWorkers > taskToUpdate.acceptedWorkersCount) {
-                TODO()
-            }
+//            if (task.numberOfWorkers > taskToUpdate.acceptedWorkersCount) {
+//                TODO()
+//            }
 
             taskToUpdate.title = task.title
             taskToUpdate.payment = task.payment

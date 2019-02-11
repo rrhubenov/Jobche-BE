@@ -27,9 +27,10 @@ class DefaultValues {
         private val LOCATION = Address(COUNTRY, CITY)
         private val DATE_TIME = LocalDateTime.now()
         private const val CREATOR_ID = 1L
+        private const val ACCEPTED_COUNT = 0
         val task = Task(TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, CREATOR_ID, LOCATION)
         val taskBody = TaskBody(TITLE, PAYMENT, NUMBER_OF_WORKERS, DESCRIPTION, DATE_TIME, LOCATION)
-        val taskResponse = TaskResponse(task.id, TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, LOCATION, CREATOR_ID)
+        val taskResponse = TaskResponse(task.id, TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, LOCATION, CREATOR_ID, ACCEPTED_COUNT)
         val taskPaginatedResponse = TaskPaginatedResponse(listOf(taskResponse, taskResponse))
 
         //User

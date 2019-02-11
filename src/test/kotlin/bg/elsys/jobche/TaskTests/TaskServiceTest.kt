@@ -87,6 +87,7 @@ class TaskServiceTest {
     inner class update {
         @Test
         fun `update task with valid user`() {
+
             every { authenticationDetails.getEmail() } returns user.email
             every { userRepository.findByEmail(user.email) } returns user
             every { repository.existsById(anyLong()) } returns true

@@ -27,6 +27,7 @@ class TaskService(val taskRepository: TaskRepository,
                 taskBody.dateTime,
                 user!!.id,
                 taskBody.location
+
         ))
     }
 
@@ -45,11 +46,16 @@ class TaskService(val taskRepository: TaskRepository,
                 throw TaskModificationForbiddenException()
             }
 
+//            if (task.numberOfWorkers > taskToUpdate.acceptedWorkersCount) {
+//                TODO()
+//            }
+
             taskToUpdate.title = task.title
             taskToUpdate.payment = task.payment
             taskToUpdate.numberOfWorkers = task.numberOfWorkers
             taskToUpdate.description = task.description
             taskToUpdate.dateTime = task.dateTime
+            taskToUpdate.location = task.location
             taskRepository.save(taskToUpdate)
 
         } else throw TaskNotFoundException()

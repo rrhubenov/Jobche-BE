@@ -47,6 +47,7 @@ class ApplicationService(val appRepository: ApplicationRepository,
             val application = appRepository.getOne(id)
             if (application.task.creatorId == user?.id) {
                 application.accepted = true
+                application.task.acceptedWorkersCount++
                 appRepository.save(application)
             } else throw ResourceForbiddenException()
         } else throw ResourceNotFoundException()

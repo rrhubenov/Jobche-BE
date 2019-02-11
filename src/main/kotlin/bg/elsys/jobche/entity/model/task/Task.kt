@@ -16,4 +16,5 @@ data class Task(var title: String,
                 var dateTime: LocalDateTime,
                 var creatorId: Long,
                 @Embedded
-                val location: Address) : BaseEntity()
+                var location: Address,
+                var acceptedWorkersCount: Int = 0) : BaseEntity()

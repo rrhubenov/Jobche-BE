@@ -10,4 +10,5 @@ data class TaskResponse(val id: Long?,
                         val numberOfWorkers: Int?,
                         val dateTime: LocalDateTime?,
                         val location: Address?,
-                        val creatorId: Long?)
+                        val creatorId: Long?,
+                        val acceptedWorkersCount: Int?)

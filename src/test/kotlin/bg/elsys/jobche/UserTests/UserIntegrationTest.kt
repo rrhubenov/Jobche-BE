@@ -1,5 +1,6 @@
 package bg.elsys.jobche.UserTests
 
+import bg.elsys.jobche.BaseIntegrationTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
@@ -9,20 +10,14 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@ExtendWith(SpringExtension::class)
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-class UserIntegrationTest {
+class UserIntegrationTest : BaseIntegrationTest() {
 
     companion object {
         const val BASE_URL = "/users"
@@ -40,9 +35,6 @@ class UserIntegrationTest {
         val EMAIL = registerUserBody.email
         val PASSWORD = registerUserBody.password
     }
-
-    @Autowired
-    lateinit var restTemplate: TestRestTemplate
 
     @BeforeEach
     fun registerUser() {

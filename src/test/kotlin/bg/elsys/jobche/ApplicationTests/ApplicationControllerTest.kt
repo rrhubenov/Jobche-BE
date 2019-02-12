@@ -1,5 +1,6 @@
 package bg.elsys.jobche.ApplicationTests
 
+import bg.elsys.jobche.BaseUnitTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.controller.ApplicationController
 import bg.elsys.jobche.entity.body.application.ApplicationBody
@@ -15,8 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyLong
 import org.springframework.http.HttpStatus
 
-@ExtendWith(MockKExtension::class)
-class ApplicationControllerTest {
+class ApplicationControllerTest: BaseUnitTest() {
 
     companion object {
         private val applicationResponse = DefaultValues.applicationResponse

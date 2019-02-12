@@ -1,5 +1,6 @@
 package bg.elsys.jobche.ApplicationTests
 
+import bg.elsys.jobche.BaseIntegrationTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.application.ApplicationBody
@@ -24,9 +25,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ExtendWith(SpringExtension::class)
-class ApplicationIntegrationTests {
+class ApplicationIntegrationTests: BaseIntegrationTest() {
     companion object {
         //User constants
         const val REGISTER_URL = "/users"
@@ -41,9 +40,6 @@ class ApplicationIntegrationTests {
         const val CREATE_APPLICATION_URL = BASE_APPLICATION_URL
         const val APPROVE_APPLICATION_URL = BASE_APPLICATION_URL + "/approve/"
     }
-
-    @Autowired
-    lateinit var restTemplate: TestRestTemplate
 
     lateinit var userCreatorResponse: ResponseEntity<UserResponse>
     lateinit var userApplicantResponse: ResponseEntity<UserResponse>

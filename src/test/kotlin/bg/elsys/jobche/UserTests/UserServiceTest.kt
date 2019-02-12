@@ -1,5 +1,6 @@
 package bg.elsys.jobche.UserTests
 
+import bg.elsys.jobche.BaseUnitTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.converter.Converters
@@ -26,8 +27,7 @@ import org.mockito.ArgumentMatchers.anyString
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import java.util.*
 
-@ExtendWith(MockKExtension::class)
-class UserServiceTest {
+class UserServiceTest: BaseUnitTest() {
 
     companion object {
         const val FIRST_NAME = "Radoslav"

@@ -1,5 +1,6 @@
 package bg.elsys.jobche.ApplicationTests
 
+import bg.elsys.jobche.BaseUnitTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.entity.model.Application
@@ -8,21 +9,18 @@ import bg.elsys.jobche.repository.TaskRepository
 import bg.elsys.jobche.repository.UserRepository
 import bg.elsys.jobche.service.ApplicationService
 import io.mockk.every
-import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.ArgumentMatchers.anyString
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import java.util.*
 
-@ExtendWith(MockKExtension::class)
-class ApplicationServiceTest {
+class ApplicationServiceTest : BaseUnitTest() {
     companion object {
         val user = DefaultValues.user
         val task = DefaultValues.task

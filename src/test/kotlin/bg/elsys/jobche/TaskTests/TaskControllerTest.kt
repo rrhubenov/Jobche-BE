@@ -1,5 +1,6 @@
 package bg.elsys.jobche.TaskTests
 
+import bg.elsys.jobche.BaseUnitTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.controller.TaskController
 import bg.elsys.jobche.converter.Converters
@@ -19,8 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.*
 import org.springframework.http.HttpStatus
 
-@ExtendWith(MockKExtension::class)
-class TaskControllerTest {
+class TaskControllerTest: BaseUnitTest() {
 
     companion object {
         val task = DefaultValues.task

@@ -1,5 +1,6 @@
 package bg.elsys.jobche.TaskTests
 
+import bg.elsys.jobche.BaseUnitTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.entity.model.task.Task
@@ -19,8 +20,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import java.util.*
 
-@ExtendWith(MockKExtension::class)
-class TaskServiceTest {
+class TaskServiceTest: BaseUnitTest() {
 
     companion object {
         private val user = DefaultValues.user

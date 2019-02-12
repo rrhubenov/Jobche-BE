@@ -1,5 +1,6 @@
 package bg.elsys.jobche.TaskTests
 
+import bg.elsys.jobche.BaseIntegrationTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
@@ -25,10 +26,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.LocalDateTime
 
-
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ExtendWith(SpringExtension::class)
-class TaskIntegrationTest {
+class TaskIntegrationTest: BaseIntegrationTest() {
 
     companion object {
         const val FIRST_NAME = "Random"
@@ -57,10 +55,6 @@ class TaskIntegrationTest {
         val EMAIL = registerUserBody.email
         val PASSWORD = registerUserBody.password
     }
-
-    @Autowired
-    lateinit var restTemplate: TestRestTemplate
-
 
     lateinit var registerResponse: ResponseEntity<UserResponse>
 

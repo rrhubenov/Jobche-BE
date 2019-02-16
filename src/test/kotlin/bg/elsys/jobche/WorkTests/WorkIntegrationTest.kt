@@ -66,6 +66,8 @@ class WorkIntegrationTest : BaseIntegrationTest() {
             val createResponse = createWork(taskId)
 
             assertThat(createResponse.statusCode).isEqualTo(HttpStatus.CREATED)
+
+            deleteWork(createResponse.body?.id)
         }
     }
 
@@ -91,8 +93,8 @@ class WorkIntegrationTest : BaseIntegrationTest() {
         return restTemplate.withBasicAuth(USER_EMAIL, USER_PASSWORD).postForEntity(CREATE_URL, workBody, WorkResponse::class.java)
     }
 
-//    fun deleteWork(workId: Long?) {
-//        restTemplate.withBasicAuth(USER_EMAIL, USER_PASSWORD).delete(DELETE_URL + workId)
-//    }
+    fun deleteWork(workId: Long?) {
+        restTemplate.withBasicAuth(USER_EMAIL, USER_PASSWORD).delete(DELETE_URL + workId)
+    }
 
 }

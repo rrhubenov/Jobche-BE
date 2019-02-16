@@ -44,4 +44,8 @@ class WorkService(private val workRepository: WorkRepository,
         } else throw ResourceNotFoundException()
     }
 
+    fun read(id: Long): WorkResponse {
+        TODO()
+    }
+
 }

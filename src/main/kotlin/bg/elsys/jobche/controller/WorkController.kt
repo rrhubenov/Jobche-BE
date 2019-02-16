@@ -21,4 +21,9 @@ class WorkController(private val service: WorkService) {
         return ResponseEntity(service.delete(id), HttpStatus.OK)
     }
 
+    @GetMapping("/{id}")
+    fun read(@PathVariable id: Long): ResponseEntity<WorkResponse> {
+        return ResponseEntity(service.read(id), HttpStatus.OK)
+    }
+
 }

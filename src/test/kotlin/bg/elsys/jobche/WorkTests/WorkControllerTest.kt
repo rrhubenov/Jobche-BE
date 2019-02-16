@@ -41,4 +41,14 @@ class WorkControllerTest: BaseUnitTest() {
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
     }
 
+    @Test
+    fun `read should return 200 and the response body`() {
+        every { service.read(work.id) } returns workResponse
+
+        val response = controller.read(work.id)
+
+        assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        assertThat(response.body).isEqualToComparingFieldByFieldRecursively(workResponse)
+    }
+
 }

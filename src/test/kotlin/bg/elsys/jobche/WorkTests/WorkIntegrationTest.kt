@@ -101,7 +101,6 @@ class WorkIntegrationTest : BaseIntegrationTest() {
             assertThat(readResponse.statusCode).isEqualTo(HttpStatus.OK)
             assertThat(readResponse.body).isEqualToComparingFieldByFieldRecursively(workResponse)
 
-
             deleteWork(createResponse.body?.id)
         }
     }

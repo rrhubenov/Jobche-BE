@@ -22,9 +22,9 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
 
     @PostMapping
     @ApiOperation(value = "Create task",
-            response = TaskResponse::class,
-            httpMethod = "POST",
-            authorizations = arrayOf(Authorization(value = "basicAuth")))
+    response = TaskResponse::class,
+    httpMethod = "POST",
+    authorizations = arrayOf(Authorization(value = "basicAuth")))
     @ApiResponses(ApiResponse(code = 201, message = "Success", response = TaskResponse::class))
     fun create(@RequestBody taskBody: TaskBody): ResponseEntity<TaskResponse> {
         val task = taskService.create(taskBody)
@@ -35,7 +35,7 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
                 task.numberOfWorkers,
                 task.dateTime,
                 task.location,
-                task.creatorId,
+                task.creator.id,
                 task.acceptedWorkersCount
 
         )
@@ -57,7 +57,7 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
                 task.numberOfWorkers,
                 task.dateTime,
                 task.location,
-                task.creatorId,
+                task.creator.id,
                 task.acceptedWorkersCount
         )
 
@@ -104,7 +104,7 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
         val tasks = taskService.readPaginated(page, size, title, paymentStart, paymentEnd, numWStart, numWEnd, dateStart, dateEnd, city)
 
         val taskResponses = tasks.map {
-            TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId, it.acceptedWorkersCount)
+            TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creator.id, it.acceptedWorkersCount)
         }.toMutableList()
 
         return ResponseEntity(TaskPaginatedResponse(taskResponses), HttpStatus.OK)
@@ -137,7 +137,7 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
         val tasks = taskService.readMePaginated(page, size)
 
         val taskResponses = tasks.map {
-            TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creatorId, it.acceptedWorkersCount)
+            TaskResponse(it.id, it.title, it.description, it.payment, it.numberOfWorkers, it.dateTime, it.location, it.creator.id, it.acceptedWorkersCount)
         }.toMutableList()
 
         return ResponseEntity(TaskPaginatedResponse(taskResponses), HttpStatus.OK)

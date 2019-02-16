@@ -1,6 +1,6 @@
 package bg.elsys.jobche.repository
 
-import bg.elsys.jobche.entity.model.User
+import bg.elsys.jobche.entity.model.user.User
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional

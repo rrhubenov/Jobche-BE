@@ -3,7 +3,7 @@ package bg.elsys.jobche.ApplicationTests
 import bg.elsys.jobche.BaseUnitTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.config.security.AuthenticationDetails
-import bg.elsys.jobche.entity.model.Application
+import bg.elsys.jobche.entity.model.task.Application
 import bg.elsys.jobche.repository.ApplicationRepository
 import bg.elsys.jobche.repository.TaskRepository
 import bg.elsys.jobche.repository.UserRepository

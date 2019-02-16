@@ -8,19 +8,18 @@ import bg.elsys.jobche.repository.TaskRepository
 import bg.elsys.jobche.repository.UserRepository
 import bg.elsys.jobche.service.TaskService
 import io.mockk.every
-import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers.*
+import org.mockito.ArgumentMatchers.anyLong
+import org.mockito.ArgumentMatchers.anyString
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import java.util.*
 
-class TaskServiceTest: BaseUnitTest() {
+class TaskServiceTest : BaseUnitTest() {
 
     companion object {
         private val user = DefaultValues.user

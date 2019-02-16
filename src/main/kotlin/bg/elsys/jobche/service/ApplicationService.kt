@@ -2,7 +2,7 @@ package bg.elsys.jobche.service
 
 import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.entity.body.application.ApplicationBody
-import bg.elsys.jobche.entity.model.Application
+import bg.elsys.jobche.entity.model.task.Application
 import bg.elsys.jobche.entity.model.task.Task
 import bg.elsys.jobche.exception.ResourceForbiddenException
 import bg.elsys.jobche.exception.ResourceNotFoundException
@@ -41,11 +41,11 @@ class ApplicationService(val appRepository: ApplicationRepository,
         } else throw ResourceNotFoundException()
     }
 
-    fun approveApplication(id: Long): Unit {
+    fun approveApplication(id: Long) {
         if (appRepository.existsById(id)) {
             val user = userRepository.findByEmail(authenticationDetails.getEmail())
             val application = appRepository.getOne(id)
-            if (application.task.creatorId == user?.id) {
+            if (application.task.creator.id == user?.id) {
                 application.accepted = true
                 application.task.acceptedWorkersCount++
                 appRepository.save(application)
@@ -61,7 +61,7 @@ class ApplicationService(val appRepository: ApplicationRepository,
             task = taskRepository.findById(taskId).get()
         } else throw ResourceNotFoundException()
 
-        if (task.creatorId == user?.id) {
+        if (task.creator.id == user?.id) {
             val result = appRepository.findAll(createPageRequest(page, size)).content
 
             if (result.isEmpty()) {

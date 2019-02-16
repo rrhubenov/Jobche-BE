@@ -8,7 +8,7 @@ import bg.elsys.jobche.exception.ResourceForbiddenException
 import bg.elsys.jobche.exception.ResourceNotFoundException
 import bg.elsys.jobche.exception.TaskNotFoundException
 import bg.elsys.jobche.exception.UserNotFoundException
-import bg.elsys.jobche.exceptions.NoContentException
+import bg.elsys.jobche.exception.NoContentException
 import bg.elsys.jobche.repository.ApplicationRepository
 import bg.elsys.jobche.repository.TaskRepository
 import bg.elsys.jobche.repository.UserRepository

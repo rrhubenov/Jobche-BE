@@ -9,7 +9,7 @@ import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.model.user.User
 import bg.elsys.jobche.entity.response.user.UserResponse
 import bg.elsys.jobche.exception.EmailExistsException
-import bg.elsys.jobche.exceptions.PhoneNumberExistsException
+import bg.elsys.jobche.exception.PhoneNumberExistsException
 import bg.elsys.jobche.repository.UserRepository
 import bg.elsys.jobche.service.UserService
 import io.mockk.every

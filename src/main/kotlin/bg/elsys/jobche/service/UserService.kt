@@ -8,7 +8,7 @@ import bg.elsys.jobche.entity.model.user.User
 import bg.elsys.jobche.entity.response.user.UserResponse
 import bg.elsys.jobche.exception.EmailExistsException
 import bg.elsys.jobche.exception.UserNotFoundException
-import bg.elsys.jobche.exceptions.PhoneNumberExistsException
+import bg.elsys.jobche.exception.PhoneNumberExistsException
 import bg.elsys.jobche.repository.UserRepository
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service

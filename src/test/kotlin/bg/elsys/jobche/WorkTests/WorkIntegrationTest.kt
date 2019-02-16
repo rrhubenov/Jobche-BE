@@ -88,6 +88,24 @@ class WorkIntegrationTest : BaseIntegrationTest() {
         }
     }
 
+    @Nested
+    inner class read {
+        @Test
+        fun `read should return 200 and the work`() {
+            val createResponse = createWork(taskId)
+
+            val readResponse = restTemplate
+                    .withBasicAuth(USER_EMAIL, USER_PASSWORD)
+                    .getForEntity(READ_URL + createResponse.body?.id, WorkResponse::class.java)
+
+            assertThat(readResponse.statusCode).isEqualTo(HttpStatus.OK)
+            assertThat(readResponse.body).isEqualToComparingFieldByFieldRecursively(workResponse)
+
+
+            deleteWork(createResponse.body?.id)
+        }
+    }
+
 
     fun createWork(taskId: Long?): ResponseEntity<WorkResponse> {
         return restTemplate.withBasicAuth(USER_EMAIL, USER_PASSWORD).postForEntity(CREATE_URL, workBody, WorkResponse::class.java)

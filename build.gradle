@@ -65,7 +65,6 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.springfox:springfox-swagger2:${swaggerVersion}")
     implementation("io.springfox:springfox-swagger-ui:${swaggerVersion}")
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
     runtimeOnly('org.postgresql:postgresql')
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 

@@ -32,7 +32,7 @@ class ApplicationIntegrationTests {
         const val REGISTER_URL = "/users"
         const val USER_DELETE_URL = "/users"
         val user = DefaultValues.user
-        val userApplicant = User("Applicant", "Applicant", "applicant@app.com", "randompass", DateOfBirth(2, 3, 2001).toString(), "0878900955")
+        val userApplicant = User("Applicant", "Applicant", "applicant@app.com", "randompass", DateOfBirth(2, 3, 2001).toString(), "0878900955", null)
         //Task constants
         const val TASK_URL = "/tasks"
         const val CREATE_TASK_URL = TASK_URL

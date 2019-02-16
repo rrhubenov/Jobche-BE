@@ -44,7 +44,8 @@ class UserService(val userRepository: UserRepository,
                 userRegister.email,
                 passwordEncoder.encode(userRegister.password),
                 dateOfBirth.toString(),
-                userRegister.phoneNum
+                userRegister.phoneNum,
+                null
         )
 
         val savedUser = userRepository.save(userDTO)

@@ -36,7 +36,7 @@ class UserServiceTest {
         const val PASSWORD = "password"
         val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         const val PHONE_NUM = "0878555373"
-        private val user = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH.toString(), PHONE_NUM)
+        private val user = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH.toString(), PHONE_NUM, null)
         private val userRegister = DefaultValues.userRegisterBody
         private val userLogin = DefaultValues.userLoginBody
     }

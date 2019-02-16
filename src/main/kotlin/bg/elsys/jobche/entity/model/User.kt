@@ -12,4 +12,5 @@ data class User(var firstName: String,
                 var email: String,
                 var password: String,
                 var dateOfBirth: String,
-                var phoneNum: String) : BaseEntity()
+                var phoneNum: String,
+                var photoId: String? = null) : BaseEntity()

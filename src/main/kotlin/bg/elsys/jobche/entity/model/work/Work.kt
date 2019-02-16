@@ -13,12 +13,16 @@ data class Work(
         @OneToOne(fetch = FetchType.EAGER)
         val task: Task,
 
-        @OneToMany(mappedBy = "work", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+        @OneToMany(mappedBy = "work", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
         var participations: List<Participation> = emptyList(),
 
-        var inProgress: Boolean = true) : BaseEntity() {
+        var status: WorkStatus = WorkStatus.IN_PROGRESS) : BaseEntity() {
 
     override fun toString(): String {
         return ""
     }
+}
+
+enum class WorkStatus {
+    IN_PROGRESS, ENDED
 }

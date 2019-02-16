@@ -2,6 +2,8 @@ package bg.elsys.jobche.WorkTests
 
 import bg.elsys.jobche.BaseIntegrationTest
 import bg.elsys.jobche.DefaultValues
+import bg.elsys.jobche.entity.body.WorkBody
+import bg.elsys.jobche.entity.model.work.WorkStatus
 import bg.elsys.jobche.entity.response.WorkResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
 import bg.elsys.jobche.entity.response.user.UserResponse
@@ -22,16 +24,13 @@ class WorkIntegrationTest : BaseIntegrationTest() {
         const val CREATE_URL = "/work"
         const val READ_URL = "/work/"
         const val DELETE_URL = "/work/"
-        const val UPDATE_URL = "/work/"
-
-        //Work constants
-        val workBody = DefaultValues.workBody
-        val workResponse = DefaultValues.workResponse
+        const val END_URL = "/work/"
 
         //User constants
         val USER_BODY = DefaultValues.userRegisterBody
         val USER_EMAIL = USER_BODY.email
         val USER_PASSWORD = USER_BODY.password
+        val user = DefaultValues.user
 
         //Task constants
         val TASK_BODY = DefaultValues.taskBody
@@ -54,16 +53,13 @@ class WorkIntegrationTest : BaseIntegrationTest() {
     fun `remove the created user and his task`() {
         //Delete User
         restTemplate.withBasicAuth(USER_EMAIL, USER_PASSWORD).delete("/users")
-
-        //Delete his Task
-        restTemplate.withBasicAuth(USER_EMAIL, USER_PASSWORD).delete("/tasks/$taskId")
     }
 
     @Nested
     inner class create {
         @Test
         fun `create work should return 201`() {
-            val createResponse = createWork(taskId)
+            val createResponse = createWork()
 
             assertThat(createResponse.statusCode).isEqualTo(HttpStatus.CREATED)
 
@@ -75,7 +71,7 @@ class WorkIntegrationTest : BaseIntegrationTest() {
     inner class delete {
         @Test
         fun `delete should return 200`() {
-            val createResponse = createWork(taskId)
+            val createResponse = createWork()
 
             val deleteResponse = restTemplate
                     .withBasicAuth(USER_EMAIL, USER_PASSWORD)
@@ -91,22 +87,41 @@ class WorkIntegrationTest : BaseIntegrationTest() {
     @Nested
     inner class read {
         @Test
-        fun `read should return 200 and the work`() {
-            val createResponse = createWork(taskId)
+        fun `read should return 200`() {
+            val createResponse = createWork()
 
             val readResponse = restTemplate
                     .withBasicAuth(USER_EMAIL, USER_PASSWORD)
                     .getForEntity(READ_URL + createResponse.body?.id, WorkResponse::class.java)
 
             assertThat(readResponse.statusCode).isEqualTo(HttpStatus.OK)
-            assertThat(readResponse.body).isEqualToComparingFieldByFieldRecursively(workResponse)
 
             deleteWork(createResponse.body?.id)
         }
     }
 
+//    @Nested
+//    inner class endWork {
+//        @Test
+//        fun `ending work should return 200`() {
+//            val createResponse = createWork()
+//
+//            val endResponse = restTemplate
+//                    .withBasicAuth(USER_EMAIL, USER_PASSWORD)
+//                    .exchange(END_URL + createResponse.body?.id,
+//                            HttpMethod.PATCH,
+//                            HttpEntity(WorkStatus.ENDED),
+//                            Unit::class.java)
+//
+//            assertThat(endResponse.statusCode).isEqualTo(HttpStatus.OK)
+//
+//            deleteWork(createResponse.body?.id)
+//        }
+//    }
 
-    fun createWork(taskId: Long?): ResponseEntity<WorkResponse> {
+
+    fun createWork(): ResponseEntity<WorkResponse> {
+        val workBody = WorkBody(taskId!!, listOf(user.id))
         return restTemplate.withBasicAuth(USER_EMAIL, USER_PASSWORD).postForEntity(CREATE_URL, workBody, WorkResponse::class.java)
     }
 

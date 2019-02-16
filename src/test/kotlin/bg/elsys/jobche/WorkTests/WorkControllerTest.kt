@@ -3,6 +3,7 @@ package bg.elsys.jobche.WorkTests
 import bg.elsys.jobche.BaseUnitTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.controller.WorkController
+import bg.elsys.jobche.entity.model.work.WorkStatus
 import bg.elsys.jobche.service.WorkService
 import io.mockk.every
 import io.mockk.mockk
@@ -49,6 +50,15 @@ class WorkControllerTest: BaseUnitTest() {
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(response.body).isEqualToComparingFieldByFieldRecursively(workResponse)
+    }
+
+    @Test
+    fun `ending work should return 200`() {
+        every { service.end(WorkStatus.ENDED, work.id) } returns Unit
+
+        val response = controller.end(WorkStatus.ENDED, work.id)
+
+        assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
     }
 
 }

@@ -1,6 +1,7 @@
 package bg.elsys.jobche.controller
 
 import bg.elsys.jobche.entity.body.WorkBody
+import bg.elsys.jobche.entity.model.work.WorkStatus
 import bg.elsys.jobche.entity.response.WorkResponse
 import bg.elsys.jobche.service.WorkService
 import org.springframework.http.HttpStatus
@@ -24,6 +25,11 @@ class WorkController(private val service: WorkService) {
     @GetMapping("/{id}")
     fun read(@PathVariable id: Long): ResponseEntity<WorkResponse> {
         return ResponseEntity(service.read(id), HttpStatus.OK)
+    }
+
+    @PatchMapping("/{id}")
+    fun end(@RequestBody workStatus: WorkStatus, @PathVariable id: Long): ResponseEntity<Unit> {
+        return ResponseEntity(service.end(workStatus, id), HttpStatus.OK)
     }
 
 }

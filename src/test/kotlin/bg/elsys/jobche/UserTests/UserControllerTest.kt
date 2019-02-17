@@ -1,5 +1,6 @@
 package bg.elsys.jobche.UserTests
 
+import bg.elsys.jobche.BaseUnitTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.controller.UserController
 import bg.elsys.jobche.service.ApplicationService
@@ -14,13 +15,12 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyLong
 import org.springframework.http.HttpStatus
 
-@ExtendWith(MockKExtension::class)
-class UserControllerTest() {
+class UserControllerTest: BaseUnitTest() {
 
     companion object {
-        val userResponse = DefaultValues.userResponse
-        val userRegisterBody = DefaultValues.userRegisterBody
-        val userLoginBody = DefaultValues.userLoginBody
+        val userResponse = DefaultValues.creatorUserResponse
+        val userRegisterBody = DefaultValues.creatorUserRegisterBody
+        val userLoginBody = DefaultValues.creatorUserLoginBody
     }
 
     private val userService: UserService = mockk()

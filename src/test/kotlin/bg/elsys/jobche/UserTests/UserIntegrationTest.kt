@@ -1,5 +1,6 @@
 package bg.elsys.jobche.UserTests
 
+import bg.elsys.jobche.BaseIntegrationTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
@@ -9,20 +10,14 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@ExtendWith(SpringExtension::class)
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-class UserIntegrationTest {
+class UserIntegrationTest : BaseIntegrationTest() {
 
     companion object {
         const val BASE_URL = "/users"
@@ -34,15 +29,12 @@ class UserIntegrationTest {
         const val LAST_NAME = "Hubenov"
         val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         const val PHONE_NUM = "0878555373"
-        private val registerUserBody = DefaultValues.userRegisterBody
-        private val loginUserBody = DefaultValues.userLoginBody
+        private val registerUserBody = DefaultValues.creatorUserRegisterBody
+        private val loginUserBody = DefaultValues.creatorUserLoginBody
         lateinit var registerResponse: ResponseEntity<UserResponse>
         val EMAIL = registerUserBody.email
         val PASSWORD = registerUserBody.password
     }
-
-    @Autowired
-    lateinit var restTemplate: TestRestTemplate
 
     @BeforeEach
     fun registerUser() {

@@ -1,18 +1,18 @@
 package bg.elsys.jobche.UserTests
 
+import bg.elsys.jobche.BaseUnitTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.user.DateOfBirth
 import bg.elsys.jobche.entity.body.user.UserRegisterBody
-import bg.elsys.jobche.entity.model.User
+import bg.elsys.jobche.entity.model.user.User
 import bg.elsys.jobche.entity.response.user.UserResponse
 import bg.elsys.jobche.exception.EmailExistsException
-import bg.elsys.jobche.exceptions.PhoneNumberExistsException
+import bg.elsys.jobche.exception.PhoneNumberExistsException
 import bg.elsys.jobche.repository.UserRepository
 import bg.elsys.jobche.service.UserService
 import io.mockk.every
-import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.verifyAll
@@ -20,14 +20,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.ArgumentMatchers.anyString
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import java.util.*
 
-@ExtendWith(MockKExtension::class)
-class UserServiceTest {
+class UserServiceTest: BaseUnitTest() {
 
     companion object {
         const val FIRST_NAME = "Radoslav"
@@ -37,8 +35,8 @@ class UserServiceTest {
         val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         const val PHONE_NUM = "0878555373"
         private val user = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH.toString(), PHONE_NUM)
-        private val userRegister = DefaultValues.userRegisterBody
-        private val userLogin = DefaultValues.userLoginBody
+        private val userRegister = DefaultValues.creatorUserRegisterBody
+        private val userLogin = DefaultValues.creatorUserLoginBody
     }
 
     private val repository: UserRepository = mockk()

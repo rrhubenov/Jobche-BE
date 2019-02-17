@@ -24,7 +24,7 @@ class ApplicationController(val service: ApplicationService, val converters: Con
         val application = service.create(applicationBody)
 
         with(converters) {
-            val applicationResponse = ApplicationResponse(application.id, application.user.response, application.task.response, application.accepted)
+            val applicationResponse = ApplicationResponse(application.id, application.user.response, application.task?.response, application.accepted)
             return ResponseEntity(applicationResponse, HttpStatus.CREATED)
         }
     }

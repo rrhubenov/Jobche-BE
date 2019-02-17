@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 class ConvertersTest {
     companion object {
         val taskResponse = DefaultValues.taskResponse
-        val userResponse = DefaultValues.userResponse
+        val userResponse = DefaultValues.creatorUserResponse
         val applicationResponse = DefaultValues.applicationResponse
     }
 
@@ -25,7 +25,7 @@ class ConvertersTest {
 
     @Test
     fun `test user response convertion`() {
-        val user = DefaultValues.user
+        val user = DefaultValues.creatorUser
 
         with(converters) {
             assertThat(user.response).isEqualTo(userResponse)

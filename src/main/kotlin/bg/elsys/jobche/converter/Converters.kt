@@ -1,8 +1,8 @@
 package bg.elsys.jobche.converter
 
 import bg.elsys.jobche.entity.body.user.DateOfBirth
-import bg.elsys.jobche.entity.model.Application
-import bg.elsys.jobche.entity.model.User
+import bg.elsys.jobche.entity.model.task.Application
+import bg.elsys.jobche.entity.model.user.User
 import bg.elsys.jobche.entity.model.task.Task
 import bg.elsys.jobche.entity.response.application.ApplicationResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
@@ -12,13 +12,13 @@ import org.springframework.stereotype.Component
 @Component
 class Converters {
     val Task.response
-        get() = TaskResponse(id, title, description, payment, numberOfWorkers, dateTime, location, creatorId, acceptedWorkersCount)
+        get() = TaskResponse(id, title, description, payment, numberOfWorkers, dateTime, location, creator.id, acceptedWorkersCount)
 
     val User.response
         get() = UserResponse(id, firstName, lastName, toDateOfBirth(dateOfBirth), phoneNum)
 
     val Application.response
-        get() = ApplicationResponse(id, user.response, task.response, accepted)
+        get() = ApplicationResponse(id, user.response, task?.response, accepted)
 
     fun toDateOfBirth(date: String): DateOfBirth {
         val values = date.split("-")

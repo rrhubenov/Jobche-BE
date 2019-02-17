@@ -33,7 +33,7 @@ class WorkController(private val service: WorkService) {
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Reads the work",
-            httpMethod = "READ")
+            httpMethod = "GET")
     @ApiResponses(ApiResponse(code = 200, message = "OK", response = WorkResponse::class))
     fun read(@PathVariable id: Long): ResponseEntity<WorkResponse> {
         return ResponseEntity(service.read(id), HttpStatus.OK)

@@ -55,7 +55,7 @@ class UserServiceTest: BaseUnitTest() {
         every { repository.findByEmail(EMAIL) } returns user
 
         val result = userService.login(userLogin)
-        val expectedResult = UserResponse(user.id, user.firstName, "Hubenov", DATE_OF_BIRTH, PHONE_NUM)
+        val expectedResult = UserResponse(user.id, user.firstName, "Hubenov", DATE_OF_BIRTH, PHONE_NUM, user.reviews)
         assertThat(result).isEqualTo(expectedResult)
     }
 
@@ -70,7 +70,7 @@ class UserServiceTest: BaseUnitTest() {
             val userResponse = userService.create(userRegister)
 
             assertThat(userResponse).isEqualTo(UserResponse(user.id, userRegister.firstName,
-                    userRegister.lastName, DATE_OF_BIRTH, PHONE_NUM))
+                    userRegister.lastName, DATE_OF_BIRTH, PHONE_NUM, user.reviews))
         }
 
         @Test

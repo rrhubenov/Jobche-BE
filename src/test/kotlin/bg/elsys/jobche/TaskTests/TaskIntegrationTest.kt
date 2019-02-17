@@ -15,18 +15,13 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.LocalDateTime
 
-class TaskIntegrationTest: BaseIntegrationTest() {
+class TaskIntegrationTest : BaseIntegrationTest() {
 
     companion object {
         const val FIRST_NAME = "Random"
@@ -51,7 +46,7 @@ class TaskIntegrationTest: BaseIntegrationTest() {
         val TASK_TIME_OF_WORK = LocalDateTime.now()
         val TASK_LOCATION = Address("Bulgaria", "Sofia")
         val taskBody = DefaultValues.taskBody
-        val registerUserBody = DefaultValues.userRegisterBody
+        val registerUserBody = DefaultValues.creatorUserRegisterBody
         val EMAIL = registerUserBody.email
         val PASSWORD = registerUserBody.password
     }
@@ -143,7 +138,7 @@ class TaskIntegrationTest: BaseIntegrationTest() {
         @Test
         fun `read multiple tasks with user authenticated filtering by title should return 200 and the filtered tasks`() {
             //Create one task
-             createTask()
+            createTask()
 
             //Expected Result
             val taskResponse2 = restTemplate
@@ -153,7 +148,7 @@ class TaskIntegrationTest: BaseIntegrationTest() {
                             3,
                             "SomeDesc",
                             LocalDateTime.now(),
-                            Address("Bulgaria", "Sofia") )
+                            Address("Bulgaria", "Sofia"))
                             , TaskResponse::class.java)
 
             val getResponse = restTemplate

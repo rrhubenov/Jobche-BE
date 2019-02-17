@@ -18,9 +18,9 @@ import org.springframework.http.HttpStatus
 class UserControllerTest: BaseUnitTest() {
 
     companion object {
-        val userResponse = DefaultValues.userResponse
-        val userRegisterBody = DefaultValues.userRegisterBody
-        val userLoginBody = DefaultValues.userLoginBody
+        val userResponse = DefaultValues.creatorUserResponse
+        val userRegisterBody = DefaultValues.creatorUserRegisterBody
+        val userLoginBody = DefaultValues.creatorUserLoginBody
     }
 
     private val userService: UserService = mockk()

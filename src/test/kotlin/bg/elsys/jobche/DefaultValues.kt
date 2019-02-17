@@ -21,17 +21,29 @@ import java.time.LocalDateTime
 
 class DefaultValues {
     companion object {
-        //User
-        private const val FIRST_NAME = "Radoslav"
-        private const val LAST_NAME = "Hubenov"
-        private const val EMAIL = "rrhubenov@gmail.com"
-        private const val PASSWORD = "password"
-        private val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
-        private const val PHONE_NUM = "0878555373"
-        val user = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH.toString(), PHONE_NUM)
-        val userRegisterBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH, PHONE_NUM)
-        val userResponse = UserResponse(user.id, FIRST_NAME, LAST_NAME, DATE_OF_BIRTH, PHONE_NUM)
-        val userLoginBody = UserLoginBody(EMAIL, PASSWORD)
+        //User - Creator
+        private const val CREATOR_FIRST_NAME = "Radoslav"
+        private const val CREATOR_LAST_NAME = "Hubenov"
+        private const val CREATOR_EMAIL = "rrhubenov@gmail.com"
+        private const val CREATOR_PASSWORD = "password"
+        private val CREATOR_DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
+        private const val CREATOR_PHONE_NUM = "0878555373"
+        val creatorUser = User(CREATOR_FIRST_NAME, CREATOR_LAST_NAME, CREATOR_EMAIL, CREATOR_PASSWORD, CREATOR_DATE_OF_BIRTH.toString(), CREATOR_PHONE_NUM)
+        val creatorUserRegisterBody = UserRegisterBody(CREATOR_FIRST_NAME, CREATOR_LAST_NAME, CREATOR_EMAIL, CREATOR_PASSWORD, CREATOR_DATE_OF_BIRTH, CREATOR_PHONE_NUM)
+        val creatorUserResponse = UserResponse(creatorUser.id, CREATOR_FIRST_NAME, CREATOR_LAST_NAME, CREATOR_DATE_OF_BIRTH, CREATOR_PHONE_NUM)
+        val creatorUserLoginBody = UserLoginBody(CREATOR_EMAIL, CREATOR_PASSWORD)
+
+        //User - Worker
+        private const val WORKER_FIRST_NAME = "Worker"
+        private const val WORKER_LAST_NAME = "Worker"
+        private const val WORKER_EMAIL = "worker@gworker.com"
+        private const val WORKER_PASSWORD = "worker123"
+        private val WORKER_DATE_OF_BIRTH = DateOfBirth(2, 2, 2000)
+        private const val WORKER_PHONE_NUM = "0878666872"
+        val workerUser = User(WORKER_FIRST_NAME, WORKER_LAST_NAME, WORKER_EMAIL, WORKER_PASSWORD, WORKER_DATE_OF_BIRTH.toString(), WORKER_PHONE_NUM)
+        val workerUserRegisterBody = UserRegisterBody(WORKER_FIRST_NAME, WORKER_LAST_NAME, WORKER_EMAIL, WORKER_PASSWORD, WORKER_DATE_OF_BIRTH, WORKER_PHONE_NUM)
+        val workerUserResponse = UserResponse(workerUser.id, WORKER_FIRST_NAME, WORKER_LAST_NAME, WORKER_DATE_OF_BIRTH, WORKER_PHONE_NUM)
+        val workerUserLoginBody = UserLoginBody(WORKER_EMAIL, WORKER_PASSWORD)
 
         //Task
         private const val TITLE = "Test Title"
@@ -44,7 +56,7 @@ class DefaultValues {
         private val DATE_TIME = LocalDateTime.now()
         private const val CREATOR_ID = 1L
         private const val ACCEPTED_COUNT = 0
-        val task = Task(TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, user, LOCATION)
+        val task = Task(TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, creatorUser, LOCATION)
         val taskBody = TaskBody(TITLE, PAYMENT, NUMBER_OF_WORKERS, DESCRIPTION, DATE_TIME, LOCATION)
         val taskResponse = TaskResponse(task.id, TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, LOCATION, CREATOR_ID, ACCEPTED_COUNT)
         val taskPaginatedResponse = TaskPaginatedResponse(listOf(taskResponse, taskResponse))
@@ -52,16 +64,16 @@ class DefaultValues {
 
         //Application
         private const val ACCEPTED = false
-        val application = Application(user, task, ACCEPTED)
-        val applicationResponse = ApplicationResponse(application.id, userResponse, taskResponse, application.accepted)
+        val application = Application(workerUser, task, ACCEPTED)
+        val applicationResponse = ApplicationResponse(application.id, workerUserResponse, taskResponse, application.accepted)
         val applicationBody = ApplicationBody(task.id)
 
         //Work
-        val workBody = WorkBody(task.id, listOf(user.id))
+        val workBody = WorkBody(task.id, listOf(workerUser.id))
         val work = Work(task)
-        val workResponse = WorkResponse(work.id, task, listOf(user), work.createdAt, work.status)
+        val workResponse = WorkResponse(work.id, task, listOf(workerUser), work.createdAt, work.status)
 
         //Participation
-        val participation = Participation(work, user)
+        val participation = Participation(work, workerUser)
     }
 }

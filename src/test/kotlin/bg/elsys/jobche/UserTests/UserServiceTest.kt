@@ -35,8 +35,8 @@ class UserServiceTest: BaseUnitTest() {
         val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         const val PHONE_NUM = "0878555373"
         private val user = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH.toString(), PHONE_NUM)
-        private val userRegister = DefaultValues.userRegisterBody
-        private val userLogin = DefaultValues.userLoginBody
+        private val userRegister = DefaultValues.creatorUserRegisterBody
+        private val userLogin = DefaultValues.creatorUserLoginBody
     }
 
     private val repository: UserRepository = mockk()

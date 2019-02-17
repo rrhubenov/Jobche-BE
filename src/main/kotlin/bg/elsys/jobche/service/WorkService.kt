@@ -8,6 +8,7 @@ import bg.elsys.jobche.entity.model.work.WorkStatus
 import bg.elsys.jobche.entity.response.WorkResponse
 import bg.elsys.jobche.exception.ResourceForbiddenException
 import bg.elsys.jobche.exception.ResourceNotFoundException
+import bg.elsys.jobche.exception.UserNotFoundException
 import bg.elsys.jobche.repository.ParticipationRepository
 import bg.elsys.jobche.repository.TaskRepository
 import bg.elsys.jobche.repository.UserRepository
@@ -32,9 +33,21 @@ class WorkService(private val workRepository: WorkRepository,
             if(requestingUser?.id == task.creator.id) {
                 val users = userRepository.findAllById(workBody.workers)
 
+                if (users.size != workBody.workers.size) {
+                    throw UserNotFoundException()
+                }
+
                 val work = workRepository.save(Work(task))
 
-                users.forEach { participationRepository.save(Participation(work, it)) }
+                users.forEach { participant ->
+                    //Check if the participant is one of the accepted appliers
+                    if(task.applications.stream().anyMatch { it.user.id == participant.id && it.accepted == true }) {
+                        participationRepository.save(Participation(work, participant))
+                    } else {
+                        workRepository.deleteById(work.id)
+                        throw ResourceForbiddenException()
+                    }
+                }
 
                 return WorkResponse(work.id, task, users, work.createdAt, work.status)
             } else throw ResourceForbiddenException()
@@ -71,7 +84,7 @@ class WorkService(private val workRepository: WorkRepository,
         } else throw ResourceNotFoundException()
     }
 
-    fun end(workStatus: WorkStatus, id: Long) {
+    fun changeStatus(workStatus: WorkStatus, id: Long) {
         if(workRepository.existsById(id)) {
             val user = userRepository.findByEmail(authenticationDetails.getEmail())
 

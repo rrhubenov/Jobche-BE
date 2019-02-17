@@ -3,8 +3,11 @@ package bg.elsys.jobche.WorkTests
 import bg.elsys.jobche.BaseIntegrationTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.entity.body.WorkBody
+import bg.elsys.jobche.entity.body.application.ApplicationBody
+import bg.elsys.jobche.entity.body.user.UserRegisterBody
 import bg.elsys.jobche.entity.model.work.WorkStatus
 import bg.elsys.jobche.entity.response.WorkResponse
+import bg.elsys.jobche.entity.response.application.ApplicationResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
 import bg.elsys.jobche.entity.response.user.UserResponse
 import org.assertj.core.api.Assertions.assertThat
@@ -27,32 +30,53 @@ class WorkIntegrationTest : BaseIntegrationTest() {
         const val END_URL = "/work/"
 
         //User constants
-        val USER_BODY = DefaultValues.userRegisterBody
-        val USER_EMAIL = USER_BODY.email
-        val USER_PASSWORD = USER_BODY.password
-        val user = DefaultValues.user
+        val USER_CREATOR_BODY = DefaultValues.creatorUserRegisterBody
+        val USER_CREATOR_EMAIL = USER_CREATOR_BODY.email
+        val USER_CREATOR_PASSWORD = USER_CREATOR_BODY.password
+
+        val USER_WORKER_EMAIL = "worker@worker.com"
+        val USER_WORKER_PASSWORD = "worker123"
+        val USER_WORKER_BODY = UserRegisterBody("Worker", "Worker", USER_WORKER_EMAIL, USER_WORKER_PASSWORD, USER_CREATOR_BODY.dateOfBirth, "0878666878")
 
         //Task constants
         val TASK_BODY = DefaultValues.taskBody
     }
 
     var taskId: Long? = 0L
+    var userCreatorId: Long? = 0L
+    var userWorkerId: Long? = 0L
 
     @BeforeEach
     fun `register a user and create a task with the user`() {
-        //Register User
-        restTemplate.postForEntity("/users", USER_BODY, UserResponse::class.java)
+        //Register User - creator
+        userCreatorId = restTemplate.postForEntity("/users", USER_CREATOR_BODY, UserResponse::class.java).body?.id
+
+        //Register User - worker
+        userWorkerId = restTemplate.postForEntity("/users", USER_WORKER_BODY, UserResponse::class.java).body?.id
 
         //Create a Task and get its ID
         taskId = restTemplate
-                .withBasicAuth(USER_EMAIL, USER_PASSWORD)
+                .withBasicAuth(USER_CREATOR_EMAIL, USER_CREATOR_PASSWORD)
                 .postForEntity("/tasks", TASK_BODY, TaskResponse::class.java).body?.id
+
+        //Apply worker to Task
+        val applicationId = restTemplate
+                .withBasicAuth(USER_WORKER_EMAIL, USER_WORKER_PASSWORD)
+                .postForEntity("/application", ApplicationBody(taskId!!), ApplicationResponse::class.java).body?.id
+
+        //Approve worker for Task
+        restTemplate
+                .withBasicAuth(USER_CREATOR_EMAIL, USER_CREATOR_PASSWORD)
+                .getForEntity("/application/approve/$applicationId", Unit::class.java)
     }
 
     @AfterEach
-    fun `remove the created user and his task`() {
-        //Delete User
-        restTemplate.withBasicAuth(USER_EMAIL, USER_PASSWORD).delete("/users")
+    fun `remove the created users`() {
+        //Delete Creator
+        restTemplate.withBasicAuth(USER_CREATOR_EMAIL, USER_CREATOR_PASSWORD).delete("/users")
+
+        //Delete Worker
+        restTemplate.withBasicAuth(USER_WORKER_EMAIL, USER_WORKER_PASSWORD).delete("/users")
     }
 
     @Nested
@@ -65,6 +89,14 @@ class WorkIntegrationTest : BaseIntegrationTest() {
 
             deleteWork(createResponse.body?.id)
         }
+
+        @Test
+        fun `create work with a non accepted applier should return 405`() {
+            val workBody = WorkBody(taskId!!, listOf(userCreatorId!!))
+            val createResponse = restTemplate.withBasicAuth(USER_CREATOR_EMAIL, USER_CREATOR_PASSWORD).postForEntity(CREATE_URL, workBody, Unit::class.java)
+
+            assertThat(createResponse.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
+        }
     }
 
     @Nested
@@ -74,7 +106,7 @@ class WorkIntegrationTest : BaseIntegrationTest() {
             val createResponse = createWork()
 
             val deleteResponse = restTemplate
-                    .withBasicAuth(USER_EMAIL, USER_PASSWORD)
+                    .withBasicAuth(USER_CREATOR_EMAIL, USER_CREATOR_PASSWORD)
                     .exchange(DELETE_URL + createResponse.body?.id,
                             HttpMethod.DELETE,
                             HttpEntity(Unit),
@@ -91,7 +123,7 @@ class WorkIntegrationTest : BaseIntegrationTest() {
             val createResponse = createWork()
 
             val readResponse = restTemplate
-                    .withBasicAuth(USER_EMAIL, USER_PASSWORD)
+                    .withBasicAuth(USER_CREATOR_EMAIL, USER_CREATOR_PASSWORD)
                     .getForEntity(READ_URL + createResponse.body?.id, WorkResponse::class.java)
 
             assertThat(readResponse.statusCode).isEqualTo(HttpStatus.OK)
@@ -107,7 +139,7 @@ class WorkIntegrationTest : BaseIntegrationTest() {
 //            val createResponse = createWork()
 //
 //            val endResponse = restTemplate
-//                    .withBasicAuth(USER_EMAIL, USER_PASSWORD)
+//                    .withBasicAuth(USER_CREATOR_EMAIL, USER_CREATOR_PASSWORD)
 //                    .exchange(END_URL + createResponse.body?.id,
 //                            HttpMethod.PATCH,
 //                            HttpEntity(WorkStatus.ENDED),
@@ -121,12 +153,12 @@ class WorkIntegrationTest : BaseIntegrationTest() {
 
 
     fun createWork(): ResponseEntity<WorkResponse> {
-        val workBody = WorkBody(taskId!!, listOf(user.id))
-        return restTemplate.withBasicAuth(USER_EMAIL, USER_PASSWORD).postForEntity(CREATE_URL, workBody, WorkResponse::class.java)
+        val workBody = WorkBody(taskId!!, listOf(userWorkerId!!))
+        return restTemplate.withBasicAuth(USER_CREATOR_EMAIL, USER_CREATOR_PASSWORD).postForEntity(CREATE_URL, workBody, WorkResponse::class.java)
     }
 
     fun deleteWork(workId: Long?) {
-        restTemplate.withBasicAuth(USER_EMAIL, USER_PASSWORD).delete(DELETE_URL + workId)
+        restTemplate.withBasicAuth(USER_CREATOR_EMAIL, USER_CREATOR_PASSWORD).delete(DELETE_URL + workId)
     }
 
 }

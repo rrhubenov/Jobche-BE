@@ -45,9 +45,9 @@ class ApplicationService(val appRepository: ApplicationRepository,
         if (appRepository.existsById(id)) {
             val user = userRepository.findByEmail(authenticationDetails.getEmail())
             val application = appRepository.getOne(id)
-            if (application.task.creator.id == user?.id) {
+            if (application.task?.creator?.id == user?.id) {
                 application.accepted = true
-                application.task.acceptedWorkersCount++
+                application.task!!.acceptedWorkersCount++
                 appRepository.save(application)
             } else throw ResourceForbiddenException()
         } else throw ResourceNotFoundException()

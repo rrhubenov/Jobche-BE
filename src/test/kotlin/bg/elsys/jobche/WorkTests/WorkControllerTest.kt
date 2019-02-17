@@ -54,9 +54,9 @@ class WorkControllerTest: BaseUnitTest() {
 
     @Test
     fun `ending work should return 200`() {
-        every { service.end(WorkStatus.ENDED, work.id) } returns Unit
+        every { service.changeStatus(WorkStatus.ENDED, work.id) } returns Unit
 
-        val response = controller.end(WorkStatus.ENDED, work.id)
+        val response = controller.changeStatus(WorkStatus.ENDED, work.id)
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
     }

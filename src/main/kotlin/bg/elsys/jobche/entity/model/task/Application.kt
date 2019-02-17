@@ -12,7 +12,7 @@ data class Application(
         val user: User,
 
         @ManyToOne(optional = false, fetch = FetchType.EAGER)
-        val task: Task,
+        val task: Task?,
 
         var accepted: Boolean = false) : BaseEntity() {
 

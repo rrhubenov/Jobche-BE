@@ -18,7 +18,7 @@ class Converters {
         get() = UserResponse(id, firstName, lastName, toDateOfBirth(dateOfBirth), phoneNum)
 
     val Application.response
-        get() = ApplicationResponse(id, user.response, task.response, accepted)
+        get() = ApplicationResponse(id, user.response, task?.response, accepted)
 
     fun toDateOfBirth(date: String): DateOfBirth {
         val values = date.split("-")

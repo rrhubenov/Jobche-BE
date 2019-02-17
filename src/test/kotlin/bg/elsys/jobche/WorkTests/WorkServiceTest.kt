@@ -3,6 +3,7 @@ package bg.elsys.jobche.WorkTests
 import bg.elsys.jobche.BaseUnitTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.config.security.AuthenticationDetails
+import bg.elsys.jobche.entity.model.task.Task
 import bg.elsys.jobche.entity.model.work.WorkStatus
 import bg.elsys.jobche.repository.ParticipationRepository
 import bg.elsys.jobche.repository.TaskRepository
@@ -13,6 +14,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
 import java.util.*
@@ -28,7 +30,8 @@ class WorkServiceTest : BaseUnitTest() {
         val task = DefaultValues.task
 
         //User constants
-        val user = DefaultValues.user
+        val userCreator = DefaultValues.creatorUser
+        val userWorker = DefaultValues.workerUser
 
         //Participation constants
         val participation = DefaultValues.participation
@@ -41,31 +44,35 @@ class WorkServiceTest : BaseUnitTest() {
     val authenticationDetails: AuthenticationDetails = mockk()
     val service = WorkService(workRepository, participationRepository, taskRepository, userRepository, authenticationDetails)
 
-    @Test
-    fun `create should call repo methods and return the created work`() {
-        every { taskRepository.findById(workBody.taskId) } returns Optional.of(task)
-        every { authenticationDetails.getEmail() } returns anyString()
-        every { userRepository.findByEmail(anyString()) } returns user
-        every { userRepository.findAllById(workBody.workers) } returns listOf(user)
-        every { workRepository.save(work) } returns work
-        every { participationRepository.save(participation) } returns participation
 
-        val result = service.create(workBody)
-
-        verify {
-            taskRepository.findById(workBody.taskId)
-            userRepository.findAllById(workBody.workers)
-            workRepository.save(work)
-            participationRepository.save(participation)
-        }
-
-        assertThat(result).isEqualToComparingFieldByFieldRecursively(workResponse)
-    }
+//    @Nested
+//    inner class create {
+//        @Test
+//        fun `create should call repo methods and return the created work`() {
+//            every { taskRepository.findById(workBody.taskId) } returns Optional.of(task)
+//            every { authenticationDetails.getEmail() } returns anyString()
+//            every { userRepository.findByEmail(anyString()) } returns userCreator
+//            every { userRepository.findAllById(workBody.workers) } returns listOf(userWorker)
+//            every { workRepository.save(work) } returns work
+//            every { participationRepository.save(participation) } returns participation
+//
+//            val result = service.create(workBody)
+//
+//            verify {
+//                taskRepository.findById(workBody.taskId)
+//                userRepository.findAllById(workBody.workers)
+//                workRepository.save(work)
+//                participationRepository.save(participation)
+//            }
+//
+//            assertThat(result).isEqualToComparingFieldByFieldRecursively(workResponse)
+//        }
+//    }
 
     @Test
     fun `delete should run repo methods`() {
         every { authenticationDetails.getEmail() } returns anyString()
-        every { userRepository.findByEmail(anyString()) } returns user
+        every { userRepository.findByEmail(anyString()) } returns userCreator
         every { workRepository.findById(work.id) } returns Optional.of(work)
         every { workRepository.deleteById(work.id) } returns Unit
 
@@ -83,7 +90,7 @@ class WorkServiceTest : BaseUnitTest() {
     fun `read should run repo methods and return response`() {
         every { workRepository.findById(work.id) } returns Optional.of(work)
         every { authenticationDetails.getEmail() } returns anyString()
-        every { userRepository.findByEmail(anyString()) } returns user
+        every { userRepository.findByEmail(anyString()) } returns userCreator
 
         val result = service.read(work.id)
 
@@ -97,14 +104,14 @@ class WorkServiceTest : BaseUnitTest() {
     }
 
     @Test
-    fun `end should run repo methods`() {
+    fun `changeStatus should run repo methods`() {
         every { workRepository.existsById(work.id) } returns true
         every { authenticationDetails.getEmail() } returns anyString()
-        every { userRepository.findByEmail(anyString()) } returns user
+        every { userRepository.findByEmail(anyString()) } returns userCreator
         every { workRepository.getOne(work.id) } returns work
         every { workRepository.save(work) } returns work
 
-        service.end(WorkStatus.ENDED, work.id)
+        service.changeStatus(WorkStatus.ENDED, work.id)
 
         verify {
             workRepository.existsById(work.id)

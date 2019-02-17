@@ -29,8 +29,8 @@ class UserIntegrationTest : BaseIntegrationTest() {
         const val LAST_NAME = "Hubenov"
         val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         const val PHONE_NUM = "0878555373"
-        private val registerUserBody = DefaultValues.userRegisterBody
-        private val loginUserBody = DefaultValues.userLoginBody
+        private val registerUserBody = DefaultValues.creatorUserRegisterBody
+        private val loginUserBody = DefaultValues.creatorUserLoginBody
         lateinit var registerResponse: ResponseEntity<UserResponse>
         val EMAIL = registerUserBody.email
         val PASSWORD = registerUserBody.password

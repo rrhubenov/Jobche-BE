@@ -22,7 +22,7 @@ import java.util.*
 
 class ApplicationServiceTest : BaseUnitTest() {
     companion object {
-        val user = DefaultValues.user
+        val user = DefaultValues.workerUser
         val task = DefaultValues.task
         val applicationBody = DefaultValues.applicationBody
         val application = DefaultValues.application

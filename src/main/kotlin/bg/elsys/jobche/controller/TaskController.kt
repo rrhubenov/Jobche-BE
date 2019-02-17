@@ -121,7 +121,7 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
 
         with(converters) {
             for (app in applicationList) {
-                applicationResponseList.add(ApplicationResponse(app.id, app.user.response, app.task.response, app.accepted))
+                applicationResponseList.add(ApplicationResponse(app.id, app.user.response, app.task?.response, app.accepted))
             }
         }
 

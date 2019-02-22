@@ -1,9 +1,10 @@
 package bg.elsys.jobche.service
 
 import bg.elsys.jobche.config.security.AuthenticationDetails
+import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.WorkBody
-import bg.elsys.jobche.entity.model.work.Work
 import bg.elsys.jobche.entity.model.work.Participation
+import bg.elsys.jobche.entity.model.work.Work
 import bg.elsys.jobche.entity.model.work.WorkStatus
 import bg.elsys.jobche.entity.response.WorkResponse
 import bg.elsys.jobche.exception.ResourceForbiddenException
@@ -20,7 +21,8 @@ class WorkService(private val workRepository: WorkRepository,
                   private val participationRepository: ParticipationRepository,
                   private val taskRepository: TaskRepository,
                   private val userRepository: UserRepository,
-                  private val authenticationDetails: AuthenticationDetails) {
+                  private val authenticationDetails: AuthenticationDetails,
+                  private val converters: Converters = Converters()) {
     fun create(workBody: WorkBody): WorkResponse {
         val optional = taskRepository.findById(workBody.taskId)
         val requestingUser = userRepository.findByEmail(authenticationDetails.getEmail())
@@ -30,7 +32,7 @@ class WorkService(private val workRepository: WorkRepository,
             val task = optional.get()
 
             //Check if the requesting user is the creator of the task
-            if(requestingUser?.id == task.creator.id) {
+            if (requestingUser?.id == task.creator.id) {
                 val users = userRepository.findAllById(workBody.workers)
 
                 if (users.size != workBody.workers.size) {
@@ -41,7 +43,7 @@ class WorkService(private val workRepository: WorkRepository,
 
                 users.forEach { participant ->
                     //Check if the participant is one of the accepted appliers
-                    if(task.applications.stream().anyMatch { it.user.id == participant.id && it.accepted == true }) {
+                    if (task.applications.stream().anyMatch { it.user.id == participant.id && it.accepted == true }) {
                         participationRepository.save(Participation(work, participant))
                     } else {
                         workRepository.deleteById(work.id)
@@ -49,7 +51,9 @@ class WorkService(private val workRepository: WorkRepository,
                     }
                 }
 
-                return WorkResponse(work.id, task, users, work.createdAt, work.status)
+                with(converters) {
+                    return work.response
+                }
             } else throw ResourceForbiddenException()
         } else throw ResourceNotFoundException()
     }
@@ -69,15 +73,17 @@ class WorkService(private val workRepository: WorkRepository,
     fun read(id: Long): WorkResponse {
         val optional = workRepository.findById(id)
 
-        if(optional.isPresent) {
+        if (optional.isPresent) {
             val work = optional.get()
             val requestingUser = userRepository.findByEmail(authenticationDetails.getEmail())
 
             //Check if the requesting user is the creator of the task or is one of the workers
-            if(work.participations.stream().anyMatch {  it.user.id ==  requestingUser?.id }
+            if (work.participations.stream().anyMatch { it.user.id == requestingUser?.id }
                     || requestingUser?.id == work.task.creator.id) {
 
-                return WorkResponse(work.id, work.task, work.participations.map { it.user }, work.createdAt, work.status)
+                with(converters) {
+                    return work.response
+                }
 
             } else throw ResourceForbiddenException()
 
@@ -85,12 +91,12 @@ class WorkService(private val workRepository: WorkRepository,
     }
 
     fun changeStatus(workStatus: WorkStatus, id: Long) {
-        if(workRepository.existsById(id)) {
+        if (workRepository.existsById(id)) {
             val user = userRepository.findByEmail(authenticationDetails.getEmail())
 
             val work = workRepository.getOne(id)
 
-            if(work.task.creator.id == user?.id) {
+            if (work.task.creator.id == user?.id) {
                 work.status = workStatus
                 workRepository.save(work)
             } else throw ResourceForbiddenException()

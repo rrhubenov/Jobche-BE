@@ -31,7 +31,10 @@ data class User(
         var applications: List<Application> = emptyList(),
 
         @OneToMany(cascade = [CascadeType.ALL], mappedBy = "user", fetch = FetchType.LAZY)
-        var participations: List<Participation> = emptyList()) : BaseEntity() {
+        var participations: List<Participation> = emptyList(),
+
+        @OneToMany(cascade = [CascadeType.ALL], mappedBy = "user", fetch = FetchType.LAZY)
+        var reviews: List<Review> = emptyList()) : BaseEntity() {
 
     override fun toString(): String {
         return ""

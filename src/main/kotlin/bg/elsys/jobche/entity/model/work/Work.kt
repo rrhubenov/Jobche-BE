@@ -2,6 +2,7 @@ package bg.elsys.jobche.entity.model.work
 
 import bg.elsys.jobche.entity.BaseEntity
 import bg.elsys.jobche.entity.model.task.Task
+import bg.elsys.jobche.entity.model.user.Review
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import javax.persistence.*
@@ -17,7 +18,11 @@ data class Work(
         @OneToMany(fetch = FetchType.LAZY, mappedBy = "work", cascade = [CascadeType.REMOVE])
         var participations: List<Participation> = emptyList(),
 
-        var status: WorkStatus = WorkStatus.IN_PROGRESS) : BaseEntity() {
+        @Enumerated(EnumType.STRING)
+        var status: WorkStatus = WorkStatus.IN_PROGRESS,
+
+        @OneToMany(fetch = FetchType.LAZY, mappedBy = "work", cascade = [CascadeType.REMOVE])
+        var reviews: List<Review> = emptyList()) : BaseEntity() {
 
     override fun toString(): String {
         return ""

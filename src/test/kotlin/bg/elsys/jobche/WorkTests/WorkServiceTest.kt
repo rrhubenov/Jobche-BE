@@ -14,6 +14,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
@@ -22,19 +23,19 @@ import java.util.*
 class WorkServiceTest : BaseUnitTest() {
 
     companion object {
-        val work = DefaultValues.work
-        val workBody = DefaultValues.workBody
-        val workResponse = DefaultValues.workResponse
+        var work = DefaultValues.work
+        var workBody = DefaultValues.workBody
+        var workResponse = DefaultValues.workResponse
 
         //Task constants
-        val task = DefaultValues.task
+        var task = DefaultValues.task
 
         //User constants
-        val userCreator = DefaultValues.creatorUser
-        val userWorker = DefaultValues.workerUser
+        var userCreator = DefaultValues.creatorUser
+        var userWorker = DefaultValues.workerUser
 
         //Participation constants
-        val participation = DefaultValues.participation
+        var participation = DefaultValues.participation
     }
 
     val workRepository: WorkRepository = mockk()
@@ -44,6 +45,23 @@ class WorkServiceTest : BaseUnitTest() {
     val authenticationDetails: AuthenticationDetails = mockk()
     val service = WorkService(workRepository, participationRepository, taskRepository, userRepository, authenticationDetails)
 
+
+    @BeforeEach
+    fun setup() {
+        work = DefaultValues.work
+        workBody = DefaultValues.workBody
+        workResponse = DefaultValues.workResponse
+
+        //Task constants
+        task = DefaultValues.task
+
+        //User constants
+        userCreator = DefaultValues.creatorUser
+        userWorker = DefaultValues.workerUser
+
+        //Participation constants
+        participation = DefaultValues.participation
+    }
 
 //    @Nested
 //    inner class create {

@@ -35,7 +35,7 @@ class ReviewService(val reviewRepository: ReviewRepository, val workRepository: 
 
                 val review = reviewRepository.save(Review(user, work, reviewBody.reviewGrade))
 
-                return ReviewResponse(review.id, review.work.id, review.user.id, review.reviewGrade)
+                return ReviewResponse(review.id, review.work.id, review.reviewGrade)
 
             } else throw ResourceForbiddenException()
         } else throw ResourceNotFoundException()

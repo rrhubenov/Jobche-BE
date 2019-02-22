@@ -71,7 +71,7 @@ class DefaultValues {
         //Work
         val workBody = WorkBody(task.id, listOf(workerUser.id))
         val work = Work(task)
-        val workResponse = WorkResponse(work.id, task, listOf(workerUser), work.createdAt, work.status)
+        val workResponse = WorkResponse(work.id, taskResponse, listOf(workerUserResponse), work.createdAt, work.status)
 
         //Participation
         val participation = Participation(work, workerUser)

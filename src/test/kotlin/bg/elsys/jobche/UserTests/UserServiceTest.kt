@@ -42,6 +42,7 @@ class UserServiceTest: BaseUnitTest() {
     private val repository: UserRepository = mockk()
     private val authenticationDetails: AuthenticationDetails = mockk()
     private val passwordEncoder = BCryptPasswordEncoder()
+    private val converters = Converters()
 
     private val userService: UserService
 
@@ -55,8 +56,11 @@ class UserServiceTest: BaseUnitTest() {
         every { repository.findByEmail(EMAIL) } returns user
 
         val result = userService.login(userLogin)
-        val expectedResult = UserResponse(user.id, user.firstName, "Hubenov", DATE_OF_BIRTH, PHONE_NUM, user.reviews)
-        assertThat(result).isEqualTo(expectedResult)
+
+        with(converters) {
+            val expectedResult = UserResponse(user.id, user.firstName, "Hubenov", DATE_OF_BIRTH, PHONE_NUM, user.reviews.map { it.response })
+            assertThat(result).isEqualTo(expectedResult)
+        }
     }
 
     @Nested
@@ -69,8 +73,10 @@ class UserServiceTest: BaseUnitTest() {
 
             val userResponse = userService.create(userRegister)
 
-            assertThat(userResponse).isEqualTo(UserResponse(user.id, userRegister.firstName,
-                    userRegister.lastName, DATE_OF_BIRTH, PHONE_NUM, user.reviews))
+            with(converters) {
+                assertThat(userResponse).isEqualTo(UserResponse(user.id, userRegister.firstName,
+                        userRegister.lastName, DATE_OF_BIRTH, PHONE_NUM, user.reviews.map {it.response}))
+            }
         }
 
         @Test

@@ -114,7 +114,7 @@ class ApplicationServiceTest : BaseUnitTest() {
             every { userRepository.findByEmail(anyString()) } returns user
             every { taskRepository.existsById(task.id) } returns true
             every { taskRepository.findById(task.id) } returns Optional.of(task)
-            every { appRepository.findAll(any<Pageable>()) } returns PageImpl<Application>(applications)
+            every { appRepository.findAllByTask(any<Pageable>(), task) } returns PageImpl<Application>(applications)
 
             val result = service.getApplicationsForTask(task.id, 1, 1)
 
@@ -123,7 +123,7 @@ class ApplicationServiceTest : BaseUnitTest() {
                 userRepository.findByEmail(anyString())
                 taskRepository.existsById(task.id)
                 taskRepository.findById(task.id)
-                appRepository.findAll(any<Pageable>())
+                appRepository.findAllByTask(any<Pageable>(), task)
             }
 
             assertThat(result).isEqualTo(applications)

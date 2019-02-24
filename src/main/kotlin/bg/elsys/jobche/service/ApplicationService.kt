@@ -62,7 +62,7 @@ class ApplicationService(val appRepository: ApplicationRepository,
         } else throw ResourceNotFoundException()
 
         if (task.creator.id == user?.id) {
-            val result = appRepository.findAll(createPageRequest(page, size)).content
+            val result = appRepository.findAllByTask(createPageRequest(page, size), task).content
 
             if (result.isEmpty()) {
                 throw NoContentException()

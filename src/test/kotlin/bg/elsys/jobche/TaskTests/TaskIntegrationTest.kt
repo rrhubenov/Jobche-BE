@@ -2,10 +2,9 @@ package bg.elsys.jobche.TaskTests
 
 import bg.elsys.jobche.BaseIntegrationTest
 import bg.elsys.jobche.DefaultValues
-import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.body.user.DateOfBirth
-import bg.elsys.jobche.entity.body.user.UserRegisterBody
+import bg.elsys.jobche.entity.body.user.UserBody
 import bg.elsys.jobche.entity.response.task.TaskPaginatedResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
 import bg.elsys.jobche.entity.response.user.UserResponse
@@ -44,9 +43,9 @@ class TaskIntegrationTest : BaseIntegrationTest() {
         const val TASK_DESCRIPTION = "Test Description"
         val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         val TASK_TIME_OF_WORK = LocalDateTime.now()
-        val TASK_LOCATION = Address("Bulgaria", "Sofia")
-        val taskBody = DefaultValues.taskBody
-        val registerUserBody = DefaultValues.creatorUserRegisterBody
+        val TASK_LOCATION = "Sofia"
+        val taskBody = DefaultValues.taskBody()
+        val registerUserBody = DefaultValues.creatorUserBody()
         val EMAIL = registerUserBody.email
         val PASSWORD = registerUserBody.password
     }
@@ -148,7 +147,7 @@ class TaskIntegrationTest : BaseIntegrationTest() {
                             3,
                             "SomeDesc",
                             LocalDateTime.now(),
-                            Address("Bulgaria", "Sofia"))
+                            "Sofia")
                             , TaskResponse::class.java)
 
             val getResponse = restTemplate
@@ -202,7 +201,7 @@ class TaskIntegrationTest : BaseIntegrationTest() {
             val OTHER_PHONE_NUM = "0878637676"
 
             //Create another user that will try to update a task that does not belong to him
-            val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, OTHER_EMAIL, OTHER_PASSWORD, DATE_OF_BIRTH, OTHER_PHONE_NUM)
+            val registerUserBody = UserBody(FIRST_NAME, LAST_NAME, OTHER_EMAIL, OTHER_PASSWORD, DATE_OF_BIRTH, OTHER_PHONE_NUM)
             registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
 
             //Create the body for the updated task
@@ -266,7 +265,7 @@ class TaskIntegrationTest : BaseIntegrationTest() {
             val OTHER_PHONE_NUM = "087863767"
 
             //Create another user that will try to update a task that does not belong to him
-            val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, OTHER_EMAIL, OTHER_PASSWORD, DATE_OF_BIRTH, OTHER_PHONE_NUM)
+            val registerUserBody = UserBody(FIRST_NAME, LAST_NAME, OTHER_EMAIL, OTHER_PASSWORD, DATE_OF_BIRTH, OTHER_PHONE_NUM)
             registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
 
             //Create the task

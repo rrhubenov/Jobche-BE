@@ -2,11 +2,7 @@ package bg.elsys.jobche.ApplicationTests
 
 import bg.elsys.jobche.BaseIntegrationTest
 import bg.elsys.jobche.DefaultValues
-import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.application.ApplicationBody
-import bg.elsys.jobche.entity.body.user.DateOfBirth
-import bg.elsys.jobche.entity.body.user.UserRegisterBody
-import bg.elsys.jobche.entity.model.user.User
 import bg.elsys.jobche.entity.response.application.ApplicationPaginatedResponse
 import bg.elsys.jobche.entity.response.application.ApplicationResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
@@ -25,8 +21,8 @@ class ApplicationIntegrationTests: BaseIntegrationTest() {
         //User constants
         const val REGISTER_URL = "/users"
         const val USER_DELETE_URL = "/users"
-        val user = DefaultValues.creatorUser
-        val userApplicant = DefaultValues.workerUser
+        val user = DefaultValues.creatorUser()
+        val userApplicant = DefaultValues.workerUser()
         //Task constants
         const val TASK_URL = "/tasks"
         const val CREATE_TASK_URL = TASK_URL
@@ -46,18 +42,18 @@ class ApplicationIntegrationTests: BaseIntegrationTest() {
     @BeforeEach
     fun setup() {
         //Create a user that will create the task
-        val userCreatorBody = DefaultValues.creatorUserRegisterBody
+        val userCreatorBody = DefaultValues.creatorUserBody()
         userCreatorResponse = restTemplate.postForEntity(REGISTER_URL, userCreatorBody, UserResponse::class.java)
         userCreatorId = userCreatorResponse.body?.id
 
 
         //Create the user that will apply for the task
-        val userApplicantBody = DefaultValues.workerUserRegisterBody
+        val userApplicantBody = DefaultValues.workerUserBody()
         userApplicantResponse = restTemplate.postForEntity(REGISTER_URL, userApplicantBody, UserResponse::class.java)
         applicantId = userApplicantResponse.body?.id
 
         //Create the task
-        val taskBody = DefaultValues.taskBody
+        val taskBody = DefaultValues.taskBody()
         taskResponse = restTemplate
                 .withBasicAuth(user.email, user.password)
                 .postForEntity(CREATE_TASK_URL, taskBody, TaskResponse::class.java)
@@ -83,8 +79,6 @@ class ApplicationIntegrationTests: BaseIntegrationTest() {
         @Test
         fun `create application should return 201 and the expected response`() {
             val applicationResponse = createApplication()
-
-            val expectedResponse = ApplicationResponse(applicationResponse.body?.id, userApplicantResponse.body, taskResponse.body, false)
 
             assertThat(applicationResponse.statusCode).isEqualTo(HttpStatus.CREATED)
 

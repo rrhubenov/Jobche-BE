@@ -5,6 +5,7 @@ import bg.elsys.jobche.entity.model.task.Application
 import bg.elsys.jobche.entity.model.task.Task
 import bg.elsys.jobche.entity.model.work.Participation
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import org.jetbrains.annotations.NotNull
 import javax.persistence.*
 
 
@@ -12,16 +13,22 @@ import javax.persistence.*
 @Table(name = "users")
 @JsonIgnoreProperties("tasks", "applications", "participations")
 data class User(
+        @NotNull
         var firstName: String,
 
+        @NotNull
         var lastName: String,
 
+        @NotNull
         var email: String,
 
+        @NotNull
         var password: String,
 
+        @NotNull
         var dateOfBirth: String,
 
+        @NotNull
         var phoneNum: String,
 
         @OneToMany(cascade = [CascadeType.ALL], mappedBy = "creator", fetch = FetchType.LAZY)

@@ -22,10 +22,10 @@ import java.util.*
 class TaskServiceTest : BaseUnitTest() {
 
     companion object {
-        private val user = DefaultValues.creatorUser
-        private val task = DefaultValues.task
-        private val taskBody = DefaultValues.taskBody
-        private val taskResponse = DefaultValues.taskResponse
+        private val user = DefaultValues.creatorUser()
+        private val task = DefaultValues.task()
+        private val taskBody = DefaultValues.taskBody()
+        private val taskResponse = DefaultValues.taskResponse()
     }
 
     private val repository: TaskRepository = mockk()

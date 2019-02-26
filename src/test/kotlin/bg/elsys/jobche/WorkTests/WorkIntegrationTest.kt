@@ -4,8 +4,7 @@ import bg.elsys.jobche.BaseIntegrationTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.entity.body.WorkBody
 import bg.elsys.jobche.entity.body.application.ApplicationBody
-import bg.elsys.jobche.entity.body.user.UserRegisterBody
-import bg.elsys.jobche.entity.model.work.WorkStatus
+import bg.elsys.jobche.entity.body.user.UserBody
 import bg.elsys.jobche.entity.response.WorkResponse
 import bg.elsys.jobche.entity.response.application.ApplicationResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
@@ -30,16 +29,16 @@ class WorkIntegrationTest : BaseIntegrationTest() {
         const val END_URL = "/work/"
 
         //User constants
-        val USER_CREATOR_BODY = DefaultValues.creatorUserRegisterBody
+        val USER_CREATOR_BODY = DefaultValues.creatorUserBody()
         val USER_CREATOR_EMAIL = USER_CREATOR_BODY.email
         val USER_CREATOR_PASSWORD = USER_CREATOR_BODY.password
 
         val USER_WORKER_EMAIL = "worker@worker.com"
         val USER_WORKER_PASSWORD = "worker123"
-        val USER_WORKER_BODY = UserRegisterBody("Worker", "Worker", USER_WORKER_EMAIL, USER_WORKER_PASSWORD, USER_CREATOR_BODY.dateOfBirth, "0878666878")
+        val USER_WORKER_BODY = UserBody("Worker", "Worker", USER_WORKER_EMAIL, USER_WORKER_PASSWORD, USER_CREATOR_BODY.dateOfBirth, "0878666878")
 
         //Task constants
-        val TASK_BODY = DefaultValues.taskBody
+        val TASK_BODY = DefaultValues.taskBody()
     }
 
     var taskId: Long? = 0L

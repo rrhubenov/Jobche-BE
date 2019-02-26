@@ -1,7 +1,6 @@
 package bg.elsys.jobche.entity.model.task
 
 import bg.elsys.jobche.entity.BaseEntity
-import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.model.user.User
 import bg.elsys.jobche.entity.model.work.Work
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
@@ -35,8 +34,7 @@ data class Task(
         var creator: User,
 
         @NotNull
-        @Embedded
-        var location: Address,
+        var city: String,
 
         var acceptedWorkersCount: Int = 0,
 

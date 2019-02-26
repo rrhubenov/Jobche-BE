@@ -17,11 +17,11 @@ import org.springframework.http.HttpStatus
 class TaskControllerTest : BaseUnitTest() {
 
     companion object {
-        val task = DefaultValues.task
+        val task = DefaultValues.task()
         val tasks = listOf(task, task)
-        val taskBody = DefaultValues.taskBody
-        val taskResponse = DefaultValues.taskResponse
-        val taskPaginatedResponse = DefaultValues.taskPaginatedResponse
+        val taskBody = DefaultValues.taskBody()
+        val taskResponse = DefaultValues.taskResponse()
+        val taskPaginatedResponse = DefaultValues.taskPaginatedResponse()
     }
 
     private val taskService: TaskService = mockk()
@@ -95,11 +95,11 @@ class TaskControllerTest : BaseUnitTest() {
     @Test
     fun `get applications for task`() {
         every { applicationService.getApplicationsForTask(task.id, 1, 1) } returns
-                listOf(DefaultValues.application)
+                listOf(DefaultValues.application())
 
         val result = controller.getApplications(task.id, 1, 1)
 
         assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(result.body?.applications).isEqualTo(listOf(DefaultValues.applicationResponse))
+        assertThat(result.body?.applications).isEqualTo(listOf(DefaultValues.applicationResponse()))
     }
 }

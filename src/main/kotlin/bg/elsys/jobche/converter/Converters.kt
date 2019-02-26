@@ -17,13 +17,16 @@ import org.springframework.stereotype.Component
 @Component
 class Converters {
     val Work.response
-        get() = WorkResponse(id, task.response, participations.map { it.userResponse }, createdAt, status)
+        get() = WorkResponse(id, task.response,
+                participations.map { it.userResponse }, createdAt, status)
 
     val Task.response
-        get() = TaskResponse(id, title, description, payment, numberOfWorkers, dateTime, location, creator.id, acceptedWorkersCount)
+        get() = TaskResponse(id, title, description, payment,
+                numberOfWorkers, dateTime, city, creator.id, acceptedWorkersCount)
 
     val User.response
-        get() = UserResponse(id, firstName, lastName, toDateOfBirth(dateOfBirth), phoneNum, reviews.map { it.response })
+        get() = UserResponse(id, firstName, lastName,
+                toDateOfBirth(dateOfBirth), phoneNum, reviews.map { it.response })
 
     val Application.response
         get() = ApplicationResponse(id, user.response, task?.response, accepted)
@@ -32,7 +35,8 @@ class Converters {
         get() = ReviewResponse(id, work.id, reviewGrade)
 
     val Participation.userResponse
-        get() = UserResponse(id, user.firstName, user.lastName, toDateOfBirth(user.dateOfBirth), user.phoneNum, user.reviews.map { it.response })
+        get() = UserResponse(id, user.firstName, user.lastName,
+                toDateOfBirth(user.dateOfBirth), user.phoneNum, user.reviews.map { it.response })
 
     fun toDateOfBirth(date: String): DateOfBirth {
         val values = date.split("-")

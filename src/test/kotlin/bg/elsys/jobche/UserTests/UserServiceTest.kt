@@ -5,7 +5,7 @@ import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.user.DateOfBirth
-import bg.elsys.jobche.entity.body.user.UserRegisterBody
+import bg.elsys.jobche.entity.body.user.UserBody
 import bg.elsys.jobche.entity.model.user.User
 import bg.elsys.jobche.entity.response.user.UserResponse
 import bg.elsys.jobche.exception.EmailExistsException
@@ -35,8 +35,7 @@ class UserServiceTest: BaseUnitTest() {
         val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         const val PHONE_NUM = "0878555373"
         private val user = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH.toString(), PHONE_NUM)
-        private val userRegister = DefaultValues.creatorUserRegisterBody
-        private val userLogin = DefaultValues.creatorUserLoginBody
+        private val userRegister = DefaultValues.creatorUserBody()
     }
 
     private val repository: UserRepository = mockk()
@@ -50,18 +49,6 @@ class UserServiceTest: BaseUnitTest() {
         userService = UserService(repository, passwordEncoder, authenticationDetails)
     }
 
-    @Test
-    fun `login should return valid user response`() {
-        every { repository.existsByEmail(EMAIL) } returns true
-        every { repository.findByEmail(EMAIL) } returns user
-
-        val result = userService.login(userLogin)
-
-        with(converters) {
-            val expectedResult = UserResponse(user.id, user.firstName, "Hubenov", DATE_OF_BIRTH, PHONE_NUM, user.reviews.map { it.response })
-            assertThat(result).isEqualTo(expectedResult)
-        }
-    }
 
     @Nested
     inner class create {
@@ -120,7 +107,7 @@ class UserServiceTest: BaseUnitTest() {
         every { repository.getOneByEmail(anyString()) } returns user
         every { repository.save(user) } returns user
 
-        userService.update(UserRegisterBody(user.firstName, user.lastName, user.email, user.password, DATE_OF_BIRTH, user.phoneNum))
+        userService.update(UserBody(user.firstName, user.lastName, user.email, user.password, DATE_OF_BIRTH, user.phoneNum))
 
         verify {
             repository.getOneByEmail(anyString())

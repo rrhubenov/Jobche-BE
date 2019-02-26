@@ -15,9 +15,9 @@ class WorkControllerTest: BaseUnitTest() {
 
 
     companion object {
-        val work = DefaultValues.work
-        val workBody = DefaultValues.workBody
-        val workResponse = DefaultValues.workResponse
+        val work = DefaultValues.work()
+        val workBody = DefaultValues.workBody()
+        val workResponse = DefaultValues.workResponse()
     }
 
     val service: WorkService = mockk()

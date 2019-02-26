@@ -46,13 +46,15 @@ class WebSecurityConfig(val userDetailsService: PostgreUserDetailsService) : Web
     }
 
     override fun configure(http: HttpSecurity) {
-        http.authorizeRequests()
+        http.run {
+            authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .antMatchers(HttpMethod.POST, "/users/login").permitAll()
                 .antMatchers(*WHITELISTED_URLS).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()
-        http.csrf().disable()
+            csrf().disable()
+        }
     }
 }

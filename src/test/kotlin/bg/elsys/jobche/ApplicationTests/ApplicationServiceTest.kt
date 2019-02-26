@@ -22,10 +22,10 @@ import java.util.*
 
 class ApplicationServiceTest : BaseUnitTest() {
     companion object {
-        val user = DefaultValues.workerUser
-        val task = DefaultValues.task
-        val applicationBody = DefaultValues.applicationBody
-        val application = DefaultValues.application
+        val user = DefaultValues.workerUser()
+        val task = DefaultValues.task()
+        val applicationBody = DefaultValues.applicationBody()
+        val application = DefaultValues.application()
         val applications = listOf(application, application)
     }
 

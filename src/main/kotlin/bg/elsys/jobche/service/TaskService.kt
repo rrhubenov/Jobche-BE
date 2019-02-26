@@ -26,7 +26,7 @@ class TaskService(val taskRepository: TaskRepository,
                 taskBody.numberOfWorkers,
                 taskBody.dateTime,
                 user!!,
-                taskBody.location
+                taskBody.city
 
         ))
     }
@@ -51,7 +51,7 @@ class TaskService(val taskRepository: TaskRepository,
             taskToUpdate.numberOfWorkers = task.numberOfWorkers
             taskToUpdate.description = task.description
             taskToUpdate.dateTime = task.dateTime
-            taskToUpdate.location = task.location
+            taskToUpdate.city = task.city
             taskRepository.save(taskToUpdate)
 
         } else throw TaskNotFoundException()

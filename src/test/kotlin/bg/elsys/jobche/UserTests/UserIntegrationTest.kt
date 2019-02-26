@@ -3,15 +3,13 @@ package bg.elsys.jobche.UserTests
 import bg.elsys.jobche.BaseIntegrationTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.entity.body.user.DateOfBirth
-import bg.elsys.jobche.entity.body.user.UserRegisterBody
+import bg.elsys.jobche.entity.body.user.UserBody
 import bg.elsys.jobche.entity.response.user.UserResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -29,8 +27,8 @@ class UserIntegrationTest : BaseIntegrationTest() {
         const val LAST_NAME = "Hubenov"
         val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         const val PHONE_NUM = "0878555373"
-        private val registerUserBody = DefaultValues.creatorUserRegisterBody
-        private val loginUserBody = DefaultValues.creatorUserLoginBody
+        private val registerUserBody = DefaultValues.creatorUserBody()
+        private val loginUserBody = DefaultValues.creatorUserBody()
         lateinit var registerResponse: ResponseEntity<UserResponse>
         val EMAIL = registerUserBody.email
         val PASSWORD = registerUserBody.password
@@ -68,7 +66,7 @@ class UserIntegrationTest : BaseIntegrationTest() {
 
         @Test
         fun `creating a user with an already existing phone number should return 400`() {
-            val invalidUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, "Random@asd.com", PASSWORD, DATE_OF_BIRTH, PHONE_NUM)
+            val invalidUserBody = UserBody(FIRST_NAME, LAST_NAME, "Random@asd.com", PASSWORD, DATE_OF_BIRTH, PHONE_NUM)
             val invalidRegisterResponse = restTemplate.postForEntity(REGISTER_URL, invalidUserBody, UserResponse::class.java)
 
             assertThat(invalidRegisterResponse.statusCode).isEqualTo(HttpStatus.CONFLICT)
@@ -76,7 +74,7 @@ class UserIntegrationTest : BaseIntegrationTest() {
 
         @Test
         fun `creating a user with an already existing email should return 400`() {
-            val invalidUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH, "0878637676")
+            val invalidUserBody = UserBody(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH, "0878637676")
             val invalidRegisterResponse = restTemplate.postForEntity(REGISTER_URL, invalidUserBody, UserResponse::class.java)
 
             assertThat(invalidRegisterResponse.statusCode).isEqualTo(HttpStatus.CONFLICT)
@@ -108,7 +106,7 @@ class UserIntegrationTest : BaseIntegrationTest() {
     inner class update {
         @Test
         fun `user updating himself should return 200 and update the resource`() {
-            val updatedUser = UserRegisterBody(FIRST_NAME + "new", LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH, PHONE_NUM)
+            val updatedUser = UserBody(FIRST_NAME + "new", LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH, PHONE_NUM)
 
             val putResponse = restTemplate
                     .withBasicAuth(EMAIL, PASSWORD)

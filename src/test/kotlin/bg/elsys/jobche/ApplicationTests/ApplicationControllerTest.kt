@@ -14,9 +14,9 @@ import org.springframework.http.HttpStatus
 class ApplicationControllerTest: BaseUnitTest() {
 
     companion object {
-        private val applicationResponse = DefaultValues.applicationResponse
-        private val applicationBody = DefaultValues.applicationBody
-        private val application = DefaultValues.application
+        private val applicationResponse = DefaultValues.applicationResponse()
+        private val applicationBody = DefaultValues.applicationBody()
+        private val application = DefaultValues.application()
 
     }
     private val controller: ApplicationController

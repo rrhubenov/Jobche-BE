@@ -7,16 +7,16 @@ import org.junit.jupiter.api.Test
 
 class ConvertersTest {
     companion object {
-        val taskResponse = DefaultValues.taskResponse
-        val userResponse = DefaultValues.creatorUserResponse
-        val applicationResponse = DefaultValues.applicationResponse
+        val taskResponse = DefaultValues.taskResponse()
+        val userResponse = DefaultValues.creatorUserResponse()
+        val applicationResponse = DefaultValues.applicationResponse()
     }
 
     val converters = Converters()
 
     @Test
     fun `test task response convertion`() {
-        val task = DefaultValues.task
+        val task = DefaultValues.task()
 
         with(converters) {
             assertThat(task.response).isEqualTo(taskResponse)
@@ -25,7 +25,7 @@ class ConvertersTest {
 
     @Test
     fun `test user response convertion`() {
-        val user = DefaultValues.creatorUser
+        val user = DefaultValues.creatorUser()
 
         with(converters) {
             assertThat(user.response).isEqualTo(userResponse)
@@ -34,7 +34,7 @@ class ConvertersTest {
 
     @Test
     fun `test application response convertion`() {
-        val application = DefaultValues.application
+        val application = DefaultValues.application()
 
         with(converters) {
             assertThat(application.response).isEqualTo(applicationResponse)

@@ -23,19 +23,19 @@ import java.util.*
 class WorkServiceTest : BaseUnitTest() {
 
     companion object {
-        var work = DefaultValues.work
-        var workBody = DefaultValues.workBody
-        var workResponse = DefaultValues.workResponse
+        var work = DefaultValues.work()
+        var workBody = DefaultValues.workBody()
+        var workResponse = DefaultValues.workResponse()
 
         //Task constants
-        var task = DefaultValues.task
+        var task = DefaultValues.task()
 
         //User constants
-        var userCreator = DefaultValues.creatorUser
-        var userWorker = DefaultValues.workerUser
+        var userCreator = DefaultValues.creatorUser()
+        var userWorker = DefaultValues.workerUser()
 
         //Participation constants
-        var participation = DefaultValues.participation
+        var participation = DefaultValues.participation()
     }
 
     val workRepository: WorkRepository = mockk()
@@ -48,19 +48,19 @@ class WorkServiceTest : BaseUnitTest() {
 
     @BeforeEach
     fun setup() {
-        work = DefaultValues.work
-        workBody = DefaultValues.workBody
-        workResponse = DefaultValues.workResponse
+        work = DefaultValues.work()
+        workBody = DefaultValues.workBody()
+        workResponse = DefaultValues.workResponse()
 
         //Task constants
-        task = DefaultValues.task
+        task = DefaultValues.task()
 
         //User constants
-        userCreator = DefaultValues.creatorUser
-        userWorker = DefaultValues.workerUser
+        userCreator = DefaultValues.creatorUser()
+        userWorker = DefaultValues.workerUser()
 
         //Participation constants
-        participation = DefaultValues.participation
+        participation = DefaultValues.participation()
     }
 
 //    @Nested

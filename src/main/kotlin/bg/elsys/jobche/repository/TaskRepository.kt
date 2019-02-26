@@ -62,7 +62,7 @@ class CustomTaskRepositoryImpl(val em: EntityManager) : CustomTaskRepository {
         }
 
         if (city != null) {
-            predicates.add(cb.equal(task.get<String>("location").get<String>("city"), city))
+            predicates.add(cb.equal(task.get<String>("city").get<String>("city"), city))
         }
 
         if (dateStart != null) {

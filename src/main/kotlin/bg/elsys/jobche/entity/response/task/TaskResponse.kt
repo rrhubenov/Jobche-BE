@@ -8,6 +8,6 @@ data class TaskResponse(val id: Long?,
                         val payment: Int?,
                         val numberOfWorkers: Int?,
                         val dateTime: LocalDateTime?,
-                        val location: String?,
+                        val city: String?,
                         val creatorId: Long?,
                         val acceptedWorkersCount: Int?)

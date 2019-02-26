@@ -47,17 +47,6 @@ class UserIntegrationTest : BaseIntegrationTest() {
     }
 
     @Nested
-    inner class login {
-        @Test
-        fun `login should return 200`() {
-            val loginResponse = restTemplate.postForEntity(LOGIN_URL, loginUserBody, UserResponse::class.java)
-
-            assertThat(loginResponse.statusCode).isEqualTo(HttpStatus.OK)
-        }
-    }
-
-
-    @Nested
     inner class create {
         @Test
         fun `create should return 201`() {
@@ -67,7 +56,8 @@ class UserIntegrationTest : BaseIntegrationTest() {
         @Test
         fun `creating a user with an already existing phone number should return 400`() {
             val invalidUserBody = UserBody(FIRST_NAME, LAST_NAME, "Random@asd.com", PASSWORD, DATE_OF_BIRTH, PHONE_NUM)
-            val invalidRegisterResponse = restTemplate.postForEntity(REGISTER_URL, invalidUserBody, UserResponse::class.java)
+            val invalidRegisterResponse =
+                    restTemplate.postForEntity(REGISTER_URL, invalidUserBody, UserResponse::class.java)
 
             assertThat(invalidRegisterResponse.statusCode).isEqualTo(HttpStatus.CONFLICT)
         }

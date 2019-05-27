@@ -1,5 +1,6 @@
 package bg.elsys.jobche.UserTests
 
+import bg.elsys.jobche.BaseUnitTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.controller.UserController
 import bg.elsys.jobche.service.ApplicationService
@@ -14,41 +15,25 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyLong
 import org.springframework.http.HttpStatus
 
-@ExtendWith(MockKExtension::class)
-class UserControllerTest() {
+class UserControllerTest: BaseUnitTest() {
 
     companion object {
-        val userResponse = DefaultValues.userResponse
-        val userRegisterBody = DefaultValues.userRegisterBody
-        val userLoginBody = DefaultValues.userLoginBody
+        val userResponse = DefaultValues.creatorUserResponse()
+        val userBody = DefaultValues.creatorUserBody()
     }
 
     private val userService: UserService = mockk()
     private val applicationService: ApplicationService = mockk()
 
-    private val controller: UserController
-
-    init {
-        controller = UserController(userService, applicationService)
-    }
-
-    @Test
-    fun `login should return valid user response`() {
-        every { userService.login(userLoginBody) } returns userResponse
-
-        val result = controller.login(userLoginBody)
-
-        assertThat(result.body).isEqualTo(userResponse)
-    }
-
+    private val controller = UserController(userService, applicationService)
 
     @Nested
     inner class create() {
         @Test
         fun `create should return valid user response`() {
-            every { userService.create(userRegisterBody) } returns userResponse
+            every { userService.create(userBody) } returns userResponse
 
-            val result = controller.create(userRegisterBody)
+            val result = controller.create(userBody)
 
             assertThat(result.body).isEqualTo(userResponse)
         }
@@ -64,9 +49,9 @@ class UserControllerTest() {
 
     @Test
     fun `update should return 200`() {
-        every { userService.update(userRegisterBody) } returns Unit
+        every { userService.update(userBody) } returns Unit
 
-        val result = controller.update(userRegisterBody)
+        val result = controller.update(userBody)
 
         assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
     }
@@ -83,11 +68,11 @@ class UserControllerTest() {
 
     @Test
     fun `get applications created from user should return 200 and appplications list`() {
-        every { applicationService.getApplicationsForUser(1, 1) } returns listOf(DefaultValues.application)
+        every { applicationService.getApplicationsForUser(1, 1) } returns listOf(DefaultValues.application())
 
         val result = controller.getApplications(1, 1)
 
         assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(result.body?.applications).isEqualTo(listOf(DefaultValues.applicationResponse))
+        assertThat(result.body?.applications).isEqualTo(listOf(DefaultValues.applicationResponse()))
     }
 }

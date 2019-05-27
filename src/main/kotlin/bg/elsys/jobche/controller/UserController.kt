@@ -2,7 +2,7 @@ package bg.elsys.jobche.controller
 
 import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.user.UserLoginBody
-import bg.elsys.jobche.entity.body.user.UserRegisterBody
+import bg.elsys.jobche.entity.body.user.UserBody
 import bg.elsys.jobche.entity.response.application.ApplicationPaginatedResponse
 import bg.elsys.jobche.entity.response.application.ApplicationResponse
 import bg.elsys.jobche.entity.response.user.UserResponse
@@ -16,7 +16,17 @@ import org.springframework.web.bind.annotation.*
 @Api(value = "User Operations", description = "All operations for users")
 @RestController
 @RequestMapping("/users")
-class UserController(val userService: UserService, val applicationService: ApplicationService, val converters: Converters = Converters()) {
+class UserController(val userService: UserService,
+                     val applicationService: ApplicationService,
+                     val converters: Converters = Converters()) {
+
+    @PostMapping
+    @ApiOperation(value = "Create a new user",
+            httpMethod = "POST")
+    @ApiResponses(ApiResponse(code = 201, message = "Created", response = UserResponse::class))
+    fun create(@RequestBody userRegister: UserBody): ResponseEntity<UserResponse> {
+        return ResponseEntity(userService.create(userRegister), HttpStatus.CREATED)
+    }
 
     @PostMapping("/login")
     @ApiOperation(value = "Get information about user",
@@ -24,14 +34,6 @@ class UserController(val userService: UserService, val applicationService: Appli
     @ApiResponses(ApiResponse(code = 204, message = "No content", response = UserResponse::class))
     fun login(@RequestBody userLogin: UserLoginBody): ResponseEntity<UserResponse> {
         return ResponseEntity(userService.login(userLogin), HttpStatus.OK)
-    }
-
-    @PostMapping
-    @ApiOperation(value = "Create a new user",
-            httpMethod = "POST")
-    @ApiResponses(ApiResponse(code = 201, message = "Created", response = UserResponse::class))
-    fun create(@RequestBody userRegister: UserRegisterBody): ResponseEntity<UserResponse> {
-        return ResponseEntity(userService.create(userRegister), HttpStatus.CREATED)
     }
 
     @DeleteMapping
@@ -48,7 +50,7 @@ class UserController(val userService: UserService, val applicationService: Appli
             httpMethod = "PUT",
             authorizations = arrayOf(Authorization(value = "basicAuth")))
     @ApiResponses(ApiResponse(code = 200, message = "Success", response = Unit::class))
-    fun update(@RequestBody updatedUser: UserRegisterBody): ResponseEntity<Unit> {
+    fun update(@RequestBody updatedUser: UserBody): ResponseEntity<Unit> {
         return ResponseEntity(userService.update(updatedUser), HttpStatus.OK)
     }
 
@@ -72,7 +74,7 @@ class UserController(val userService: UserService, val applicationService: Appli
 
         with(converters) {
             for (app in applicationList) {
-                applicationResponseList.add(ApplicationResponse(app.id, app.user.response, app.task.response, app.accepted))
+                applicationResponseList.add(ApplicationResponse(app.id, app.user.response, app.task?.response, app.accepted))
             }
         }
 

@@ -25,8 +25,8 @@ class TaskService(val taskRepository: TaskRepository,
                 taskBody.payment,
                 taskBody.numberOfWorkers,
                 taskBody.dateTime,
-                user!!.id,
-                taskBody.location
+                user!!,
+                taskBody.city
 
         ))
     }
@@ -42,20 +42,16 @@ class TaskService(val taskRepository: TaskRepository,
             val user = userRepository.findByEmail(authenticationDetails.getEmail())
             val taskToUpdate = taskRepository.getOne(id)
 
-            if (taskToUpdate.creatorId != user?.id) {
+            if (taskToUpdate.creator.id != user?.id) {
                 throw TaskModificationForbiddenException()
             }
-
-//            if (task.numberOfWorkers > taskToUpdate.acceptedWorkersCount) {
-//                TODO()
-//            }
 
             taskToUpdate.title = task.title
             taskToUpdate.payment = task.payment
             taskToUpdate.numberOfWorkers = task.numberOfWorkers
             taskToUpdate.description = task.description
             taskToUpdate.dateTime = task.dateTime
-            taskToUpdate.location = task.location
+            taskToUpdate.city = task.city
             taskRepository.save(taskToUpdate)
 
         } else throw TaskNotFoundException()
@@ -66,7 +62,7 @@ class TaskService(val taskRepository: TaskRepository,
             val task = taskRepository.findById(id)
             val user = userRepository.findByEmail(authenticationDetails.getEmail())
 
-            if (task.get().creatorId != user!!.id) {
+            if (task.get().creator.id != user!!.id) {
                 throw TaskModificationForbiddenException()
             }
 

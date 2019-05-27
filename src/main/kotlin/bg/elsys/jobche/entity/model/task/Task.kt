@@ -1,20 +1,51 @@
 package bg.elsys.jobche.entity.model.task
 
 import bg.elsys.jobche.entity.BaseEntity
-import bg.elsys.jobche.entity.body.task.Address
+import bg.elsys.jobche.entity.model.user.User
+import bg.elsys.jobche.entity.model.work.Work
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import org.jetbrains.annotations.NotNull
 import java.time.LocalDateTime
-import javax.persistence.Embedded
-import javax.persistence.Entity
-import javax.persistence.Table
+import javax.persistence.*
+import javax.validation.constraints.Size
 
 @Entity
 @Table(name = "tasks")
-data class Task(var title: String,
-                var description: String,
-                var payment: Int,
-                var numberOfWorkers: Int,
-                var dateTime: LocalDateTime,
-                var creatorId: Long,
-                @Embedded
-                var location: Address,
-                var acceptedWorkersCount: Int = 0) : BaseEntity()
+@JsonIgnoreProperties("applications", "work")
+data class Task(
+        @NotNull
+        var title: String,
+
+        @NotNull
+        var description: String,
+
+        @NotNull
+        var payment: Int,
+
+        @NotNull
+        @Size(min = 1, message = "The number of workers needed cannot be less than 1")
+        var numberOfWorkers: Int,
+
+        @NotNull
+        var dateTime: LocalDateTime,
+
+        @NotNull
+        @ManyToOne(fetch = FetchType.EAGER)
+        var creator: User,
+
+        @NotNull
+        var city: String,
+
+        var acceptedWorkersCount: Int = 0,
+
+        @OneToMany(cascade = [CascadeType.ALL], mappedBy = "task", fetch = FetchType.LAZY)
+        var applications: List<Application> = emptyList(),
+
+        @OneToOne(fetch = FetchType.LAZY, mappedBy = "task", cascade = [CascadeType.ALL])
+        var work: Work? = null) : BaseEntity() {
+
+
+    override fun toString(): String {
+        return ""
+    }
+}

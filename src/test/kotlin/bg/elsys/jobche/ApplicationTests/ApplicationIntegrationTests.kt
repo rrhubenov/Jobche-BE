@@ -1,11 +1,8 @@
 package bg.elsys.jobche.ApplicationTests
 
+import bg.elsys.jobche.BaseIntegrationTest
 import bg.elsys.jobche.DefaultValues
-import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.application.ApplicationBody
-import bg.elsys.jobche.entity.body.user.DateOfBirth
-import bg.elsys.jobche.entity.body.user.UserRegisterBody
-import bg.elsys.jobche.entity.model.User
 import bg.elsys.jobche.entity.response.application.ApplicationPaginatedResponse
 import bg.elsys.jobche.entity.response.application.ApplicationResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
@@ -15,24 +12,17 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ExtendWith(SpringExtension::class)
-class ApplicationIntegrationTests {
+class ApplicationIntegrationTests: BaseIntegrationTest() {
     companion object {
         //User constants
         const val REGISTER_URL = "/users"
         const val USER_DELETE_URL = "/users"
-        val user = DefaultValues.user
-        val userApplicant = User("Applicant", "Applicant", "applicant@app.com", "randompass", DateOfBirth(2, 3, 2001).toString(), "0878900955", null)
+        val user = DefaultValues.creatorUser()
+        val userApplicant = DefaultValues.workerUser()
         //Task constants
         const val TASK_URL = "/tasks"
         const val CREATE_TASK_URL = TASK_URL
@@ -41,9 +31,6 @@ class ApplicationIntegrationTests {
         const val CREATE_APPLICATION_URL = BASE_APPLICATION_URL
         const val APPROVE_APPLICATION_URL = BASE_APPLICATION_URL + "/approve/"
     }
-
-    @Autowired
-    lateinit var restTemplate: TestRestTemplate
 
     lateinit var userCreatorResponse: ResponseEntity<UserResponse>
     lateinit var userApplicantResponse: ResponseEntity<UserResponse>
@@ -55,18 +42,18 @@ class ApplicationIntegrationTests {
     @BeforeEach
     fun setup() {
         //Create a user that will create the task
-        val userCreatorBody = DefaultValues.userRegisterBody
+        val userCreatorBody = DefaultValues.creatorUserBody()
         userCreatorResponse = restTemplate.postForEntity(REGISTER_URL, userCreatorBody, UserResponse::class.java)
         userCreatorId = userCreatorResponse.body?.id
 
 
         //Create the user that will apply for the task
-        val userApplicantBody = UserRegisterBody(userApplicant.firstName, userApplicant.lastName, userApplicant.email, userApplicant.password, Converters().toDateOfBirth(userApplicant.dateOfBirth), userApplicant.phoneNum)
+        val userApplicantBody = DefaultValues.workerUserBody()
         userApplicantResponse = restTemplate.postForEntity(REGISTER_URL, userApplicantBody, UserResponse::class.java)
         applicantId = userApplicantResponse.body?.id
 
         //Create the task
-        val taskBody = DefaultValues.taskBody
+        val taskBody = DefaultValues.taskBody()
         taskResponse = restTemplate
                 .withBasicAuth(user.email, user.password)
                 .postForEntity(CREATE_TASK_URL, taskBody, TaskResponse::class.java)
@@ -93,10 +80,7 @@ class ApplicationIntegrationTests {
         fun `create application should return 201 and the expected response`() {
             val applicationResponse = createApplication()
 
-            val expectedResponse = ApplicationResponse(applicationResponse.body?.id, userApplicantResponse.body, taskResponse.body, false)
-
             assertThat(applicationResponse.statusCode).isEqualTo(HttpStatus.CREATED)
-            assertThat(applicationResponse.body).isEqualTo(expectedResponse)
 
             deleteApplication(applicationResponse.body?.id)
         }

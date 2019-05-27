@@ -1,33 +1,27 @@
 package bg.elsys.jobche.TaskTests
 
+import bg.elsys.jobche.BaseUnitTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.controller.TaskController
-import bg.elsys.jobche.converter.Converters
-import bg.elsys.jobche.entity.body.task.Address
-import bg.elsys.jobche.entity.body.task.TaskBody
-import bg.elsys.jobche.entity.response.task.TaskPaginatedResponse
-import bg.elsys.jobche.entity.response.task.TaskResponse
 import bg.elsys.jobche.service.ApplicationService
 import bg.elsys.jobche.service.TaskService
 import io.mockk.every
-import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers.*
+import org.mockito.ArgumentMatchers.anyInt
+import org.mockito.ArgumentMatchers.anyLong
 import org.springframework.http.HttpStatus
 
-@ExtendWith(MockKExtension::class)
-class TaskControllerTest {
+class TaskControllerTest : BaseUnitTest() {
 
     companion object {
-        val task = DefaultValues.task
+        val task = DefaultValues.task()
         val tasks = listOf(task, task)
-        val taskBody = DefaultValues.taskBody
-        val taskResponse = DefaultValues.taskResponse
-        val taskPaginatedResponse = DefaultValues.taskPaginatedResponse
+        val taskBody = DefaultValues.taskBody()
+        val taskResponse = DefaultValues.taskResponse()
+        val taskPaginatedResponse = DefaultValues.taskPaginatedResponse()
     }
 
     private val taskService: TaskService = mockk()
@@ -101,11 +95,11 @@ class TaskControllerTest {
     @Test
     fun `get applications for task`() {
         every { applicationService.getApplicationsForTask(task.id, 1, 1) } returns
-                listOf(DefaultValues.application)
+                listOf(DefaultValues.application())
 
         val result = controller.getApplications(task.id, 1, 1)
 
         assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(result.body?.applications).isEqualTo(listOf(DefaultValues.applicationResponse))
+        assertThat(result.body?.applications).isEqualTo(listOf(DefaultValues.applicationResponse()))
     }
 }

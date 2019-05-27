@@ -1,33 +1,31 @@
 package bg.elsys.jobche.ApplicationTests
 
+import bg.elsys.jobche.BaseUnitTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.config.security.AuthenticationDetails
-import bg.elsys.jobche.entity.model.Application
+import bg.elsys.jobche.entity.model.task.Application
 import bg.elsys.jobche.repository.ApplicationRepository
 import bg.elsys.jobche.repository.TaskRepository
 import bg.elsys.jobche.repository.UserRepository
 import bg.elsys.jobche.service.ApplicationService
 import io.mockk.every
-import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.ArgumentMatchers.anyString
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import java.util.*
 
-@ExtendWith(MockKExtension::class)
-class ApplicationServiceTest {
+class ApplicationServiceTest : BaseUnitTest() {
     companion object {
-        val user = DefaultValues.user
-        val task = DefaultValues.task
-        val applicationBody = DefaultValues.applicationBody
-        val application = DefaultValues.application
+        val user = DefaultValues.workerUser()
+        val task = DefaultValues.task()
+        val applicationBody = DefaultValues.applicationBody()
+        val application = DefaultValues.application()
         val applications = listOf(application, application)
     }
 
@@ -116,7 +114,7 @@ class ApplicationServiceTest {
             every { userRepository.findByEmail(anyString()) } returns user
             every { taskRepository.existsById(task.id) } returns true
             every { taskRepository.findById(task.id) } returns Optional.of(task)
-            every { appRepository.findAll(any<Pageable>()) } returns PageImpl<Application>(applications)
+            every { appRepository.findAllByTask(any<Pageable>(), task) } returns PageImpl<Application>(applications)
 
             val result = service.getApplicationsForTask(task.id, 1, 1)
 
@@ -125,7 +123,7 @@ class ApplicationServiceTest {
                 userRepository.findByEmail(anyString())
                 taskRepository.existsById(task.id)
                 taskRepository.findById(task.id)
-                appRepository.findAll(any<Pageable>())
+                appRepository.findAllByTask(any<Pageable>(), task)
             }
 
             assertThat(result).isEqualTo(applications)

@@ -1,10 +1,10 @@
 package bg.elsys.jobche.TaskTests
 
+import bg.elsys.jobche.BaseIntegrationTest
 import bg.elsys.jobche.DefaultValues
-import bg.elsys.jobche.entity.body.task.Address
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.body.user.DateOfBirth
-import bg.elsys.jobche.entity.body.user.UserRegisterBody
+import bg.elsys.jobche.entity.body.user.UserBody
 import bg.elsys.jobche.entity.response.task.TaskPaginatedResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
 import bg.elsys.jobche.entity.response.user.UserResponse
@@ -14,21 +14,13 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.LocalDateTime
 
-
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ExtendWith(SpringExtension::class)
-class TaskIntegrationTest {
+class TaskIntegrationTest : BaseIntegrationTest() {
 
     companion object {
         const val FIRST_NAME = "Random"
@@ -51,16 +43,12 @@ class TaskIntegrationTest {
         const val TASK_DESCRIPTION = "Test Description"
         val DATE_OF_BIRTH = DateOfBirth(1, 1, 2000)
         val TASK_TIME_OF_WORK = LocalDateTime.now()
-        val TASK_LOCATION = Address("Bulgaria", "Sofia")
-        val taskBody = DefaultValues.taskBody
-        val registerUserBody = DefaultValues.userRegisterBody
+        val TASK_LOCATION = "Sofia"
+        val taskBody = DefaultValues.taskBody()
+        val registerUserBody = DefaultValues.creatorUserBody()
         val EMAIL = registerUserBody.email
         val PASSWORD = registerUserBody.password
     }
-
-    @Autowired
-    lateinit var restTemplate: TestRestTemplate
-
 
     lateinit var registerResponse: ResponseEntity<UserResponse>
 
@@ -149,7 +137,7 @@ class TaskIntegrationTest {
         @Test
         fun `read multiple tasks with user authenticated filtering by title should return 200 and the filtered tasks`() {
             //Create one task
-             createTask()
+            createTask()
 
             //Expected Result
             val taskResponse2 = restTemplate
@@ -159,7 +147,7 @@ class TaskIntegrationTest {
                             3,
                             "SomeDesc",
                             LocalDateTime.now(),
-                            Address("Bulgaria", "Sofia") )
+                            "Sofia")
                             , TaskResponse::class.java)
 
             val getResponse = restTemplate
@@ -213,7 +201,7 @@ class TaskIntegrationTest {
             val OTHER_PHONE_NUM = "0878637676"
 
             //Create another user that will try to update a task that does not belong to him
-            val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, OTHER_EMAIL, OTHER_PASSWORD, DATE_OF_BIRTH, OTHER_PHONE_NUM)
+            val registerUserBody = UserBody(FIRST_NAME, LAST_NAME, OTHER_EMAIL, OTHER_PASSWORD, DATE_OF_BIRTH, OTHER_PHONE_NUM)
             registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
 
             //Create the body for the updated task
@@ -277,7 +265,7 @@ class TaskIntegrationTest {
             val OTHER_PHONE_NUM = "087863767"
 
             //Create another user that will try to update a task that does not belong to him
-            val registerUserBody = UserRegisterBody(FIRST_NAME, LAST_NAME, OTHER_EMAIL, OTHER_PASSWORD, DATE_OF_BIRTH, OTHER_PHONE_NUM)
+            val registerUserBody = UserBody(FIRST_NAME, LAST_NAME, OTHER_EMAIL, OTHER_PASSWORD, DATE_OF_BIRTH, OTHER_PHONE_NUM)
             registerResponse = restTemplate.postForEntity(REGISTER_URL, registerUserBody, UserResponse::class.java)
 
             //Create the task

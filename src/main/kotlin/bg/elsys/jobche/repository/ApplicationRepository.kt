@@ -1,11 +1,13 @@
 package bg.elsys.jobche.repository
 
-import bg.elsys.jobche.entity.model.Application
-import bg.elsys.jobche.entity.model.User
+import bg.elsys.jobche.entity.model.task.Application
+import bg.elsys.jobche.entity.model.task.Task
+import bg.elsys.jobche.entity.model.user.User
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface ApplicationRepository : JpaRepository<Application, Long> {
     fun findAllByUser(pageable: Pageable, user: User?): Page<Application>
+    fun findAllByTask(pageable: Pageable, user: Task?): Page<Application>
 }

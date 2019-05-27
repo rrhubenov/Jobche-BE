@@ -7,4 +7,4 @@ data class TaskBody(val title: String,
                     val numberOfWorkers: Int,
                     val description: String,
                     val dateTime: LocalDateTime,
-                    val location: Address)
+                    val city: String)

@@ -29,11 +29,16 @@ interface CustomTaskRepository {
 
 @Repository
 class CustomTaskRepositoryImpl(val em: EntityManager) : CustomTaskRepository {
-    override fun findAll(pageable: Pageable, title: String?, paymentStart: Int?, paymentEnd: Int?, numWStart: Int?, numWEnd: Int?, dateStart: LocalDateTime?, dateEnd: LocalDateTime?, city: String?): List<Task> {
+    override fun findAll(pageable: Pageable, title: String?,
+                         paymentStart: Int?, paymentEnd: Int?,
+                         numWStart: Int?, numWEnd: Int?,
+                         dateStart: LocalDateTime?, dateEnd: LocalDateTime?,
+                         city: String?): List<Task> {
         val cb = em.criteriaBuilder
         val cq = cb.createQuery(Task::class.java)
 
         val task = cq.from(Task::class.java)
+
         val predicates = mutableListOf<Predicate>()
 
         if (title != null) {
@@ -57,7 +62,7 @@ class CustomTaskRepositoryImpl(val em: EntityManager) : CustomTaskRepository {
         }
 
         if (city != null) {
-            predicates.add(cb.equal(task.get<String>("location").get<String>("city"), city))
+            predicates.add(cb.equal(task.get<String>("city").get<String>("city"), city))
         }
 
         if (dateStart != null) {
@@ -70,6 +75,11 @@ class CustomTaskRepositoryImpl(val em: EntityManager) : CustomTaskRepository {
 
         cq.where(*predicates.toTypedArray())
 
-        return em.createQuery(cq).resultList
+        val tr = em.createQuery(cq)
+
+        tr.firstResult = pageable.pageNumber*pageable.pageSize
+        tr.maxResults = pageable.pageSize
+
+        return tr.resultList
     }
 }

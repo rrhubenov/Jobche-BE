@@ -2,6 +2,7 @@ package bg.elsys.jobche.Utils
 
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.converter.Converters
+import bg.elsys.jobche.entity.model.picture.ProfilePicture
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -10,6 +11,7 @@ class ConvertersTest {
         val taskResponse = DefaultValues.taskResponse()
         val userResponse = DefaultValues.creatorUserResponse()
         val applicationResponse = DefaultValues.applicationResponse()
+        val pictureResponse = DefaultValues.pictureResponse()
     }
 
     val converters = Converters()
@@ -38,6 +40,15 @@ class ConvertersTest {
 
         with(converters) {
             assertThat(application.response).isEqualTo(applicationResponse)
+        }
+    }
+
+    @Test
+    fun `test picture response convertion`() {
+        val profilePicture = DefaultValues.profilePicture()
+
+        with(converters) {
+            assertThat(profilePicture.response).isEqualTo(pictureResponse)
         }
     }
 }

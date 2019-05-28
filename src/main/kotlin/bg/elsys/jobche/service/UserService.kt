@@ -77,4 +77,8 @@ class UserService(val userRepository: UserRepository,
         } else throw UserNotFoundException()
     }
 
+    fun existsById(id: Long): Boolean {
+        return userRepository.existsById(id)
+    }
+
 }

@@ -53,6 +53,14 @@ ext {
     mockitoVersion = '1.8.13.kotlin13'
     swaggerVersion = "2.9.2"
     oauthVersion = "2.3.4.RELEASE"
+    s3mockVersion = "0.2.4"
+    awsVersion = '1.11.228'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "com.amazonaws:aws-java-sdk-bom:${awsVersion}"
+    }
 }
 
 dependencies {
@@ -65,9 +73,12 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.springfox:springfox-swagger2:${swaggerVersion}")
     implementation("io.springfox:springfox-swagger-ui:${swaggerVersion}")
+    implementation("com.amazonaws:aws-java-sdk-s3")
+    implementation("commons-io:commons-io:2.5")
     runtimeOnly('org.postgresql:postgresql')
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
+    testCompile("io.findify:s3mock_2.12:${s3mockVersion}")
     testCompile("org.assertj:assertj-core:${assertJVersion}")
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"

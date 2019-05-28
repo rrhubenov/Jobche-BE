@@ -129,6 +129,15 @@ class UserServiceTest: BaseUnitTest() {
     }
 
     @Test
+    fun `user exists should return true`() {
+        every { repository.existsById(anyLong()) } returns true
+
+        val result = userService.existsById(anyLong())
+
+        assertThat(result).isEqualTo(true)
+    }
+
+    @Test
     fun `test dateOfBirth string to DateOfBirth`() {
         val dateOfBirthString = "1-1-2000"
 

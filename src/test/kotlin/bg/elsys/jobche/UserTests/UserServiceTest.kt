@@ -11,6 +11,7 @@ import bg.elsys.jobche.entity.response.user.UserResponse
 import bg.elsys.jobche.exception.EmailExistsException
 import bg.elsys.jobche.exception.PhoneNumberExistsException
 import bg.elsys.jobche.repository.UserRepository
+import bg.elsys.jobche.service.AmazonStorageService
 import bg.elsys.jobche.service.UserService
 import io.mockk.every
 import io.mockk.mockk
@@ -36,17 +37,19 @@ class UserServiceTest: BaseUnitTest() {
         const val PHONE_NUM = "0878555373"
         private val user = User(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, DATE_OF_BIRTH.toString(), PHONE_NUM)
         private val userRegister = DefaultValues.creatorUserBody()
+        private val userResponse = DefaultValues.creatorUserResponse()
     }
 
     private val repository: UserRepository = mockk()
     private val authenticationDetails: AuthenticationDetails = mockk()
     private val passwordEncoder = BCryptPasswordEncoder()
-    private val converters = Converters()
+    private val storageService: AmazonStorageService = mockk()
+    private val converters: Converters = Converters(storageService)
 
     private val userService: UserService
 
     init {
-        userService = UserService(repository, passwordEncoder, authenticationDetails)
+        userService = UserService(repository, passwordEncoder, authenticationDetails, converters)
     }
 
 
@@ -58,12 +61,9 @@ class UserServiceTest: BaseUnitTest() {
             every { repository.existsByPhoneNum(userRegister.phoneNum) } returns false
             every { repository.save(any<User>()) } returns user
 
-            val userResponse = userService.create(userRegister)
+            val result = userService.create(userRegister)
 
-            with(converters) {
-                assertThat(userResponse).isEqualTo(UserResponse(user.id, userRegister.firstName,
-                        userRegister.lastName, DATE_OF_BIRTH, PHONE_NUM, user.reviews.map {it.response}))
-            }
+            assertThat(result).isEqualTo(userResponse)
         }
 
         @Test
@@ -129,9 +129,13 @@ class UserServiceTest: BaseUnitTest() {
     }
 
     @Test
-    fun `test dateOfBirth string to DateOfBirth`() {
-        val dateOfBirthString = "1-1-2000"
+    fun `user exists should return true`() {
+        every { repository.existsById(anyLong()) } returns true
 
-        assertThat(Converters().toDateOfBirth(dateOfBirthString)).isEqualTo(DATE_OF_BIRTH)
+        val result = userService.existsById(anyLong())
+
+        assertThat(result).isEqualTo(true)
     }
+
+
 }

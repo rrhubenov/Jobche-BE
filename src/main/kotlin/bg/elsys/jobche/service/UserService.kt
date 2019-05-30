@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service
 class UserService(val userRepository: UserRepository,
                   val passwordEncoder: PasswordEncoder,
                   val authenticationDetails: AuthenticationDetails,
-                  val converters: Converters = Converters()) {
+                  val converters: Converters) {
 
     fun create(userRegister: UserBody): UserResponse {
         if (userRepository.existsByEmail(userRegister.email)) {
@@ -75,6 +75,10 @@ class UserService(val userRepository: UserRepository,
                 return user.response
             }
         } else throw UserNotFoundException()
+    }
+
+    fun existsById(id: Long): Boolean {
+        return userRepository.existsById(id)
     }
 
 }

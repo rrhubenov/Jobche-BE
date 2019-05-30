@@ -3,12 +3,14 @@ package bg.elsys.jobche.WorkTests
 import bg.elsys.jobche.BaseUnitTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.config.security.AuthenticationDetails
+import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.model.task.Task
 import bg.elsys.jobche.entity.model.work.WorkStatus
 import bg.elsys.jobche.repository.ParticipationRepository
 import bg.elsys.jobche.repository.TaskRepository
 import bg.elsys.jobche.repository.UserRepository
 import bg.elsys.jobche.repository.WorkRepository
+import bg.elsys.jobche.service.AmazonStorageService
 import bg.elsys.jobche.service.WorkService
 import io.mockk.every
 import io.mockk.mockk
@@ -42,8 +44,10 @@ class WorkServiceTest : BaseUnitTest() {
     val participationRepository: ParticipationRepository = mockk()
     val taskRepository: TaskRepository = mockk()
     val userRepository: UserRepository = mockk()
+    val storageService: AmazonStorageService = mockk()
+    val converters = Converters(storageService)
     val authenticationDetails: AuthenticationDetails = mockk()
-    val service = WorkService(workRepository, participationRepository, taskRepository, userRepository, authenticationDetails)
+    val service = WorkService(workRepository, participationRepository, taskRepository, userRepository, authenticationDetails, converters)
 
 
     @BeforeEach

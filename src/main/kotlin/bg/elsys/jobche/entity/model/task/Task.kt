@@ -1,6 +1,7 @@
 package bg.elsys.jobche.entity.model.task
 
 import bg.elsys.jobche.entity.BaseEntity
+import bg.elsys.jobche.entity.model.picture.TaskPicture
 import bg.elsys.jobche.entity.model.user.User
 import bg.elsys.jobche.entity.model.work.Work
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
@@ -42,7 +43,11 @@ data class Task(
         var applications: List<Application> = emptyList(),
 
         @OneToOne(fetch = FetchType.LAZY, mappedBy = "task", cascade = [CascadeType.ALL])
-        var work: Work? = null) : BaseEntity() {
+        var work: Work? = null,
+
+        @OneToMany(cascade = [CascadeType.ALL], mappedBy = "task", fetch = FetchType.LAZY)
+        var pictures: List<TaskPicture>? = null
+        ) : BaseEntity() {
 
 
     override fun toString(): String {

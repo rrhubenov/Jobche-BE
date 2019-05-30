@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/users")
 class UserController(val userService: UserService,
                      val applicationService: ApplicationService,
-                     val converters: Converters = Converters()) {
+                     val converters: Converters) {
 
     @PostMapping
     @ApiOperation(value = "Create a new user",

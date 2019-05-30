@@ -18,57 +18,40 @@ import java.time.LocalDateTime
 @Api(value = "Task Operations", description = "All operations for tasks")
 @RestController
 @RequestMapping("/tasks")
-class TaskController(val taskService: TaskService, val applicationService: ApplicationService, val converters: Converters = Converters()) {
+class TaskController(val taskService: TaskService, val applicationService: ApplicationService, val converters: Converters) {
 
     @PostMapping
     @ApiOperation(value = "Create task",
     response = TaskResponse::class,
     httpMethod = "POST",
-    authorizations = arrayOf(Authorization(value = "basicAuth")))
+    authorizations = [Authorization(value = "basicAuth")])
     @ApiResponses(ApiResponse(code = 201, message = "Success", response = TaskResponse::class))
     fun create(@RequestBody taskBody: TaskBody): ResponseEntity<TaskResponse> {
         val task = taskService.create(taskBody)
-        val taskResponse = TaskResponse(task.id,
-                task.title,
-                task.description,
-                task.payment,
-                task.numberOfWorkers,
-                task.dateTime,
-                task.city,
-                task.creator.id,
-                task.acceptedWorkersCount
 
-        )
-
-        return ResponseEntity(taskResponse, HttpStatus.CREATED)
+        with(converters) {
+            return ResponseEntity(task.response, HttpStatus.CREATED)
+        }
     }
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Read one task",
             httpMethod = "GET",
-            authorizations = arrayOf(Authorization(value = "basicAuth")))
+            authorizations = [Authorization(value = "basicAuth")])
     @ApiResponses(ApiResponse(code = 200, message = "Success", response = TaskResponse::class))
     fun read(@PathVariable id: Long): ResponseEntity<TaskResponse> {
         val task = taskService.read(id)
-        val taskResponse = TaskResponse(task.id,
-                task.title,
-                task.description,
-                task.payment,
-                task.numberOfWorkers,
-                task.dateTime,
-                task.city,
-                task.creator.id,
-                task.acceptedWorkersCount
-        )
 
-        return ResponseEntity(taskResponse, HttpStatus.OK)
+        with(converters) {
+            return ResponseEntity(task.response, HttpStatus.OK)
+        }
 
     }
 
     @PutMapping("/{id}")
     @ApiOperation(value = "Update task",
             httpMethod = "PUT",
-            authorizations = arrayOf(Authorization(value = "basicAuth")))
+            authorizations = [Authorization(value = "basicAuth")])
     @ApiResponses(ApiResponse(code = 200, message = "Success", response = Unit::class))
     fun update(@PathVariable id: Long, @RequestBody taskBody: TaskBody): ResponseEntity<Unit> {
         return ResponseEntity(taskService.update(taskBody, id), HttpStatus.OK)
@@ -77,7 +60,7 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
     @DeleteMapping("/{id}")
     @ApiOperation(value = "Delete task",
             httpMethod = "DELETE",
-            authorizations = arrayOf(Authorization(value = "basicAuth")))
+            authorizations = [Authorization(value = "basicAuth")])
     @ApiResponses(ApiResponse(code = 204, message = "No Content", response = Unit::class))
     fun delete(@PathVariable id: Long): ResponseEntity<Unit> {
         return ResponseEntity(taskService.delete(id), HttpStatus.NO_CONTENT)
@@ -86,7 +69,7 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
     @GetMapping
     @ApiOperation(value = "Read tasks paginated",
             httpMethod = "GET",
-            authorizations = arrayOf(Authorization(value = "basicAuth")))
+            authorizations = [Authorization(value = "basicAuth")])
     @ApiResponses(ApiResponse(code = 200, message = "Success", response = TaskPaginatedResponse::class))
     fun readPaginated(@RequestParam("page") page: Int,
                       @RequestParam("size") size: Int,
@@ -114,7 +97,7 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
     @GetMapping("/{taskId}/applications")
     @ApiOperation(value = "Get applications for task",
             httpMethod = "GET",
-            authorizations = arrayOf(Authorization(value = "basicAuth")))
+            authorizations = [Authorization(value = "basicAuth")])
     @ApiResponses(ApiResponse(code = 200, message = "Success", response = ApplicationPaginatedResponse::class))
     fun getApplications(@PathVariable taskId: Long, @RequestParam("page") page: Int, @RequestParam("size") size: Int): ResponseEntity<ApplicationPaginatedResponse> {
         val applicationList = applicationService.getApplicationsForTask(taskId, page, size)
@@ -132,7 +115,7 @@ class TaskController(val taskService: TaskService, val applicationService: Appli
     @GetMapping("/me")
     @ApiOperation(value = "Read my tasks paginated",
             httpMethod = "GET",
-            authorizations = arrayOf(Authorization(value = "basicAuth")))
+            authorizations = [Authorization(value = "basicAuth")])
     @ApiResponses(ApiResponse(code = 200, message = "Success", response = TaskPaginatedResponse::class))
     fun readMePaginated(@RequestParam("page") page: Int, @RequestParam("size") size: Int): ResponseEntity<TaskPaginatedResponse> {
         val tasks = taskService.readMePaginated(page, size)

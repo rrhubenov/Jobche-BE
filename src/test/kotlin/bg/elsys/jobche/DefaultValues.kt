@@ -2,10 +2,11 @@ package bg.elsys.jobche
 
 import bg.elsys.jobche.entity.body.WorkBody
 import bg.elsys.jobche.entity.body.application.ApplicationBody
+import bg.elsys.jobche.entity.body.picture.ProfilePictureBody
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.body.user.DateOfBirth
-import bg.elsys.jobche.entity.body.user.UserLoginBody
 import bg.elsys.jobche.entity.body.user.UserBody
+import bg.elsys.jobche.entity.model.picture.ProfilePicture
 import bg.elsys.jobche.entity.model.task.Application
 import bg.elsys.jobche.entity.model.task.Task
 import bg.elsys.jobche.entity.model.user.User
@@ -15,6 +16,7 @@ import bg.elsys.jobche.entity.response.WorkResponse
 import bg.elsys.jobche.entity.response.application.ApplicationResponse
 import bg.elsys.jobche.entity.response.task.TaskPaginatedResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
+import bg.elsys.jobche.entity.response.picture.PictureResponse
 import bg.elsys.jobche.entity.response.user.UserResponse
 import java.time.LocalDateTime
 
@@ -135,6 +137,21 @@ class DefaultValues {
             val work = work()
             val workerUser = workerUser()
             return Participation(work, workerUser)
+        }
+
+        fun profilePicture(): ProfilePicture {
+            val user = workerUser()
+            return ProfilePicture(user)
+        }
+
+        fun pictureResponse(): PictureResponse {
+            val picture = profilePicture()
+            return PictureResponse(picture.id)
+        }
+
+        fun profilePictureBody(): ProfilePictureBody {
+            val user = workerUser()
+            return ProfilePictureBody(user.id)
         }
     }
 }

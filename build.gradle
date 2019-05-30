@@ -2,6 +2,7 @@ buildscript {
     ext {
         kotlinVersion = '1.3.10'
         springBootVersion = '2.1.0.RELEASE'
+        gradleDockerVersion = '1.2'
     }
     repositories {
         mavenCentral()
@@ -11,6 +12,7 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
         classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
         classpath("org.jetbrains.kotlin:kotlin-noarg:${kotlinVersion}")
+        classpath("se.transmode.gradle:gradle-docker:${gradleDockerVersion}")
     }
 }
 
@@ -21,6 +23,7 @@ apply plugin: 'eclipse-wtp'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'war'
+apply plugin: 'docker'
 
 group = 'bg.elsys'
 version = '0.0.1-SNAPSHOT'
@@ -53,6 +56,14 @@ ext {
     mockitoVersion = '1.8.13.kotlin13'
     swaggerVersion = "2.9.2"
     oauthVersion = "2.3.4.RELEASE"
+    s3mockVersion = "0.2.4"
+    awsVersion = '1.11.228'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "com.amazonaws:aws-java-sdk-bom:${awsVersion}"
+    }
 }
 
 dependencies {
@@ -65,13 +76,38 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.springfox:springfox-swagger2:${swaggerVersion}")
     implementation("io.springfox:springfox-swagger-ui:${swaggerVersion}")
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("com.amazonaws:aws-java-sdk-s3")
+    implementation("commons-io:commons-io:2.5")
     runtimeOnly('org.postgresql:postgresql')
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
+    testCompile("io.findify:s3mock_2.12:${s3mockVersion}")
     testCompile("org.assertj:assertj-core:${assertJVersion}")
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation("io.mockk:mockk:${mockitoVersion}")
 }
+
+task buildDocker(type: Docker, dependsOn: build) {
+    push = false
+    applicationName = "pu6ki/jobche"
+    dockerfile = file('src/main/docker/Dockerfile')
+    tag = "${applicationName}"
+    tagVersion = "latest"
+    doFirst {
+        copy {
+            from war
+            into stageDir
+        }
+        copy {
+            from file('src/main/resources/credentials')
+            into stageDir
+        }
+        copy {
+            from file('src/main/resources/config')
+            into stageDir
+        }
+    }
+}
+

@@ -103,7 +103,7 @@ class TaskIntegrationTest : BaseIntegrationTest() {
         }
 
         @Test
-        fun `read multiple tasks with user authenticated should return 200 and the tasks`() {
+        fun  `read multiple tasks with user authenticated should return 200 and the tasks`() {
             //First add multiple tasks
             val taskResponse1 = createTask()
             val taskResponse2 = createTask()

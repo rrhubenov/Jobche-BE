@@ -25,20 +25,18 @@ class PictureService(private val profilePictureRepository: ProfilePictureReposit
                      private val authenticationDetails: AuthenticationDetails,
                      private val converters: Converters) {
     fun addProfilePicture(file: MultipartFile): PictureResponse {
-        val user = userRepository.findByEmail(authenticationDetails.getEmail())
-        if (user != null) {
-            val picture = ProfilePicture(user)
-            if (user.picture != null) {
-                val oldPicture = user.picture
-                if (oldPicture != null) {
-                    storageService.delete(oldPicture.pictureId)
-                }
+        val user = authenticationDetails.getUser()
+        val picture = ProfilePicture(user)
+        if (user.picture != null) {
+            val oldPicture = user.picture
+            if (oldPicture != null) {
+                storageService.delete(oldPicture.pictureId)
             }
-            storageService.save(file.inputStream, picture.pictureId)
-            return with(converters) {
-                profilePictureRepository.save(picture).response
-            }
-        } else throw UserNotFoundException()
+        }
+        storageService.save(file.inputStream, picture.pictureId)
+        return with(converters) {
+            profilePictureRepository.save(picture).response
+        }
     }
 
     fun getProfilePicture(id: Long?): InputStream {
@@ -52,7 +50,7 @@ class PictureService(private val profilePictureRepository: ProfilePictureReposit
             val user = userRepository.findById(userId).get()
             if (profilePictureRepository.existsByUser(user)) {
                 return storageService.read(profilePictureRepository.findByUser(user).pictureId)
-            } else throw NoContentException()
+            } else throw NoContentException("Exception: User has no profile picture")
         } else throw UserNotFoundException()
     }
 
@@ -66,7 +64,7 @@ class PictureService(private val profilePictureRepository: ProfilePictureReposit
                 storageService.save(file.inputStream, picture.pictureId)
                 return taskPictureRepository.save(picture).response
             }
-        } else throw ResourceForbiddenException()
+        } else throw ResourceForbiddenException("Exception: You do not have permission to add pictures for this task")
     }
 
     fun getPicturesForTask(id: Long): TaskPicturesResponse {
@@ -80,7 +78,7 @@ class PictureService(private val profilePictureRepository: ProfilePictureReposit
                 hyperlinks.add(storageService.url(picture.pictureId))
             }
             return TaskPicturesResponse(hyperlinks)
-        } else throw NoContentException()
+        } else throw NoContentException("Exception: Task has no pictures")
     }
 
 }

@@ -22,7 +22,7 @@ class ReviewService(val reviewRepository: ReviewRepository, val workRepository: 
             val work = optionalWork.get()
 
             if (!work.status.equals(WorkStatus.ENDED)) {
-                throw ResourceForbiddenException()
+                throw ResourceForbiddenException("Exception: You do not have permission to create a review for an ended work")
             }
 
             val user = optionalUser.get()
@@ -37,7 +37,8 @@ class ReviewService(val reviewRepository: ReviewRepository, val workRepository: 
 
                 return ReviewResponse(review.id, review.work.id, review.reviewGrade)
 
-            } else throw ResourceForbiddenException()
+            } else throw ResourceForbiddenException("Exception: You do not have permission to grade this user for this work." +
+                    " You are either not the creator for this work or the the user you are trying to grade is not a participant in this work")
         } else throw ResourceNotFoundException()
     }
 }

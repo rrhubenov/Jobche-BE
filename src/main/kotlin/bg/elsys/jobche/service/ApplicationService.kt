@@ -33,12 +33,12 @@ class ApplicationService(val appRepository: ApplicationRepository,
 
     fun delete(id: Long) {
         if (appRepository.existsById(id)) {
-            val user = userRepository.findByEmail(authenticationDetails.getEmail())
+            val user = authenticationDetails.getUser()
             val app = appRepository.findById(id).get()
-            if (app.user.id == user?.id) {
+            if (app.user.id == user.id) {
                 appRepository.deleteById(id)
-            } else throw ResourceForbiddenException()
-        } else throw ResourceNotFoundException()
+            } else throw ResourceForbiddenException("Exception: You do not have permission to modify this application")
+        } else throw ResourceNotFoundException("Exception: No application matching this id was found")
     }
 
     fun approveApplication(id: Long) {
@@ -49,8 +49,8 @@ class ApplicationService(val appRepository: ApplicationRepository,
                 application.accepted = true
                 application.task!!.acceptedWorkersCount++
                 appRepository.save(application)
-            } else throw ResourceForbiddenException()
-        } else throw ResourceNotFoundException()
+            } else throw ResourceForbiddenException("Exception: You do not have permission to modify this application")
+        } else throw ResourceNotFoundException("Exception: No application matching this id was found")
     }
 
     fun getApplicationsForTask(taskId: Long, page: Int, size: Int): List<Application> {
@@ -65,10 +65,10 @@ class ApplicationService(val appRepository: ApplicationRepository,
             val result = appRepository.findAllByTask(createPageRequest(page, size), task).content
 
             if (result.isEmpty()) {
-                throw NoContentException()
+                throw NoContentException("Exception: No applications are available for this task")
             } else return result
 
-        } else throw ResourceForbiddenException()
+        } else throw ResourceForbiddenException("Exception: You do not have permission to view the applications for this task")
     }
 
     fun getApplicationsForUser(page: Int, size: Int): List<Application> {
@@ -77,7 +77,7 @@ class ApplicationService(val appRepository: ApplicationRepository,
         val result = appRepository.findAllByUser(createPageRequest(page, size), user).content
 
         if (result.isEmpty()) {
-            throw NoContentException()
+            throw NoContentException("Exception: No applications are available for this user")
         } else return result
     }
 

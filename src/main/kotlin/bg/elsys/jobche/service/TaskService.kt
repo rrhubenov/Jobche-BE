@@ -97,7 +97,7 @@ class TaskService(val taskRepository: TaskRepository,
     fun getById(id: Long): Task {
         if(taskRepository.existsById(id)) {
             return taskRepository.findById(id).get()
-        } else throw ResourceNotFoundException()
+        } else throw ResourceNotFoundException("Exception: Task not found")
     }
 
 }

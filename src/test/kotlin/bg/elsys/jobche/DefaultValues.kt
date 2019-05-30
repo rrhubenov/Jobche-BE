@@ -141,7 +141,7 @@ class DefaultValues {
 
         fun profilePicture(): ProfilePicture {
             val user = workerUser()
-            return ProfilePicture(user.id)
+            return ProfilePicture(user)
         }
 
         fun pictureResponse(): PictureResponse {

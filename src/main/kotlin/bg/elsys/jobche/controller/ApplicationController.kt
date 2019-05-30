@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*
 @Api(value = "Application operations", description = "Operations for creating and approving user applications for tasks")
 @RestController
 @RequestMapping("/application")
-class ApplicationController(val service: ApplicationService, val converters: Converters = Converters()) {
+class ApplicationController(val service: ApplicationService, val converters: Converters) {
 
     @PostMapping
     @ApiOperation(value = "Create application",

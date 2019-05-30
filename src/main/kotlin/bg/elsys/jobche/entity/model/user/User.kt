@@ -1,6 +1,7 @@
 package bg.elsys.jobche.entity.model.user
 
 import bg.elsys.jobche.entity.BaseEntity
+import bg.elsys.jobche.entity.model.picture.ProfilePicture
 import bg.elsys.jobche.entity.model.task.Application
 import bg.elsys.jobche.entity.model.task.Task
 import bg.elsys.jobche.entity.model.work.Participation
@@ -41,7 +42,10 @@ data class User(
         var participations: List<Participation> = emptyList(),
 
         @OneToMany(cascade = [CascadeType.ALL], mappedBy = "user", fetch = FetchType.LAZY)
-        var reviews: List<Review> = emptyList()) : BaseEntity() {
+        var reviews: List<Review> = emptyList(),
+
+        @OneToOne(cascade = [CascadeType.ALL], mappedBy = "user", fetch = FetchType.LAZY)
+        var picture: ProfilePicture? = null) : BaseEntity() {
 
     override fun toString(): String {
         return ""

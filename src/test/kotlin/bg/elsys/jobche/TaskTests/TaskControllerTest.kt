@@ -3,6 +3,8 @@ package bg.elsys.jobche.TaskTests
 import bg.elsys.jobche.BaseUnitTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.controller.TaskController
+import bg.elsys.jobche.converter.Converters
+import bg.elsys.jobche.service.AmazonStorageService
 import bg.elsys.jobche.service.ApplicationService
 import bg.elsys.jobche.service.TaskService
 import io.mockk.every
@@ -26,11 +28,13 @@ class TaskControllerTest : BaseUnitTest() {
 
     private val taskService: TaskService = mockk()
     private val applicationService: ApplicationService = mockk()
+    private val storageService: AmazonStorageService = mockk()
+    private val converters = Converters(storageService)
 
     private val controller: TaskController
 
     init {
-        controller = TaskController(taskService, applicationService)
+        controller = TaskController(taskService, applicationService, converters)
     }
 
     @Test

@@ -3,19 +3,19 @@ package bg.elsys.jobche.UserTests
 import bg.elsys.jobche.BaseUnitTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.controller.UserController
+import bg.elsys.jobche.converter.Converters
+import bg.elsys.jobche.service.AmazonStorageService
 import bg.elsys.jobche.service.ApplicationService
 import bg.elsys.jobche.service.UserService
 import io.mockk.every
-import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyLong
 import org.springframework.http.HttpStatus
 
-class UserControllerTest: BaseUnitTest() {
+class UserControllerTest : BaseUnitTest() {
 
     companion object {
         val userResponse = DefaultValues.creatorUserResponse()
@@ -24,8 +24,11 @@ class UserControllerTest: BaseUnitTest() {
 
     private val userService: UserService = mockk()
     private val applicationService: ApplicationService = mockk()
+    private val storageService: AmazonStorageService = mockk()
+    private val converters = Converters(storageService)
 
-    private val controller = UserController(userService, applicationService)
+
+    private val controller = UserController(userService, applicationService, converters)
 
     @Nested
     inner class create() {

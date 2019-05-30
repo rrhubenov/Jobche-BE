@@ -7,4 +7,5 @@ data class UserResponse(val id: Long?,
                         val lastName: String?,
                         val dateOfBirth: DateOfBirth?,
                         val phoneNum: String?,
-                        val reviews: List<ReviewResponse>? = emptyList())
+                        val reviews: List<ReviewResponse>? = emptyList(),
+                        val profilePicture: String? = null)

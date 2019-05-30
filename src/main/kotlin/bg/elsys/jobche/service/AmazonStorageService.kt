@@ -29,4 +29,12 @@ class AmazonStorageService(private val client: AmazonS3) {
     fun delete(id: String) {
         client.deleteObject(Constants.S3_BUCKET, id)
     }
+
+    fun url(id: String): String {
+//        if (id != null) {
+            return client
+                    .getUrl(Constants.S3_BUCKET, id)
+                    .toExternalForm()
+//        } else return null
+    }
 }

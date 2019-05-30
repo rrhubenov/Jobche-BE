@@ -18,6 +18,7 @@ class PictureControllerTest : BaseUnitTest() {
         val pictureResponse = DefaultValues.pictureResponse()
         val profilePictureBody = DefaultValues.profilePictureBody()
         val picture = MockMultipartFile("profilePicture", "testData".toByteArray())
+        val user = DefaultValues.workerUser()
     }
 
     private val service: PictureService = mockk()
@@ -27,9 +28,9 @@ class PictureControllerTest : BaseUnitTest() {
     inner class create {
         @Test
         fun `add profile picture should return 201`() {
-            every { service.addProfilePicture(profilePictureBody, picture) } returns pictureResponse
+            every { service.addProfilePicture(picture) } returns pictureResponse
 
-            val result = controller.addProfilePicture(profilePictureBody, picture)
+            val result = controller.addProfilePicture(picture)
 
             assertThat(result.body).isEqualTo(pictureResponse)
             assertThat(result.statusCode).isEqualTo(HttpStatus.CREATED)

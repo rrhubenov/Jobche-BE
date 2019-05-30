@@ -2,6 +2,7 @@ buildscript {
     ext {
         kotlinVersion = '1.3.10'
         springBootVersion = '2.1.0.RELEASE'
+        gradleDockerVersion = '1.2'
     }
     repositories {
         mavenCentral()
@@ -11,6 +12,7 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
         classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
         classpath("org.jetbrains.kotlin:kotlin-noarg:${kotlinVersion}")
+        classpath("se.transmode.gradle:gradle-docker:${gradleDockerVersion}")
     }
 }
 
@@ -21,6 +23,7 @@ apply plugin: 'eclipse-wtp'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'war'
+apply plugin: 'docker'
 
 group = 'bg.elsys'
 version = '0.0.1-SNAPSHOT'
@@ -85,3 +88,26 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation("io.mockk:mockk:${mockitoVersion}")
 }
+
+task buildDocker(type: Docker, dependsOn: build) {
+    push = false
+    applicationName = "pu6ki/jobche"
+    dockerfile = file('src/main/docker/Dockerfile')
+    tag = "${applicationName}"
+    tagVersion = "latest"
+    doFirst {
+        copy {
+            from war
+            into stageDir
+        }
+        copy {
+            from file('src/main/resources/credentials')
+            into stageDir
+        }
+        copy {
+            from file('src/main/resources/config')
+            into stageDir
+        }
+    }
+}
+

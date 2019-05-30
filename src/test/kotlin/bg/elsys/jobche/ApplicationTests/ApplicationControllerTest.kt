@@ -3,6 +3,8 @@ package bg.elsys.jobche.ApplicationTests
 import bg.elsys.jobche.BaseUnitTest
 import bg.elsys.jobche.DefaultValues
 import bg.elsys.jobche.controller.ApplicationController
+import bg.elsys.jobche.converter.Converters
+import bg.elsys.jobche.service.AmazonStorageService
 import bg.elsys.jobche.service.ApplicationService
 import io.mockk.every
 import io.mockk.mockk
@@ -21,9 +23,11 @@ class ApplicationControllerTest: BaseUnitTest() {
     }
     private val controller: ApplicationController
     private val service: ApplicationService = mockk()
+    private val storageService: AmazonStorageService = mockk()
+    private val converters = Converters(storageService)
 
     init {
-        controller = ApplicationController(service)
+        controller = ApplicationController(service, converters)
     }
 
     @Test

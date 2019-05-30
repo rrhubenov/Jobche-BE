@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service
 class UserService(val userRepository: UserRepository,
                   val passwordEncoder: PasswordEncoder,
                   val authenticationDetails: AuthenticationDetails,
-                  val converters: Converters = Converters()) {
+                  val converters: Converters) {
 
     fun create(userRegister: UserBody): UserResponse {
         if (userRepository.existsByEmail(userRegister.email)) {

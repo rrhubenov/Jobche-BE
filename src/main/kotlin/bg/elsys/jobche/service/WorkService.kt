@@ -22,7 +22,7 @@ class WorkService(private val workRepository: WorkRepository,
                   private val taskRepository: TaskRepository,
                   private val userRepository: UserRepository,
                   private val authenticationDetails: AuthenticationDetails,
-                  private val converters: Converters = Converters()) {
+                  private val converters: Converters) {
     fun create(workBody: WorkBody): WorkResponse {
         val optional = taskRepository.findById(workBody.taskId)
         val requestingUser = userRepository.findByEmail(authenticationDetails.getEmail())

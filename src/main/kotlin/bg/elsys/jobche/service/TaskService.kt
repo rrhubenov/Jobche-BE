@@ -3,6 +3,7 @@ package bg.elsys.jobche.service
 import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.model.task.Task
+import bg.elsys.jobche.exception.ResourceNotFoundException
 import bg.elsys.jobche.exception.TaskModificationForbiddenException
 import bg.elsys.jobche.exception.TaskNotFoundException
 import bg.elsys.jobche.repository.TaskRepository
@@ -91,6 +92,12 @@ class TaskService(val taskRepository: TaskRepository,
 
     private fun createPageRequest(page: Int, size: Int): Pageable {
         return PageRequest.of(page, size)
+    }
+
+    fun getById(id: Long): Task {
+        if(taskRepository.existsById(id)) {
+            return taskRepository.findById(id).get()
+        } else throw ResourceNotFoundException()
     }
 
 }

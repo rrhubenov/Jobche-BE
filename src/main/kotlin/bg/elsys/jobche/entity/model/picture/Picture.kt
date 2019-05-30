@@ -1,6 +1,11 @@
 package bg.elsys.jobche.entity.model.picture
 
 import bg.elsys.jobche.entity.BaseEntity
+import org.jetbrains.annotations.NotNull
 import java.util.*
+import javax.persistence.Entity
+import javax.persistence.MappedSuperclass
 
-abstract class Picture(val pictureId: String = UUID.randomUUID().toString()): BaseEntity()
+@MappedSuperclass
+abstract class Picture(@NotNull
+                       val pictureId: String = UUID.randomUUID().toString()): BaseEntity()

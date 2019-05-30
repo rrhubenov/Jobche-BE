@@ -47,15 +47,15 @@ class WorkService(private val workRepository: WorkRepository,
                         participationRepository.save(Participation(work, participant))
                     } else {
                         workRepository.deleteById(work.id)
-                        throw ResourceForbiddenException()
+                        throw ResourceForbiddenException("Exception: A participant was not part of the application list")
                     }
                 }
 
                 with(converters) {
                     return work.response
                 }
-            } else throw ResourceForbiddenException()
-        } else throw ResourceNotFoundException()
+            } else throw ResourceForbiddenException("Exception: You are not the owner of the task")
+        } else throw ResourceNotFoundException("Exception: No task with the following id was found")
     }
 
     fun delete(id: Long) {
@@ -66,8 +66,8 @@ class WorkService(private val workRepository: WorkRepository,
             val creatorId = work.get().task.creator.id
             if (user?.id == creatorId) {
                 workRepository.deleteById(id)
-            } else throw ResourceForbiddenException()
-        } else throw ResourceNotFoundException()
+            } else throw ResourceForbiddenException("Exception: You are not the creator of this task")
+        } else throw ResourceNotFoundException("Exception: No work with the following id was found")
     }
 
     fun read(id: Long): WorkResponse {
@@ -85,9 +85,9 @@ class WorkService(private val workRepository: WorkRepository,
                     return work.response
                 }
 
-            } else throw ResourceForbiddenException()
+            } else throw ResourceForbiddenException("Exception: You do not have permission to view this resource")
 
-        } else throw ResourceNotFoundException()
+        } else throw ResourceNotFoundException("Exception: No work with the following id was found")
     }
 
     fun changeStatus(workStatus: WorkStatus, id: Long) {
@@ -99,9 +99,9 @@ class WorkService(private val workRepository: WorkRepository,
             if (work.task.creator.id == user?.id) {
                 work.status = workStatus
                 workRepository.save(work)
-            } else throw ResourceForbiddenException()
+            } else throw ResourceForbiddenException("Exception: You do not have permission to modify the following resource")
 
-        } else throw ResourceNotFoundException()
+        } else throw ResourceNotFoundException("Exception: No work with the following id was found")
     }
 
 }

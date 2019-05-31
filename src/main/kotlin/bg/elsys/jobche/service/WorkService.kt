@@ -25,14 +25,14 @@ class WorkService(private val workRepository: WorkRepository,
                   private val converters: Converters) {
     fun create(workBody: WorkBody): WorkResponse {
         val optional = taskRepository.findById(workBody.taskId)
-        val requestingUser = userRepository.findByEmail(authenticationDetails.getEmail())
+        val requestingUser = authenticationDetails.getUser()
 
         //Check if the task exists
         if (optional.isPresent) {
             val task = optional.get()
 
             //Check if the requesting user is the creator of the task
-            if (requestingUser?.id == task.creator.id) {
+            if (requestingUser.id == task.creator.id) {
                 val users = userRepository.findAllById(workBody.workers)
 
                 if (users.size != workBody.workers.size) {
@@ -43,7 +43,7 @@ class WorkService(private val workRepository: WorkRepository,
 
                 users.forEach { participant ->
                     //Check if the participant is one of the accepted appliers
-                    if (task.applications.stream().anyMatch { it.user.id == participant.id && it.accepted == true }) {
+                    if (task.applications.stream().anyMatch { it.user.id == participant.id && it.accepted }) {
                         participationRepository.save(Participation(work, participant))
                     } else {
                         workRepository.deleteById(work.id)
@@ -75,11 +75,11 @@ class WorkService(private val workRepository: WorkRepository,
 
         if (optional.isPresent) {
             val work = optional.get()
-            val requestingUser = userRepository.findByEmail(authenticationDetails.getEmail())
+            val requestingUser = authenticationDetails.getUser()
 
             //Check if the requesting user is the creator of the task or is one of the workers
-            if (work.participations.stream().anyMatch { it.user.id == requestingUser?.id }
-                    || requestingUser?.id == work.task.creator.id) {
+            if (work.participations.stream().anyMatch { it.user.id == requestingUser.id }
+                    || requestingUser.id == work.task.creator.id) {
 
                 with(converters) {
                     return work.response

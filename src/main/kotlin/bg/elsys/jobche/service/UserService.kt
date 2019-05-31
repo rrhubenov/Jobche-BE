@@ -17,7 +17,8 @@ import org.springframework.stereotype.Service
 class UserService(val userRepository: UserRepository,
                   val passwordEncoder: PasswordEncoder,
                   val authenticationDetails: AuthenticationDetails,
-                  val converters: Converters) {
+                  val converters: Converters,
+                  val storageService: AmazonStorageService) {
 
     fun create(userRegister: UserBody): UserResponse {
         if (userRepository.existsByEmail(userRegister.email)) {
@@ -44,16 +45,17 @@ class UserService(val userRepository: UserRepository,
         }
     }
 
-    fun login(userLogin: UserLoginBody): UserResponse {
-        if (userRepository.existsByEmail(userLogin.email)) {
-            val user = userRepository.findByEmail(userLogin.email)
-            with(converters) {
-                return user!!.response
-            }
-        } else throw UserNotFoundException()
+    fun me(): UserResponse {
+        with(converters) {
+            return authenticationDetails.getUser().response
+        }
     }
 
     fun delete() {
+        val picture = authenticationDetails.getUser().picture
+        if (picture != null) {
+            storageService.delete(picture.pictureId)
+        }
         userRepository.deleteByEmail(authenticationDetails.getEmail())
     }
 

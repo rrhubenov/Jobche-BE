@@ -101,11 +101,11 @@ task buildDocker(type: Docker, dependsOn: build) {
             into stageDir
         }
         copy {
-            from file('src/main/resources/credentials')
+            from file('/Users/rhubenov/.aws/credentials')
             into stageDir
         }
         copy {
-            from file('src/main/resources/config')
+            from file('/Users/rhubenov/.aws/config')
             into stageDir
         }
     }

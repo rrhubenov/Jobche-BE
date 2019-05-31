@@ -15,7 +15,6 @@ import bg.elsys.jobche.entity.response.picture.PictureResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
 import bg.elsys.jobche.entity.response.user.ReviewResponse
 import bg.elsys.jobche.entity.response.user.UserResponse
-import bg.elsys.jobche.exception.NoContentException
 import bg.elsys.jobche.service.AmazonStorageService
 import org.springframework.stereotype.Component
 
@@ -28,7 +27,7 @@ class Converters(val storageService: AmazonStorageService) {
     val Task.response
         get() = TaskResponse(id, title, description, payment,
                 numberOfWorkers, dateTime, city, creator.id, acceptedWorkersCount
-                ,getPicturesTask(pictures))
+                , getPicturesTask(pictures))
 
     val User.response
         get() = UserResponse(id, firstName, lastName,
@@ -41,7 +40,7 @@ class Converters(val storageService: AmazonStorageService) {
         get() = ReviewResponse(id, work.id, reviewGrade)
 
     val Participation.userResponse
-        get() = UserResponse(id, user.firstName, user.lastName,
+        get() = UserResponse(user.id, user.firstName, user.lastName,
                 toDateOfBirth(user.dateOfBirth), user.phoneNum, user.reviews.map { it.response })
 
     val ProfilePicture.response
@@ -52,18 +51,18 @@ class Converters(val storageService: AmazonStorageService) {
 
     fun toDateOfBirth(date: String): DateOfBirth {
         val values = date.split("-")
-        return DateOfBirth(values.get(0).toInt(), values.get(1).toInt(), values.get(2).toInt())
+        return DateOfBirth(values[0].toInt(), values[1].toInt(), values[2].toInt())
     }
 
     private fun getPicture(picture: ProfilePicture?): String? {
-        if (picture != null) {
-            return storageService.url(picture.pictureId)
-        } else return null
+        return if (picture != null) {
+            storageService.url(picture.pictureId)
+        } else null
     }
 
     private fun getPicturesTask(pictures: List<TaskPicture>?): List<String>? {
-        if (pictures != null && !pictures.isEmpty()) {
-            return pictures.map { storageService.url(it.pictureId) }
-        } else return null
+        return if (pictures != null && !pictures.isEmpty()) {
+            pictures.map { storageService.url(it.pictureId) }
+        } else null
     }
 }

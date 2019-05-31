@@ -49,7 +49,7 @@ class UserServiceTest: BaseUnitTest() {
     private val userService: UserService
 
     init {
-        userService = UserService(repository, passwordEncoder, authenticationDetails, converters)
+        userService = UserService(repository, passwordEncoder, authenticationDetails, converters, storageService)
     }
 
 

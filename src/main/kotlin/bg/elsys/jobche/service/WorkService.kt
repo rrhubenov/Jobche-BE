@@ -3,6 +3,8 @@ package bg.elsys.jobche.service
 import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.WorkBody
+import bg.elsys.jobche.entity.model.task.Application
+import bg.elsys.jobche.entity.model.user.User
 import bg.elsys.jobche.entity.model.work.Participation
 import bg.elsys.jobche.entity.model.work.Work
 import bg.elsys.jobche.entity.model.work.WorkStatus
@@ -24,12 +26,12 @@ class WorkService(private val workRepository: WorkRepository,
                   private val authenticationDetails: AuthenticationDetails,
                   private val converters: Converters) {
     fun create(workBody: WorkBody): WorkResponse {
-        val optional = taskRepository.findById(workBody.taskId)
+        val optionalTask = taskRepository.findById(workBody.taskId)
         val requestingUser = authenticationDetails.getUser()
 
         //Check if the task exists
-        if (optional.isPresent) {
-            val task = optional.get()
+        if (optionalTask.isPresent) {
+            val task = optionalTask.get()
 
             //Check if the requesting user is the creator of the task
             if (requestingUser.id == task.creator.id) {
@@ -39,21 +41,17 @@ class WorkService(private val workRepository: WorkRepository,
                     throw UserNotFoundException()
                 }
 
+                users.forEach { checkIfAcceptedForTask(it, task.applications) }
+
                 val work = workRepository.save(Work(task))
 
-                users.forEach { participant ->
-                    //Check if the participant is one of the accepted appliers
-                    if (task.applications.stream().anyMatch { it.user.id == participant.id && it.accepted }) {
-                        participationRepository.save(Participation(work, participant))
-                    } else {
-                        workRepository.deleteById(work.id)
-                        throw ResourceForbiddenException("Exception: A participant was not part of the application list")
-                    }
-                }
+                users.forEach { participationRepository.save(Participation(work, it))}
 
                 with(converters) {
                     return work.response
                 }
+
+
             } else throw ResourceForbiddenException("Exception: You are not the owner of the task")
         } else throw ResourceNotFoundException("Exception: No task with the following id was found")
     }
@@ -104,4 +102,9 @@ class WorkService(private val workRepository: WorkRepository,
         } else throw ResourceNotFoundException("Exception: No work with the following id was found")
     }
 
+    private fun checkIfAcceptedForTask(user: User, applications: List<Application>) {
+        if(!applications.any { it.user.id == user.id && it.accepted}) {
+            throw ResourceForbiddenException("Exception: A participant was not part of the application list or is not accepted")
+        }
+    }
 }

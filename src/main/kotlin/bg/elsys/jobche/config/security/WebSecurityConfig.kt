@@ -49,7 +49,6 @@ class WebSecurityConfig(val userDetailsService: PostgreUserDetailsService) : Web
         http.run {
             authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
-                .antMatchers(HttpMethod.POST, "/users/login").permitAll()
                 .antMatchers(*WHITELISTED_URLS).permitAll()
                 .anyRequest().authenticated()
                 .and()

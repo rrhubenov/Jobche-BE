@@ -85,10 +85,6 @@ class UserIntegrationTest : BaseIntegrationTest() {
                             Unit::class.java)
 
             assertThat(deleteResponse.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
-
-            val loginResponse = restTemplate.postForEntity(LOGIN_URL, loginUserBody, UserResponse::class.java)
-
-            assertThat(loginResponse.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
         }
     }
 

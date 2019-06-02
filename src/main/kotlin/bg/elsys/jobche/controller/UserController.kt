@@ -28,18 +28,19 @@ class UserController(val userService: UserService,
         return ResponseEntity(userService.create(userRegister), HttpStatus.CREATED)
     }
 
-    @PostMapping("/login")
-    @ApiOperation(value = "Get information about user",
-            httpMethod = "POST")
-    @ApiResponses(ApiResponse(code = 204, message = "No content", response = UserResponse::class))
-    fun login(@RequestBody userLogin: UserLoginBody): ResponseEntity<UserResponse> {
-        return ResponseEntity(userService.login(userLogin), HttpStatus.OK)
+    @GetMapping("/me")
+    @ApiOperation(value = "Get information about current user",
+            httpMethod = "GET",
+            authorizations = [Authorization(value = "basicAuth")])
+    @ApiResponses(ApiResponse(code = 200, message = "OK", response = UserResponse::class))
+    fun me(): ResponseEntity<UserResponse> {
+        return ResponseEntity(userService.me(), HttpStatus.OK)
     }
 
     @DeleteMapping
     @ApiOperation(value = "Delete currently signed in user",
             httpMethod = "DELETE",
-            authorizations = arrayOf(Authorization(value = "basicAuth")))
+            authorizations = [Authorization(value = "basicAuth")])
     @ApiResponses(ApiResponse(code = 204, message = "No content", response = Unit::class))
     fun delete(): ResponseEntity<Unit> {
         return ResponseEntity(userService.delete(), HttpStatus.NO_CONTENT)
@@ -48,7 +49,7 @@ class UserController(val userService: UserService,
     @PutMapping
     @ApiOperation(value = "Update currently signed in user",
             httpMethod = "PUT",
-            authorizations = arrayOf(Authorization(value = "basicAuth")))
+            authorizations = [Authorization(value = "basicAuth")])
     @ApiResponses(ApiResponse(code = 200, message = "Success", response = Unit::class))
     fun update(@RequestBody updatedUser: UserBody): ResponseEntity<Unit> {
         return ResponseEntity(userService.update(updatedUser), HttpStatus.OK)
@@ -57,7 +58,7 @@ class UserController(val userService: UserService,
     @GetMapping("/{id}")
     @ApiOperation(value = "Read info of user",
             httpMethod = "GET",
-            authorizations = arrayOf(Authorization(value = "basicAuth")))
+            authorizations = [Authorization(value = "basicAuth")])
     @ApiResponses(ApiResponse(code = 200, message = "Success", response = UserResponse::class))
     fun read(@PathVariable id: Long): ResponseEntity<UserResponse> {
         return ResponseEntity(userService.read(id), HttpStatus.OK)
@@ -66,7 +67,7 @@ class UserController(val userService: UserService,
     @GetMapping("/me/applications")
     @ApiOperation(value = "Read applications created by user",
             httpMethod = "GET",
-            authorizations = arrayOf(Authorization(value = "basicAuth")))
+            authorizations = [Authorization(value = "basicAuth")])
     @ApiResponses(ApiResponse(code = 200, message = "Success", response = ApplicationPaginatedResponse::class))
     fun getApplications(@RequestParam("page") page: Int, @RequestParam("size") size: Int): ResponseEntity<ApplicationPaginatedResponse> {
         val applicationList = applicationService.getApplicationsForUser(page, size)
@@ -80,5 +81,4 @@ class UserController(val userService: UserService,
 
         return ResponseEntity(ApplicationPaginatedResponse(applicationResponseList), HttpStatus.OK)
     }
-
 }

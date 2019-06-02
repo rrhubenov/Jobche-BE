@@ -39,8 +39,7 @@ class PictureServiceTest : BaseUnitTest() {
     inner class create {
         @Test
         fun `adding a profile picture should return the right response`() {
-            every { authenticationDetails.getEmail() } returns user.email
-            every { userRepository.findByEmail(any()) } returns user
+            every { authenticationDetails.getUser() } returns user
             every { storageService.save(file = any(), id = any()) } returns profilePicture.pictureId
             every { profilePictureRepository.save(profilePicture) } returns profilePicture
 

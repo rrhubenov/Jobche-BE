@@ -16,7 +16,8 @@ import java.time.LocalDateTime
 @Service
 class TaskService(val taskRepository: TaskRepository,
                   val userRepository: UserRepository,
-                  val authenticationDetails: AuthenticationDetails) {
+                  val authenticationDetails: AuthenticationDetails,
+                  val storageService: AmazonStorageService) {
     fun create(taskBody: TaskBody): Task {
         //Get Id of the creator
         val user = userRepository.findByEmail(authenticationDetails.getEmail())
@@ -60,14 +61,17 @@ class TaskService(val taskRepository: TaskRepository,
 
     fun delete(id: Long) {
         if (taskRepository.existsById(id)) {
-            val task = taskRepository.findById(id)
+            val task = taskRepository.findById(id).get()
             val user = userRepository.findByEmail(authenticationDetails.getEmail())
 
-            if (task.get().creator.id != user!!.id) {
+            if (task.creator.id != user!!.id) {
                 throw TaskModificationForbiddenException()
             }
 
             taskRepository.deleteById(id)
+            if (!task.pictures.isNullOrEmpty()) {
+                task.pictures?.forEach { storageService.delete(it.pictureId) }
+            }
         } else throw TaskNotFoundException()
     }
 
@@ -95,7 +99,7 @@ class TaskService(val taskRepository: TaskRepository,
     }
 
     fun getById(id: Long): Task {
-        if(taskRepository.existsById(id)) {
+        if (taskRepository.existsById(id)) {
             return taskRepository.findById(id).get()
         } else throw ResourceNotFoundException("Exception: Task not found")
     }

@@ -6,6 +6,7 @@ import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.entity.model.task.Task
 import bg.elsys.jobche.repository.TaskRepository
 import bg.elsys.jobche.repository.UserRepository
+import bg.elsys.jobche.service.AmazonStorageService
 import bg.elsys.jobche.service.TaskService
 import io.mockk.every
 import io.mockk.mockk
@@ -30,12 +31,13 @@ class TaskServiceTest : BaseUnitTest() {
 
     private val repository: TaskRepository = mockk()
     private val userRepository: UserRepository = mockk()
+    private val storageService: AmazonStorageService = mockk()
     private val authenticationDetails: AuthenticationDetails = mockk()
 
     private val taskService: TaskService
 
     init {
-        taskService = TaskService(repository, userRepository, authenticationDetails)
+        taskService = TaskService(repository, userRepository, authenticationDetails, storageService)
     }
 
     @Test

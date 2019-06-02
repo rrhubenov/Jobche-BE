@@ -8,6 +8,7 @@ import io.swagger.annotations.*
 import org.apache.commons.io.IOUtils
 import org.apache.http.entity.ContentType
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
@@ -17,7 +18,7 @@ import javax.servlet.http.HttpServletResponse
 @RestController
 @RequestMapping("/picture")
 class PictureController(val pictureService: PictureService) {
-    @PostMapping("/profile")
+    @PostMapping("/profile", consumes = ["multipart/form-data"])
     @ApiOperation(value = "Add profile picture to S3 and database",
             response = PictureResponse::class,
             httpMethod = "POST",

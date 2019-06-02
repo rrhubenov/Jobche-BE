@@ -21,19 +21,19 @@ class ReviewService(val reviewRepository: ReviewRepository, val workRepository: 
         if (optionalWork.isPresent && optionalUser.isPresent) {
             val work = optionalWork.get()
 
-            if (!work.status.equals(WorkStatus.ENDED)) {
+            if (work.status == WorkStatus.ENDED) {
                 throw ResourceForbiddenException("Exception: You do not have permission to create a review for an ended work")
             }
 
-            val user = optionalUser.get()
+            val graded = optionalUser.get()
 
-            val requestingUser = userRepository.findByEmail(authenticationDetails.getEmail())
+            val grader = authenticationDetails.getUser()
 
             //Check that the graded user was a participant of the work && the grader is the work creator
-            if (work.task.creator.id == requestingUser?.id
-                    && work.participations.stream().anyMatch { it.user.id == user.id }) {
+            if (work.task.creator.id == grader.id
+                    && work.participations.stream().anyMatch { it.user.id == graded.id }) {
 
-                val review = reviewRepository.save(Review(user, work, reviewBody.reviewGrade))
+                val review = reviewRepository.save(Review(graded, work, reviewBody.reviewGrade))
 
                 return ReviewResponse(review.id, review.work.id, review.reviewGrade)
 

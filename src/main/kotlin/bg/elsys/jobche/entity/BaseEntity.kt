@@ -13,7 +13,7 @@ import javax.persistence.*
 @JsonIgnoreProperties(value = ["createdAt", "updatedAt"], allowGetters = true)
 abstract class BaseEntity(
         @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @GeneratedValue(strategy = GenerationType.AUTO)
         @Column(name = "id", nullable = false, updatable = false)
         val id: Long = 1,
 

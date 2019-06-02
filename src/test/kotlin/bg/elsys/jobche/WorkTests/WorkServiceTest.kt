@@ -111,15 +111,13 @@ class WorkServiceTest : BaseUnitTest() {
     @Test
     fun `read should run repo methods and return response`() {
         every { workRepository.findById(work.id) } returns Optional.of(work)
-        every { authenticationDetails.getEmail() } returns anyString()
-        every { userRepository.findByEmail(anyString()) } returns userCreator
+        every { authenticationDetails.getUser() } returns userCreator
 
         val result = service.read(work.id)
 
         verify {
             workRepository.findById(work.id)
-            authenticationDetails.getEmail()
-            userRepository.findByEmail(anyString())
+            authenticationDetails.getUser()
         }
 
         assertThat(result).isEqualToIgnoringGivenFields(workResponse, "workers")

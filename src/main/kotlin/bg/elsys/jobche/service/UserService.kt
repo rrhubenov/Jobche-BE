@@ -52,15 +52,16 @@ class UserService(val userRepository: UserRepository,
     }
 
     fun delete() {
-        val picture = authenticationDetails.getUser().picture
+        val user = authenticationDetails.getUser()
+        val picture = user.picture
         if (picture != null) {
             storageService.delete(picture.pictureId)
         }
-        userRepository.deleteByEmail(authenticationDetails.getEmail())
+        userRepository.delete(user)
     }
 
     fun update(updatedUser: UserBody) {
-        val user = userRepository.getOneByEmail(authenticationDetails.getEmail())
+        val user = authenticationDetails.getUser()
         user.firstName = updatedUser.firstName
         user.lastName = updatedUser.lastName
         user.email = updatedUser.email

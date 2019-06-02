@@ -91,26 +91,26 @@ class UserServiceTest: BaseUnitTest() {
 
     @Test
     fun `delete user`() {
-        every { authenticationDetails.getEmail() } returns anyString()
-        every { repository.deleteByEmail(any()) } returns Unit
+        every { authenticationDetails.getUser() } returns user
+        every { repository.delete(any()) } returns Unit
 
         userService.delete()
 
         verifyAll {
-            authenticationDetails.getEmail()
-            repository.deleteByEmail(anyString())
+            authenticationDetails.getUser()
+            repository.delete(any())
         }
     }
 
     @Test
     fun `update user`() {
-        every { repository.getOneByEmail(anyString()) } returns user
+        every { authenticationDetails.getUser() } returns user
         every { repository.save(user) } returns user
 
         userService.update(UserBody(user.firstName, user.lastName, user.email, user.password, DATE_OF_BIRTH, user.phoneNum))
 
         verify {
-            repository.getOneByEmail(anyString())
+            authenticationDetails.getUser()
             repository.save(user)
         }
     }

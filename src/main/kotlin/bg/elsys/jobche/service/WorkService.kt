@@ -45,7 +45,9 @@ class WorkService(private val workRepository: WorkRepository,
 
                 val work = workRepository.save(Work(task))
 
-                users.forEach { participationRepository.save(Participation(work, it))}
+                val participations = users.map { Participation(work, it) }
+
+                participationRepository.saveAll(participations)
 
                 with(converters) {
                     return work.response

@@ -68,7 +68,7 @@ class ApplicationServiceTest : BaseUnitTest() {
         @Test
         fun `successfully remove application`() {
             every { appRepository.existsById(anyLong()) } returns true
-            every { userRepository.findByEmail(anyString()) } returns user
+            every { authenticationDetails.getUser() } returns user
             every { appRepository.findById(anyLong()) } returns Optional.of(application)
             every { appRepository.deleteById(anyLong()) } returns Unit
 
@@ -76,8 +76,7 @@ class ApplicationServiceTest : BaseUnitTest() {
 
             verify {
                 appRepository.existsById(anyLong())
-                authenticationDetails.getEmail()
-                userRepository.findByEmail(anyString())
+                authenticationDetails.getUser()
                 appRepository.findById(anyLong())
                 appRepository.deleteById(anyLong())
             }

@@ -40,8 +40,7 @@ class Converters(val storageService: AmazonStorageService) {
         get() = ReviewResponse(id, work.id, reviewGrade)
 
     val Participation.userResponse
-        get() = UserResponse(user.id, user.firstName, user.lastName,
-                toDateOfBirth(user.dateOfBirth), user.phoneNum, user.reviews.map { it.response })
+        get() = user.response
 
     val ProfilePicture.response
         get() = PictureResponse(id)

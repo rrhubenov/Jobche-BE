@@ -21,8 +21,8 @@ class ReviewService(val reviewRepository: ReviewRepository, val workRepository: 
         if (optionalWork.isPresent && optionalUser.isPresent) {
             val work = optionalWork.get()
 
-            if (work.status == WorkStatus.ENDED) {
-                throw ResourceForbiddenException("Exception: You do not have permission to create a review for an ended work")
+            if (work.status != WorkStatus.ENDED) {
+                throw ResourceForbiddenException("Exception: You do not have permission to create a review for a work that has not ended")
             }
 
             val graded = optionalUser.get()

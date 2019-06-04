@@ -44,9 +44,8 @@ class ApplicationServiceTest : BaseUnitTest() {
     inner class create {
         @Test
         fun `create application`() {
-            every { taskRepository.existsById(task.id) } returns true
-            every { authenticationDetails.getUser() } returns user
             every { taskRepository.findById(task.id) } returns Optional.of(task)
+            every { authenticationDetails.getUser() } returns user
             every { appRepository.save(application) } returns application
 
             val result = service.create(applicationBody)
@@ -54,9 +53,8 @@ class ApplicationServiceTest : BaseUnitTest() {
             assertThat(result).isEqualTo(application)
 
             verify {
-                taskRepository.existsById(task.id)
-                authenticationDetails.getUser()
                 taskRepository.findById(task.id)
+                authenticationDetails.getUser()
                 appRepository.save(application)
             }
         }
@@ -66,17 +64,15 @@ class ApplicationServiceTest : BaseUnitTest() {
     inner class remove {
         @Test
         fun `successfully remove application`() {
-            every { appRepository.existsById(anyLong()) } returns true
-            every { authenticationDetails.getUser() } returns user
             every { appRepository.findById(anyLong()) } returns Optional.of(application)
+            every { authenticationDetails.getUser() } returns user
             every { appRepository.deleteById(anyLong()) } returns Unit
 
             service.delete(anyLong())
 
             verify {
-                appRepository.existsById(anyLong())
-                authenticationDetails.getUser()
                 appRepository.findById(anyLong())
+                authenticationDetails.getUser()
                 appRepository.deleteById(anyLong())
             }
         }
@@ -86,17 +82,15 @@ class ApplicationServiceTest : BaseUnitTest() {
     inner class approve() {
         @Test
         fun `successfully approve an applicaiton`() {
-            every { appRepository.existsById(anyLong()) } returns true
+            every { appRepository.findById(anyLong()) } returns Optional.of(application)
             every { authenticationDetails.getUser() } returns user
-            every { appRepository.getOne(anyLong()) } returns application
             every { appRepository.save(any<Application>()) } returns application
 
             service.changeApplicationStatus(anyLong(), true)
 
             verify {
-                appRepository.existsById(anyLong())
+                appRepository.findById(anyLong())
                 authenticationDetails.getUser()
-                appRepository.getOne(anyLong())
                 appRepository.save(application)
             }
         }
@@ -106,18 +100,14 @@ class ApplicationServiceTest : BaseUnitTest() {
     inner class read {
         @Test
         fun `get applications for task`() {
-            every { authenticationDetails.getEmail() } returns anyString()
-            every { userRepository.findByEmail(anyString()) } returns user
-            every { taskRepository.existsById(task.id) } returns true
+            every { authenticationDetails.getUser()} returns user
             every { taskRepository.findById(task.id) } returns Optional.of(task)
             every { appRepository.findAllByTask(any<Pageable>(), task) } returns PageImpl<Application>(applications)
 
             val result = service.getApplicationsForTask(task.id, 1, 1)
 
             verify {
-                authenticationDetails.getEmail()
-                userRepository.findByEmail(anyString())
-                taskRepository.existsById(task.id)
+                authenticationDetails.getUser()
                 taskRepository.findById(task.id)
                 appRepository.findAllByTask(any<Pageable>(), task)
             }

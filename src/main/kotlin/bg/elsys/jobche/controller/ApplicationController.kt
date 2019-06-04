@@ -39,13 +39,24 @@ class ApplicationController(val service: ApplicationService, val converters: Con
         return ResponseEntity(service.delete(id), HttpStatus.NO_CONTENT)
     }
 
-    @GetMapping("/approve/{id}")
-    @ApiOperation(value = "Creater of the task can approve applications",
+    @PostMapping("/approve/{id}")
+    @ApiOperation(value = "Creator of the task can approve applications",
             response = Unit::class,
-            httpMethod = "GET",
+            httpMethod = "POST",
             authorizations = [Authorization(value = "basicAuth")])
-    @ApiResponses(ApiResponse(code = 200, message = "OK", response = Unit::class))
+    @ApiResponses(ApiResponse(code = 204, message = "No Content", response = Unit::class))
     fun approveApplication(@PathVariable id: Long): ResponseEntity<Unit> {
-        return ResponseEntity(service.approveApplication(id), HttpStatus.OK)
+        return ResponseEntity(service.changeApplicationStatus(id, true), HttpStatus.NO_CONTENT)
     }
+
+    @PostMapping("/disapprove/{id}")
+    @ApiOperation(value = "Creator of the task can disapprove applications",
+            response = Unit::class,
+            httpMethod = "POST",
+            authorizations = [Authorization(value = "basicAuth")])
+    @ApiResponses(ApiResponse(code = 204, message = "No Content", response = Unit::class))
+    fun disapproveApplication(@PathVariable id: Long): ResponseEntity<Unit> {
+        return ResponseEntity(service.changeApplicationStatus(id, false), HttpStatus.NO_CONTENT)
+    }
+
 }

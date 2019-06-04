@@ -4,11 +4,10 @@ import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.entity.body.application.ApplicationBody
 import bg.elsys.jobche.entity.model.task.Application
 import bg.elsys.jobche.entity.model.task.Task
+import bg.elsys.jobche.exception.NoContentException
 import bg.elsys.jobche.exception.ResourceForbiddenException
 import bg.elsys.jobche.exception.ResourceNotFoundException
 import bg.elsys.jobche.exception.TaskNotFoundException
-import bg.elsys.jobche.exception.UserNotFoundException
-import bg.elsys.jobche.exception.NoContentException
 import bg.elsys.jobche.repository.ApplicationRepository
 import bg.elsys.jobche.repository.TaskRepository
 import bg.elsys.jobche.repository.UserRepository
@@ -23,11 +22,9 @@ class ApplicationService(val appRepository: ApplicationRepository,
                          val authenticationDetails: AuthenticationDetails) {
     fun create(application: ApplicationBody): Application {
         if (taskRepository.existsById(application.taskId)) {
-            val user = userRepository.findByEmail(authenticationDetails.getEmail())
+            val user = authenticationDetails.getUser()
             val task = taskRepository.findById(application.taskId).get()
-            if (user != null) {
-                return appRepository.save(Application(user, task))
-            } else throw UserNotFoundException()
+            return appRepository.save(Application(user, task))
         } else throw TaskNotFoundException()
     }
 
@@ -41,13 +38,15 @@ class ApplicationService(val appRepository: ApplicationRepository,
         } else throw ResourceNotFoundException("Exception: No application matching this id was found")
     }
 
-    fun approveApplication(id: Long) {
+    fun changeApplicationStatus(id: Long, value: Boolean) {
         if (appRepository.existsById(id)) {
-            val user = userRepository.findByEmail(authenticationDetails.getEmail())
+            val user = authenticationDetails.getUser()
             val application = appRepository.getOne(id)
-            if (application.task?.creator?.id == user?.id) {
-                application.accepted = true
-                application.task!!.acceptedWorkersCount++
+            if (application.task?.creator?.id == user.id) {
+                application.accepted = value
+                if (value == true) {
+                    application.task.acceptedWorkersCount++
+                } else application.task.acceptedWorkersCount--
                 appRepository.save(application)
             } else throw ResourceForbiddenException("Exception: You do not have permission to modify this application")
         } else throw ResourceNotFoundException("Exception: No application matching this id was found")

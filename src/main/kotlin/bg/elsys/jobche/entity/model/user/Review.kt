@@ -15,7 +15,9 @@ data class Review(
         val work: Work,
 
         @Enumerated(EnumType.STRING)
-        val reviewGrade: ReviewGrade
+        val reviewGrade: ReviewGrade,
+
+        val comment: String?
 
 ): BaseEntity()
 

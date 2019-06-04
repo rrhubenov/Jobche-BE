@@ -1,6 +1,7 @@
 package bg.elsys.jobche.service
 
 import bg.elsys.jobche.config.security.AuthenticationDetails
+import bg.elsys.jobche.converter.Converters
 import bg.elsys.jobche.entity.body.user.ReviewBody
 import bg.elsys.jobche.entity.model.user.Review
 import bg.elsys.jobche.entity.model.work.WorkStatus
@@ -13,7 +14,7 @@ import bg.elsys.jobche.repository.WorkRepository
 import org.springframework.stereotype.Service
 
 @Service
-class ReviewService(val reviewRepository: ReviewRepository, val workRepository: WorkRepository, val userRepository: UserRepository, val authenticationDetails: AuthenticationDetails) {
+class ReviewService(val reviewRepository: ReviewRepository, val workRepository: WorkRepository, val userRepository: UserRepository, val authenticationDetails: AuthenticationDetails, val converters: Converters) {
     fun create(reviewBody: ReviewBody): ReviewResponse {
         val optionalWork = workRepository.findById(reviewBody.workId)
         val optionalUser = userRepository.findById(reviewBody.userId)
@@ -31,11 +32,12 @@ class ReviewService(val reviewRepository: ReviewRepository, val workRepository: 
 
             //Check that the graded user was a participant of the work && the grader is the work creator
             if (work.task.creator.id == grader.id
-                    && work.participations.stream().anyMatch { it.user.id == graded.id }) {
+                    && work.participations.any { it.user.id == graded.id }) {
+                val review = reviewRepository.save(Review(graded, work, reviewBody.reviewGrade, reviewBody.comment))
 
-                val review = reviewRepository.save(Review(graded, work, reviewBody.reviewGrade))
-
-                return ReviewResponse(review.id, review.work.id, review.reviewGrade)
+                return with(converters) {
+                    review.response
+                }
 
             } else throw ResourceForbiddenException("Exception: You do not have permission to grade this user for this work." +
                     " You are either not the creator for this work or the the user you are trying to grade is not a participant in this work")

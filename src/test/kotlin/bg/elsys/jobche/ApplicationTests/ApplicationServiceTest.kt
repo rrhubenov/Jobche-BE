@@ -45,7 +45,7 @@ class ApplicationServiceTest : BaseUnitTest() {
         @Test
         fun `create application`() {
             every { taskRepository.existsById(task.id) } returns true
-            every { userRepository.findByEmail(anyString()) } returns user
+            every { authenticationDetails.getUser() } returns user
             every { taskRepository.findById(task.id) } returns Optional.of(task)
             every { appRepository.save(application) } returns application
 
@@ -55,8 +55,7 @@ class ApplicationServiceTest : BaseUnitTest() {
 
             verify {
                 taskRepository.existsById(task.id)
-                authenticationDetails.getEmail()
-                userRepository.findByEmail(anyString())
+                authenticationDetails.getUser()
                 taskRepository.findById(task.id)
                 appRepository.save(application)
             }
@@ -88,17 +87,15 @@ class ApplicationServiceTest : BaseUnitTest() {
         @Test
         fun `successfully approve an applicaiton`() {
             every { appRepository.existsById(anyLong()) } returns true
-            every { authenticationDetails.getEmail() } returns anyString()
-            every { userRepository.findByEmail(anyString()) } returns user
+            every { authenticationDetails.getUser() } returns user
             every { appRepository.getOne(anyLong()) } returns application
             every { appRepository.save(any<Application>()) } returns application
 
-            service.approveApplication(anyLong())
+            service.changeApplicationStatus(anyLong(), true)
 
             verify {
                 appRepository.existsById(anyLong())
-                authenticationDetails.getEmail()
-                userRepository.findByEmail(anyString())
+                authenticationDetails.getUser()
                 appRepository.getOne(anyLong())
                 appRepository.save(application)
             }

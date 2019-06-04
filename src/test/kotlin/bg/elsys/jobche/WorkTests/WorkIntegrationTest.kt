@@ -66,7 +66,7 @@ class WorkIntegrationTest : BaseIntegrationTest() {
         //Approve worker for Task
         restTemplate
                 .withBasicAuth(USER_CREATOR_EMAIL, USER_CREATOR_PASSWORD)
-                .getForEntity("/application/approve/$applicationId", Unit::class.java)
+                .postForEntity("/application/approve/$applicationId", Unit::class.java, Unit::class.java)
     }
 
     @AfterEach
@@ -130,26 +130,6 @@ class WorkIntegrationTest : BaseIntegrationTest() {
             deleteWork(createResponse.body?.id)
         }
     }
-
-//    @Nested
-//    inner class endWork {
-//        @Test
-//        fun `ending work should return 200`() {
-//            val createResponse = createWork()
-//
-//            val endResponse = restTemplate
-//                    .withBasicAuth(USER_CREATOR_EMAIL, USER_CREATOR_PASSWORD)
-//                    .exchange(END_URL + createResponse.body?.id,
-//                            HttpMethod.PATCH,
-//                            HttpEntity(WorkStatus.ENDED),
-//                            Unit::class.java)
-//
-//            assertThat(endResponse.statusCode).isEqualTo(HttpStatus.OK)
-//
-//            deleteWork(createResponse.body?.id)
-//        }
-//    }
-
 
     fun createWork(): ResponseEntity<WorkResponse> {
         val workBody = WorkBody(taskId!!, listOf(userWorkerId!!))

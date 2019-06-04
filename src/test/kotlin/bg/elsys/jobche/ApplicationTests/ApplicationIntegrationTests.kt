@@ -116,9 +116,9 @@ class ApplicationIntegrationTests: BaseIntegrationTest() {
             //Second, creator of task must approve the application
             val approveResponse = restTemplate
                     .withBasicAuth(user.email, user.password)
-                    .getForEntity(APPROVE_APPLICATION_URL + createResponse.body?.id, Unit::class.java)
+                    .postForEntity(APPROVE_APPLICATION_URL + createResponse.body?.id, Unit::class.java, Unit::class.java)
 
-            assertThat(approveResponse.statusCode).isEqualTo(HttpStatus.OK)
+            assertThat(approveResponse.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
 
             //Check that accepted workers count is increased by 1
             val getResponse = restTemplate

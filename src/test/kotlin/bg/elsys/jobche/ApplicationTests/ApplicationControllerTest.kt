@@ -50,10 +50,10 @@ class ApplicationControllerTest: BaseUnitTest() {
 
     @Test
     fun `approve application should return 200`() {
-        every { service.approveApplication(anyLong()) } returns Unit
+        every { service.changeApplicationStatus(anyLong(), true) } returns Unit
 
         val result = controller.approveApplication(anyLong())
 
-        assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
+        assertThat(result.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
     }
 }

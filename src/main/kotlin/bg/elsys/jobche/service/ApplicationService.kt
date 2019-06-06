@@ -46,10 +46,19 @@ class ApplicationService(val appRepository: ApplicationRepository,
         val app = getApp(id)
         val user = authenticationDetails.getUser()
         if (app.task?.creator?.id == user.id) {
+
+            if(app.accepted == value) {
+                throw ResourceForbiddenException("The wanted value has already been applied to the following application")
+            }
+
             app.accepted = value
             if (value == true) {
-                app.task.acceptedWorkersCount++
-            } else app.task.acceptedWorkersCount--
+                if (app.task.acceptedWorkersCount < app.task.numberOfWorkers) {
+                    app.task.acceptedWorkersCount++
+                } else throw ResourceForbiddenException("Max applications are already approved. Disapprove an application to approve another one.")
+            } else if(app.task.acceptedWorkersCount > 0){
+                app.task.acceptedWorkersCount--
+            } else throw ResourceForbiddenException("No more applications to disapprove")
             appRepository.save(app)
         } else throw ResourceForbiddenException("Exception: You do not have permission to modify this application")
     }

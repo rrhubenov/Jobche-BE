@@ -89,7 +89,8 @@ class DefaultValues {
 
         fun taskResponse(): TaskResponse {
             val task = task()
-            return TaskResponse(task.id, TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, CITY, CREATOR_ID, ACCEPTED_COUNT)
+            val creatorResponse = creatorUserResponse()
+            return TaskResponse(task.id, TITLE, DESCRIPTION, PAYMENT, NUMBER_OF_WORKERS, DATE_TIME, CITY, creatorResponse, ACCEPTED_COUNT)
         }
 
         fun taskPaginatedResponse(): TaskPaginatedResponse {

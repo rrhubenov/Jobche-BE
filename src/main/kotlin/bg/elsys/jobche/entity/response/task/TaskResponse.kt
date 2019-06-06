@@ -1,5 +1,6 @@
 package bg.elsys.jobche.entity.response.task
 
+import bg.elsys.jobche.entity.response.user.UserResponse
 import java.time.LocalDateTime
 
 data class TaskResponse(val id: Long?,
@@ -9,6 +10,6 @@ data class TaskResponse(val id: Long?,
                         val numberOfWorkers: Int?,
                         val dateTime: LocalDateTime?,
                         val city: String?,
-                        val creatorId: Long?,
+                        val creator: UserResponse?,
                         val acceptedWorkersCount: Int?,
                         val pictures: List<String>? = null)

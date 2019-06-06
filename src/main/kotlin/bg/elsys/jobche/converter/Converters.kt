@@ -26,7 +26,7 @@ class Converters(val storageService: AmazonStorageService) {
 
     val Task.response
         get() = TaskResponse(id, title, description, payment,
-                numberOfWorkers, dateTime, city, creator.id, acceptedWorkersCount
+                numberOfWorkers, dateTime, city, creator.response, acceptedWorkersCount
                 , getPicturesTask(pictures))
 
     val User.response
@@ -37,7 +37,7 @@ class Converters(val storageService: AmazonStorageService) {
         get() = ApplicationResponse(id, user.response, task?.response, accepted)
 
     val Review.response
-        get() = ReviewResponse(id, work.id, reviewGrade)
+        get() = ReviewResponse(id, work.id, reviewGrade, comment, work.task.creator.id)
 
     val Participation.userResponse
         get() = user.response

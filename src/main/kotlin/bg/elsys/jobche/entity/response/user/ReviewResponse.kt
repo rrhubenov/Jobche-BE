@@ -4,4 +4,6 @@ import bg.elsys.jobche.entity.model.user.ReviewGrade
 
 data class ReviewResponse(val id: Long?,
                           val workId: Long?,
-                          val reviewGrade: ReviewGrade?)
+                          val reviewGrade: ReviewGrade?,
+                          val comment: String?,
+                          val reviewerId: Long?)

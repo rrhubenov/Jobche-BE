@@ -3,6 +3,7 @@ package bg.elsys.jobche.service
 import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.entity.body.task.TaskBody
 import bg.elsys.jobche.entity.model.task.Task
+import bg.elsys.jobche.entity.model.work.WorkStatus
 import bg.elsys.jobche.exception.ResourceNotFoundException
 import bg.elsys.jobche.exception.TaskModificationForbiddenException
 import bg.elsys.jobche.exception.TaskNotFoundException
@@ -85,13 +86,14 @@ class TaskService(val taskRepository: TaskRepository,
                       dateEnd: LocalDateTime? = null,
                       city: String? = null): List<Task> {
         return taskRepository.findAll(createPageRequest(page, size), title, paymentStart, paymentEnd, numWStart, numWEnd, dateStart, dateEnd, city)
+                .filter { it.work == null }
     }
 
 
     fun readMePaginated(page: Int, size: Int): List<Task> {
         val user = userRepository.findByEmail(authenticationDetails.getEmail())
 
-        return taskRepository.findAllByCreatorId(createPageRequest(page, size), user?.id).content
+        return taskRepository.findAllByCreatorId(createPageRequest(page, size), user?.id).content.filter { it.work?.status != WorkStatus.ENDED }
     }
 
     private fun createPageRequest(page: Int, size: Int): Pageable {

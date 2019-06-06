@@ -1,7 +1,6 @@
 package bg.elsys.jobche.repository
 
 import bg.elsys.jobche.entity.model.task.Task
-import org.apache.tomcat.jni.Local
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -77,7 +76,7 @@ class CustomTaskRepositoryImpl(val em: EntityManager) : CustomTaskRepository {
 
         val tr = em.createQuery(cq)
 
-        tr.firstResult = pageable.pageNumber*pageable.pageSize
+        tr.firstResult = pageable.pageNumber * pageable.pageSize
         tr.maxResults = pageable.pageSize
 
         return tr.resultList

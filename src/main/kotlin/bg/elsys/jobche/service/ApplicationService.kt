@@ -3,7 +3,6 @@ package bg.elsys.jobche.service
 import bg.elsys.jobche.config.security.AuthenticationDetails
 import bg.elsys.jobche.entity.body.application.ApplicationBody
 import bg.elsys.jobche.entity.model.task.Application
-import bg.elsys.jobche.entity.model.task.Task
 import bg.elsys.jobche.exception.NoContentException
 import bg.elsys.jobche.exception.ResourceForbiddenException
 import bg.elsys.jobche.exception.ResourceNotFoundException
@@ -21,53 +20,64 @@ class ApplicationService(val appRepository: ApplicationRepository,
                          val taskRepository: TaskRepository,
                          val authenticationDetails: AuthenticationDetails) {
     fun create(application: ApplicationBody): Application {
-        if (taskRepository.existsById(application.taskId)) {
+        val optionalTask = taskRepository.findById(application.taskId)
+
+        if (optionalTask.isPresent) {
+
+            val task = optionalTask.get()
             val user = authenticationDetails.getUser()
-            val task = taskRepository.findById(application.taskId).get()
             return appRepository.save(Application(user, task))
+
         } else throw TaskNotFoundException()
     }
 
     fun delete(id: Long) {
-        if (appRepository.existsById(id)) {
-            val user = authenticationDetails.getUser()
-            val app = appRepository.findById(id).get()
-            if (app.user.id == user.id) {
-                appRepository.deleteById(id)
-            } else throw ResourceForbiddenException("Exception: You do not have permission to modify this application")
-        } else throw ResourceNotFoundException("Exception: No application matching this id was found")
+        val app = getApp(id)
+        val user = authenticationDetails.getUser()
+
+        if (app.user.id == user.id) {
+
+            appRepository.deleteById(id)
+
+        } else throw ResourceForbiddenException("Exception: You do not have permission to modify this application")
     }
 
     fun changeApplicationStatus(id: Long, value: Boolean) {
-        if (appRepository.existsById(id)) {
-            val user = authenticationDetails.getUser()
-            val application = appRepository.getOne(id)
-            if (application.task?.creator?.id == user.id) {
-                application.accepted = value
-                if (value == true) {
-                    application.task.acceptedWorkersCount++
-                } else application.task.acceptedWorkersCount--
-                appRepository.save(application)
-            } else throw ResourceForbiddenException("Exception: You do not have permission to modify this application")
-        } else throw ResourceNotFoundException("Exception: No application matching this id was found")
+        val app = getApp(id)
+        val user = authenticationDetails.getUser()
+        if (app.task?.creator?.id == user.id) {
+
+            if(app.accepted == value) {
+                throw ResourceForbiddenException("The wanted value has already been applied to the following application")
+            }
+
+            app.accepted = value
+            if (value == true) {
+                if (app.task.acceptedWorkersCount < app.task.numberOfWorkers) {
+                    app.task.acceptedWorkersCount++
+                } else throw ResourceForbiddenException("Max applications are already approved. Disapprove an application to approve another one.")
+            } else if(app.task.acceptedWorkersCount > 0){
+                app.task.acceptedWorkersCount--
+            } else throw ResourceForbiddenException("No more applications to disapprove")
+            appRepository.save(app)
+        } else throw ResourceForbiddenException("Exception: You do not have permission to modify this application")
     }
 
     fun getApplicationsForTask(taskId: Long, page: Int, size: Int): List<Application> {
-        val user = userRepository.findByEmail(authenticationDetails.getEmail())
-        val task: Task
+        val user = authenticationDetails.getUser()
+        val optionalTask = taskRepository.findById(taskId)
 
-        if (taskRepository.existsById(taskId)) {
-            task = taskRepository.findById(taskId).get()
+        if (optionalTask.isPresent) {
+            val task = optionalTask.get()
+            if (task.creator.id == user.id) {
+                val result = appRepository.findAllByTask(createPageRequest(page, size), task).content
+
+                if (!result.isEmpty()) {
+                    return result
+                } else throw NoContentException("Exception: No applications are available for this task")
+
+            } else throw ResourceForbiddenException("Exception: You do not have permission to view the applications for this task")
         } else throw ResourceNotFoundException()
-
-        if (task.creator.id == user?.id) {
-            val result = appRepository.findAllByTask(createPageRequest(page, size), task).content
-
-            if (result.isEmpty()) {
-                throw NoContentException("Exception: No applications are available for this task")
-            } else return result
-
-        } else throw ResourceForbiddenException("Exception: You do not have permission to view the applications for this task")
     }
 
     fun getApplicationsForUser(page: Int, size: Int): List<Application> {
@@ -75,13 +85,20 @@ class ApplicationService(val appRepository: ApplicationRepository,
 
         val result = appRepository.findAllByUser(createPageRequest(page, size), user).content
 
-        if (result.isEmpty()) {
-            throw NoContentException("Exception: No applications are available for this user")
-        } else return result
+        if (!result.isEmpty()) {
+           return result
+        } else throw NoContentException("Exception: No applications are available for this user")
     }
 
     private fun createPageRequest(page: Int, size: Int): Pageable {
         return PageRequest.of(page, size)
+    }
+
+    private fun getApp(id: Long): Application {
+        val optionalApp = appRepository.findById(id)
+
+        if (optionalApp.isPresent) return optionalApp.get()
+        else throw ResourceNotFoundException("Exception: No application matching this id was found")
     }
 
 }

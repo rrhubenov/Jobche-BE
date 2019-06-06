@@ -42,7 +42,7 @@ data class Task(
         @OneToMany(cascade = [CascadeType.ALL], mappedBy = "task", fetch = FetchType.LAZY)
         var applications: List<Application> = emptyList(),
 
-        @OneToOne(fetch = FetchType.LAZY, mappedBy = "task", cascade = [CascadeType.ALL])
+        @OneToOne(fetch = FetchType.EAGER, mappedBy = "task", cascade = [CascadeType.ALL])
         var work: Work? = null,
 
         @OneToMany(cascade = [CascadeType.ALL], mappedBy = "task", fetch = FetchType.LAZY)

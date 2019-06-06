@@ -12,4 +12,7 @@ data class ReviewBody(
         val userId: Long,
 
         @ApiModelProperty(value = "The grade for the user's work", example = "GOOD", allowableValues = "BAD, AVERAGE, GOOD, GREAT, PERFECT")
-        val reviewGrade: ReviewGrade)
+        val reviewGrade: ReviewGrade,
+
+        @ApiModelProperty(value = "A comment by the creator of the task on the performance of the worker", example = "Great job")
+        val comment: String?)

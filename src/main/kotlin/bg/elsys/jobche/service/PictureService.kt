@@ -31,6 +31,7 @@ class PictureService(private val profilePictureRepository: ProfilePictureReposit
             val oldPicture = user.picture
             if (oldPicture != null) {
                 storageService.delete(oldPicture.pictureId)
+                profilePictureRepository.deleteById(oldPicture.id)
             }
         }
         storageService.save(file.inputStream, picture.pictureId)

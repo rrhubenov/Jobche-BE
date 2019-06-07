@@ -44,7 +44,7 @@ data class User(
         @OneToMany(cascade = [CascadeType.ALL], mappedBy = "user", fetch = FetchType.LAZY)
         var reviews: List<Review> = emptyList(),
 
-        @OneToOne(cascade = [CascadeType.ALL], mappedBy = "user", fetch = FetchType.LAZY)
+        @OneToOne(cascade = [CascadeType.REMOVE], mappedBy = "user", fetch = FetchType.EAGER)
         var picture: ProfilePicture? = null) : BaseEntity() {
 
     override fun toString(): String {

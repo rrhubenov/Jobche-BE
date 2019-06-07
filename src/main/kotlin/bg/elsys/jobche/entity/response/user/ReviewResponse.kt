@@ -6,4 +6,9 @@ data class ReviewResponse(val id: Long?,
                           val workId: Long?,
                           val reviewGrade: ReviewGrade?,
                           val comment: String?,
-                          val reviewerId: Long?)
+                          val reviewer: ReviewerResponse?)
+
+data class ReviewerResponse(val id: Long?,
+                            val firstName: String?,
+                            val lastName: String?,
+                            val profilePicture: String? = null)

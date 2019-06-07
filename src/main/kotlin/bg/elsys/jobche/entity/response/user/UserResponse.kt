@@ -8,4 +8,5 @@ data class UserResponse(val id: Long?,
                         val dateOfBirth: DateOfBirth?,
                         val phoneNum: String?,
                         val reviews: List<ReviewResponse>? = emptyList(),
+                        val averageReview: Double? = null,
                         val profilePicture: String? = null)

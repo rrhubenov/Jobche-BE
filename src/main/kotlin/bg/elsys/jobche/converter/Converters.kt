@@ -14,6 +14,7 @@ import bg.elsys.jobche.entity.response.application.ApplicationResponse
 import bg.elsys.jobche.entity.response.picture.PictureResponse
 import bg.elsys.jobche.entity.response.task.TaskResponse
 import bg.elsys.jobche.entity.response.user.ReviewResponse
+import bg.elsys.jobche.entity.response.user.ReviewerResponse
 import bg.elsys.jobche.entity.response.user.UserResponse
 import bg.elsys.jobche.service.AmazonStorageService
 import org.springframework.stereotype.Component
@@ -31,13 +32,16 @@ class Converters(val storageService: AmazonStorageService) {
 
     val User.response
         get() = UserResponse(id, firstName, lastName,
-                toDateOfBirth(dateOfBirth), phoneNum, reviews.map { it.response }, getPicture(picture))
+                toDateOfBirth(dateOfBirth), phoneNum, reviews.map { it.response }, calculateAverageReview(reviews), getPicture(picture))
+
+    val User.reviewerResponse
+        get() = ReviewerResponse(id, firstName, lastName, getPicture(picture))
 
     val Application.response
         get() = ApplicationResponse(id, user.response, task?.response, accepted)
 
     val Review.response
-        get() = ReviewResponse(id, work.id, reviewGrade, comment, work.task.creator.id)
+        get() = ReviewResponse(id, work.id, reviewGrade, comment, work.task.creator.reviewerResponse)
 
     val Participation.userResponse
         get() = user.response
@@ -63,5 +67,14 @@ class Converters(val storageService: AmazonStorageService) {
         return if (pictures != null && !pictures.isEmpty()) {
             pictures.map { storageService.url(it.pictureId) }
         } else null
+    }
+
+    private fun calculateAverageReview(reviews: List<Review>): Double? {
+        return if(reviews.isEmpty()) {
+            null
+        } else reviews.stream()
+                .mapToDouble { (it.reviewGrade.ordinal + 1).toDouble() }
+                .average()
+                .asDouble
     }
 }

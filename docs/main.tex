@@ -1,0 +1,50 @@
+\documentclass[12pt, a4paper]{extreport}
+\usepackage[utf8]{inputenc}
+\usepackage[T1,T2A]{fontenc}
+\usepackage[english, bulgarian]{babel}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{csquotes}
+\usepackage{biblatex}
+\usepackage{listings}
+\usepackage{mathptmx}
+\usepackage{setspace}
+
+\spacing{1.213}
+
+\addbibresource{bibliography.bib}
+
+\pagestyle{fancy}
+
+\title{Jobche - Back End}
+\author{Radoslav Hubenov}
+\date{February 2019}
+
+\begin{document}
+
+\tableofcontents
+\newpage
+\chapter*{Увод}
+\input{chapters/intro}
+
+\chapter{Проучване}
+\input{chapters/exploratory.tex}
+
+\chapter{Основен продукт}
+\input{chapters/requirements.tex}
+
+\chapter{Реализация}
+\input{chapters/implementation.tex}
+
+\chapter{Ръководство}
+\input{chapters/usage.tex}
+
+\chapter*{Заключение}
+\input{chapters/conclusion}
+
+\chapter*{Използвана литература}
+\printbibliography[heading=none]
+
+
+\end{document}
